@@ -1,6 +1,6 @@
 # Poster Designer
 
-**A Claude Code agent that designs posters for a customer care floor in the Optum look, the way a studio does: brief first, three ideas before one, and nothing leaves until it has been measured.**
+**An agent for Claude Code and GitHub Copilot that designs posters for a customer care floor in the Optum look, the way a studio does: brief first, three ideas before one, and nothing leaves until it has been measured.**
 
 It writes each poster as HTML and CSS, renders it with a real browser to print-ready PNG and PDF, and checks the result with a script that fails on weak hierarchy, low contrast, text outside the margin, and any word the brief did not contain.
 
@@ -106,7 +106,7 @@ Contrast is measured against what is actually behind each piece of text in the r
 
 ## Install
 
-Needs Python 3.10+ and [Claude Code](https://claude.com/claude-code).
+Needs Python 3.10+ and either [Claude Code](https://claude.com/claude-code) or GitHub Copilot in VS Code (agent mode).
 
 ```bash
 pip install playwright pillow
@@ -115,6 +115,8 @@ pip install playwright pillow
 ```bash
 python -m playwright install chromium
 ```
+
+### Claude Code
 
 Windows:
 
@@ -130,9 +132,41 @@ bash install.sh
 
 This copies the agent to `~/.claude/agents/` and the skill to `~/.claude/skills/poster-design/`.
 
+### GitHub Copilot
+
+**Simplest:** open this repository as the workspace in VS Code. Copilot reads the files that are already here:
+
+| File | What Copilot does with it |
+|---|---|
+| `.github/agents/poster-designer.agent.md` | Adds **Poster Designer** to the agent list in Copilot Chat |
+| `.github/copilot-instructions.md` | Applies the poster rules to every chat in this workspace |
+| `AGENTS.md` | The same rules for Copilot CLI, the coding agent and other tools that read it |
+| `skills/poster-design/` | The skill the agent reads: process, rules, profile, template, scripts |
+
+**In your own project:** install the skill for your user, then copy the agent file across.
+
+```powershell
+powershell -ExecutionPolicy Bypass -File install.ps1 -Copilot
+```
+
+```bash
+bash install.sh --copilot
+```
+
+This puts the skill in `~/.copilot/skills/poster-design/`. Then copy `.github/agents/poster-designer.agent.md` into your project's `.github/agents/` folder.
+
+What to expect in Copilot:
+
+- **Agent mode is required.** The scripts run in the terminal, so Copilot has to be allowed to run commands. Plain chat and Microsoft 365 Copilot cannot run them.
+- **Looking at the result depends on the model.** The process checks four rendered images by eye. If the model in use cannot open image files, the agent is told to say so and hand you the four images and their questions instead of pretending it looked. The automated checker runs either way.
+- **Skill discovery varies by Copilot version.** The agent file does not rely on it: it finds the skill folder itself and reads `SKILL.md` directly.
+- **On a managed work machine,** installing Python packages and the Chromium engine may need approval.
+
+The Copilot files follow the locations in the VS Code documentation for [custom agents](https://code.visualstudio.com/docs/copilot/customization/custom-agents) and [agent skills](https://code.visualstudio.com/docs/copilot/customization/agent-skills). They have not yet been run inside Copilot; the scripts and rules they call are the ones tested above.
+
 ## Use
 
-In Claude Code, ask for a poster. The agent is picked up from its description, or you can name it:
+In Claude Code, ask for a poster; the agent is picked up from its description, or you can name it. In Copilot Chat, choose **Poster Designer** from the agent list and ask the same way:
 
 ```text
 Use the poster-designer agent. Floor-screen slide for this week's huddle topic:
@@ -165,7 +199,10 @@ Formats: `a4` `a3` `a2` `tabloid` `letter` `ig-portrait` `ig-square` `story` `la
 ## What is in the repository
 
 ```text
-agents/poster-designer.md            the agent
+agents/poster-designer.md            the agent, for Claude Code
+.github/agents/poster-designer.agent.md   the agent, for GitHub Copilot
+.github/copilot-instructions.md      poster rules for Copilot in this workspace
+AGENTS.md                            the same rules for other agents
 skills/poster-design/
   SKILL.md                           definition of done, commands, measured rules
   profiles/optum-callcenter.json     the house look: colours, type roles, shapes, tone, hard rules

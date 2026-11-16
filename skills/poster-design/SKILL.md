@@ -18,30 +18,41 @@ The work is done as HTML and CSS and rendered with a real browser, so type is re
 - [ ] Files handed over: PNG, PDF for print formats, HTML source, brief, and a short rationale.
 
 ## Files
-| Path | What it is |
+All paths are relative to the folder this file is in. The same folder works as a Claude Code skill (`~/.claude/skills/poster-design/`), a GitHub Copilot skill (`~/.copilot/skills/poster-design/` or `.github/skills/poster-design/`), or in place inside the repository (`skills/poster-design/`).
+
+| File | What it is |
 |---|---|
-| `references/process.md` | The seven steps, with what to produce at each |
-| `references/craft.md` | Hierarchy, grids, type, colour, image, and the design lineages to draw on |
-| `references/product-lighting.md` | Making a product look lit and placed, not pasted |
-| `references/anti-slop.md` | The habits that make work look generated, and what to do instead |
-| `references/formats.md` | Sizes, bleed, safe margins, viewing distance, export |
-| `profiles/` | Brand profiles (colours, type roles, shapes, tone, rules) |
-| `templates/base.html` | Starting sheet: grid, `--u` unit, type scale, palette roles |
-| `scripts/render.py` | HTML to PNG and PDF, plus squint, thumbnail, greyscale and grid overlay |
-| `scripts/check.py` | Measures the poster against the rules; fails on invented text |
-| `scripts/sheet.py` | Puts renders side by side for comparing concepts or checks |
+| [references/process.md](./references/process.md) | The seven steps, with what to produce at each |
+| [references/craft.md](./references/craft.md) | Hierarchy, grids, type, colour, image, and the design lineages to draw on |
+| [references/product-lighting.md](./references/product-lighting.md) | Making an object look lit and placed, not pasted |
+| [references/anti-slop.md](./references/anti-slop.md) | The habits that make work look generated, and what to do instead |
+| [references/formats.md](./references/formats.md) | Sizes, bleed, safe margins, viewing distance, export |
+| [profiles/optum-callcenter.json](./profiles/optum-callcenter.json) | The house look: colours, type roles, shapes, tone, hard rules |
+| [profiles/README.md](./profiles/README.md) | How profiles work and how to write one |
+| [templates/base.html](./templates/base.html) | Starting sheet: grid, `--u` unit, type scale, palette roles |
+| [scripts/render.py](./scripts/render.py) | HTML to PNG and PDF, plus squint, thumbnail, greyscale and grid overlay |
+| [scripts/check.py](./scripts/check.py) | Measures the poster against the rules; fails on invented text |
+| [scripts/sheet.py](./scripts/sheet.py) | Puts renders side by side for comparing concepts or checks |
 
 ## Commands
+Set `S` to the `scripts` folder beside this file, wherever the skill is installed.
+
 ```bash
-S=~/.claude/skills/poster-design/scripts
+S=~/.claude/skills/poster-design/scripts      # Claude Code
+S=~/.copilot/skills/poster-design/scripts     # GitHub Copilot, personal skill
+S=skills/poster-design/scripts                # inside the repository
 python $S/render.py poster.html --format a3 --grid --pdf      # a4 a3 a2 tabloid letter ig-portrait ig-square story landscape og, or 1200x1600
 python $S/check.py  poster.html --format a3 --brief brief.json
 python $S/sheet.py  a/poster.png b/poster.png c/poster.png --out concepts.png
 ```
+The scripts need `pip install playwright pillow` and `python -m playwright install chromium` once.
+
 Use `--scale 1` while iterating (fast, small files) and the default scale for the final.
 
 ## The four looks
 After every render, open these and answer the question. A "no" means go back.
+
+If you cannot view image files in this session, say so, give the person the four paths and their questions, and wait for the answer. Never report a look you did not take.
 
 | File | Question |
 |---|---|
