@@ -21,6 +21,16 @@ Team building. Friday 12 December, 3 pm, 14th floor.
 
 The first line never changes. The second line is your poster, in your own words.
 
+**In any Copilot, even one that cannot open links,** paste the block in [`copilot/start.txt`](copilot/start.txt) once. Copilot answers "Poster Designer is ready", and for the rest of that chat every message you send is a poster request:
+
+```text
+Team building. Friday 12 December, 3 pm, 14th floor.
+```
+
+```text
+Change the headline to "Headsets off".
+```
+
 Copilot answers with one HTML file. Paste its reply into the Studio to check it and export a PDF or PNG.
 
 A chat Copilot can read the instructions from the link, but it cannot run this repository's scripts. Some Copilots, especially on managed work accounts, are not allowed to open outside links; if yours says it cannot, use the Studio's **Copy the prompt for Copilot** button and paste the prompt itself.
