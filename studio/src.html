@@ -61,65 +61,65 @@
 </head>
 <body>
 <header>
-  <p class="k">Poster Studio · works with any Copilot</p>
-  <h1>Brief it. Paste it. <em>Check</em> it.</h1>
-  <p class="lead">Nothing to install. Fill in the brief, copy the prompt into Copilot and paste back its reply. You get the poster as PNG and PDF, the research behind it, and the checks.</p>
+  <p class="k">Poster Studio · works on its own, or with any Copilot</p>
+  <h1>Type it. See it. <em>Print</em> it.</h1>
+  <p class="lead">Nothing to install and no internet needed. Type the words and the Studio draws the poster in the house look, checks it, and gives you a PNG and a PDF. Copilot can write the words for you.</p>
 </header>
 
 <main>
   <section aria-labelledby="s1">
-    <h2 id="s1"><b>01</b>The brief</h2>
-    <p class="hint">Only what you type here is allowed on the poster as fact. Leave a line empty and the poster gets a blank space to write in, not a made-up date.</p>
+    <h2 id="s1"><b>01</b>Make the poster</h2>
+    <p class="hint">Type the words and press Make. The Studio draws the poster. Only what you type goes on it as fact: leave When, Time or Where empty and the poster gets a blank line to write on, not a made-up date.</p>
     <div class="grid">
       <div><label for="kind">Kind of poster</label>
-        <select id="kind">
-          <option>Team building or team event</option><option>Town hall or meeting</option><option>Call habit or huddle topic</option>
-          <option>Privacy or security reminder</option><option>Recognition</option><option>Wellbeing reminder</option><option>Schedule or system notice</option>
-        </select></div>
+        <select id="kind"><option>Team building</option><option>Town hall</option><option>Call habit</option><option>Privacy</option><option>Recognition</option><option>Wellbeing</option><option>Notice</option></select></div>
       <div><label for="format">Where it will be seen</label>
         <select id="format">
           <option value="a3">Wall poster, A3 portrait</option><option value="landscape">Floor or wall screen, 16:9</option>
           <option value="ig-portrait">Team chat post, 4:5</option><option value="a4">Notice board, A4 portrait</option>
           <option value="ig-square">Square post, 1:1</option><option value="story">Phone screen, 9:16</option>
         </select></div>
-      <div class="wide"><label for="message">The one message <span>what should people remember?</span></label>
-        <input id="message" placeholder=""></div>
-      <div><label for="headline">Headline <span>optional: leave empty and Copilot writes one</span></label>
+      <div class="wide"><label for="headline">Headline <span>2 to 6 words. Put *stars* round the one word that matters, or leave it and the last word is used.</span></label>
         <input id="headline"></div>
-      <div><label for="picture">Picture <span>what should be drawn?</span></label>
-        <select id="picture">
-          <option value="people">People, drawn as simple figures</option><option value="object">One object, drawn simply</option><option value="type">No picture: the words are the picture</option>
-        </select></div>
-      <div><label for="count">How many to choose from</label>
-        <select id="count"><option value="1">One poster</option><option value="3">Three different options</option></select></div>
+      <div class="wide"><label for="message">One line under it <span>optional: one plain sentence</span></label>
+        <input id="message"></div>
       <div><label for="when">When <span>date</span></label><input id="when"></div>
       <div><label for="time">Time</label><input id="time"></div>
-      <div><label for="where">Where</label><input id="where"></div>
-      <div class="wide"><label for="extra">Other words that must appear <span>one per line: a contact, a deadline, three habits</span></label>
-        <textarea id="extra"></textarea></div>
+      <div class="wide"><label for="where">Where</label><input id="where"></div>
+      <div class="wide"><label for="extra">Points <span>optional: up to three short actions, one per line</span></label>
+        <textarea id="extra" style="min-height:84px"></textarea></div>
+      <div><label for="layout">Layout</label>
+        <select id="layout"><option value="">Chosen for you</option><option value="ring">Ring right</option><option value="disc">Corner disc</option><option value="sun">Rising disc</option><option value="split">Split panel</option><option value="badge">Centre badge</option><option value="arc">Corner arc</option><option value="column">Side column</option><option value="steps">Numbered steps (needs points)</option><option value="word">Big word, no picture</option><option value="number">Big number (needs a date)</option></select></div>
+      <div><label for="style">Colour</label>
+        <select id="style"><option value="light">Light: warm white</option><option value="dark">Dark: charcoal</option><option value="sky">Sky: pale blue</option></select></div>
+      <div><label for="picture">Picture</label>
+        <select id="picture"><option value="">Chosen for you</option><option value="highfive">High five</option><option value="team">Team of three</option><option value="headset">Headset</option><option value="lock">Padlock</option><option value="megaphone">Megaphone</option><option value="question">Question mark</option><option value="trophy">Trophy</option><option value="calendar">Calendar</option><option value="cup">Cup</option><option value="clock">Clock</option></select></div>
     </div>
     <div class="row">
-      <button id="copy">Copy the prompt for Copilot</button>
-      <button id="show" class="quiet">Show the prompt</button>
-      <span id="copied" class="said" role="status"></span>
+      <button id="make">Make the poster</button>
+      <button id="another" class="quiet">Another look</button>
+      <button id="example" class="quiet">Try with an example</button>
+      <span id="made" class="said" role="status"></span>
     </div>
-    <textarea id="prompt" class="code" readonly hidden style="margin-top:14px; min-height:260px"></textarea>
   </section>
 
   <section aria-labelledby="s2">
-    <h2 id="s2"><b>02</b>Paste what Copilot wrote</h2>
-    <p class="hint">Paste the whole reply. The studio finds the HTML in it. If Copilot made a picture and not code, tell it: "Write the HTML file, not an image."</p>
-    <textarea id="html" class="code" spellcheck="false"></textarea>
+    <h2 id="s2"><b>02</b>Or let Copilot write it</h2>
+    <p class="hint">Paste the agent block into Copilot once and tell it what you need. It writes the words, picks the layout and gives you the research. Paste its whole reply here and the Studio draws the poster. A reply with three options gives you three to choose from.</p>
     <div class="row">
-      <button id="run">Preview and check</button>
-      <button id="example" class="quiet">Try with an example</button>
+      <button id="copy" class="quiet">Copy the agent block for Copilot</button>
+      <span id="copied" class="said" role="status"></span>
+    </div>
+    <textarea id="html" class="code" spellcheck="false" style="margin-top:14px"></textarea>
+    <div class="row">
+      <button id="run">Use Copilot's reply</button>
     </div>
     <div class="row" id="options" role="group" aria-label="Options" hidden></div>
   </section>
 
   <section aria-labelledby="sr">
     <h2 id="sr"><b>03</b>Research</h2>
-    <p class="hint">What Copilot worked out before designing: who the poster is for, what works, the three ideas, the one it chose, and what it still needs from you. It is saved with the poster.</p>
+    <p class="hint">Who the poster is for and why it looks the way it does. With Copilot, this is its research: the audience, what works, the ideas, the one it chose, and what it still needs from you. It is saved with the poster.</p>
     <pre id="notes" class="notes">The research appears here.</pre>
   </section>
 
@@ -173,6 +173,8 @@
 </footer>
 
 <script id="vendor">/*VENDOR*/</script>
+<script id="engine">/*ENGINE*/</script>
+<script type="text/plain" id="startblock">/*STARTBLOCK*/</script>
 <script>
 const $ = (id) => document.getElementById(id)
 /* the two typefaces travel inside this file, so posters look right with no internet */
@@ -189,94 +191,99 @@ const FORMATS = {
   story: { w: 1080, h: 1920, page: ['190.5mm', '338.7mm'], seen: 'a phone held upright' },
 }
 const lines = (s) => s.split(/\n/).map((x) => x.trim()).filter(Boolean)
-
-/* ---------- 1. the prompt ---------- */
-function buildPrompt() {
-  const f = FORMATS[$('format').value]
-  const facts = []
-  const gaps = []
-  for (const [id, label] of [['when', 'When'], ['time', 'Time'], ['where', 'Where']]) {
-    const v = $(id).value.trim()
-    if (v) facts.push(`${label}: ${v}`); else gaps.push(label)
-  }
-  const extra = lines($('extra').value)
-  const pic = {
-    people: 'People, drawn by you in inline SVG as simple solid charcoal figures with round ends (round head, plain torso, arms that attach at the shoulder), doing something that shows the message, and touching or overlapping the orange shape. Never realistic people, never a photo, never an emoji.',
-    object: 'One object that stands for the message, drawn by you in inline SVG as a simple solid charcoal shape with round ends, sitting on or inside the orange shape. Never clip art, never an emoji.',
-    type: 'No picture. The headline is the picture: make it very large and let the orange shape sit behind or beside it.',
-  }[$('picture').value]
-
-  return `You are a senior graphic designer who writes code. Design one poster as a single HTML file. Do NOT make an image. Write HTML and CSS only.
-
-THE BRIEF
-Kind: ${$('kind').value}
-For: a customer care (call centre) team
-Seen on: ${f.seen}
-Sheet: ${f.w} x ${f.h} CSS pixels (${$('format').selectedOptions[0].text})
-The one message: ${$('message').value.trim() || '(write one from the kind of poster, plainly)'}
-Headline: ${$('headline').value.trim() || '(write it: 2 to 6 words, plain speech, no slogan, no exclamation mark)'}
-Facts that may appear, exactly as written:
-${facts.length ? facts.map((x) => '- ' + x).join('\n') : '- (none given)'}${extra.length ? '\n' + extra.map((x) => '- ' + x).join('\n') : ''}
-${gaps.length ? `NOT given: ${gaps.join(', ')}. For each, show only its label above a ruled line with empty space to write in. Do not invent a value.` : ''}
-
-RULES YOU MAY NOT BREAK
-1. Invent nothing: no dates, times, places, names, numbers, scores, quotes or logos beyond the facts above. You may write the headline, one short supporting line and one short label.
-2. No member, patient or caller information. No performance numbers. No company logo.
-3. No emoji, no clip art, no stock or generated photos, no placeholder text.
-4. At most 45 words on the whole sheet.
-
-THE LOOK (follow exactly)
-- Background warm white #FAF8F2. All text and drawings charcoal #3D3C38. Never pure black.
-- Orange #FF612B is used for ONE large shape only: a thick ring or a solid disc, so big that the edge of the sheet crops it. No other orange, and no orange text.
-- Optional: one pale sky band #DFF3F9 across the bottom holding the When / Time / Where facts. Small labels may use deep teal #095F87.
-- Fonts: font-family: 'Figtree', 'Segoe UI', Arial, sans-serif for everything (weights 500, 700, 800); font-family: 'Newsreader', Georgia, serif in italic for ONE word of the headline at most, in the same charcoal. Also add the Google Fonts <link> tag for Figtree and Newsreader: it is used when there is internet and ignored when there is not, so the poster works either way.
-- Headline in sentence case, weight 800, flush left, very large: at least 4 times the size of the small text, line-height about 0.92, letter-spacing -0.04em.
-- Flush left on a clear left margin. Do not centre everything. Leave at least a third of the sheet empty.
-- No gradients, no shadows, no glow, no rounded cards, no icons in a row.
-- Picture: ${pic}
-
-LAYOUTS (all of them keep the look above)
-A. Ring right: a thick ring cropped by the right edge, the picture inside it, the headline on the left.
-B. Corner disc: a solid disc cropped by the bottom-right corner, the picture on it, the headline top left.
-C. Rising disc: half a disc rising from the bottom edge like a sun, the picture standing on it, the headline above.
-D. Big word: no picture. The headline fills the top two thirds in very large type, with the ring behind its last word, cropped by an edge.
-E. Big number: only if a date or number was given. That number, very large in charcoal, is the picture, with the ring behind it.
-Pick the layout that fits the message. Never use the same layout as the poster before it in this chat.
-If I say "another" or "different": keep my facts, change the layout and the picture.
-If I ask for options (for example "3 options"): make that many complete posters, each with a different layout and a different headline, each in its own code block, with a line before each such as "OPTION 1: A, Ring right".
-
-${$('count').value === '3' ? 'MAKE 3 OPTIONS for this request: three complete posters, three different layouts, three different headlines.\n\n' : ''}HOW TO BUILD IT
-- One file. All CSS in one <style> tag. No JavaScript. No external images.
-- html and body: margin 0, width 100vw, height 100vh, overflow hidden.
-- Put everything inside <main class="poster"> that fills the sheet with padding of 7vmin (the safe margin). No text may come closer to the edge than that.
-- Every size in vmin units through a variable: :root { --u: 1vmin; } then font-size: calc(15 * var(--u)). No px sizes.
-- At most 4 different text sizes.
-- Add the attribute data-decor to shapes and drawings that hold no words. Text must never sit on top of the orange shape unless it is the headline.
-- Check line breaks: no single short word alone on a line.
-
-YOUR REPLY
-Always three parts, in this order:
-Part 1. RESEARCH, as short plain text (about 130 words in all), under these five headings:
-AUDIENCE: who sees it, where, from how far away, and for how long.
-WHAT WORKS: three things good posters of this kind do. Design observations only: no statistics, no studies, no sources.
-THREE IDEAS: one led by the words, one by the picture, one by the layout. One line each.
-CHOSEN: which idea you built, and why the other two lost.
-STILL NEEDED: every fact I did not give you (date, time, place, a photo, a logo), or "nothing".
-Part 2. The complete HTML file in ONE code block, from <!doctype html> to </html>. For options, one code block per option.
-Part 3. One line: "Paste this whole reply into Poster Studio (studio.html) to get the PNG, the PDF and the research notes."`
+const E = window.PosterEngine
+const SIZE = { a3: 'a3', a4: 'a4', screen: 'landscape', landscape: 'landscape', chat: 'ig-portrait', 'ig-portrait': 'ig-portrait', square: 'ig-square', 'ig-square': 'ig-square', phone: 'story', story: 'story' }
+const WHY = {
+  ring: 'Ring right: the ring frames the picture and leaves the left side clear for the headline.',
+  disc: 'Corner disc: one strong object on one strong shape, read from across a room.',
+  sun: 'Rising disc: the disc lifts the picture, which suits people and good news.',
+  word: 'Big word: no picture, because the instruction itself is the message.',
+  number: 'Big number: the date is the thing to remember, so it is the picture.',
+  split: 'Split panel: the picture gets the top of the sheet to itself, and the words read cleanly underneath.',
+  column: 'Side column: the facts stand in their own column, so they are found at a glance.',
+  badge: 'Centre badge: the whole ring, centred, for an occasion worth marking.',
+  steps: 'Numbered steps: the three actions are the poster, in the order they are done.',
+  arc: 'Corner arc: the picture sits high, and the headline lands at eye level.',
 }
 
+/* ---------- 1. the form and the engine ---------- */
+function formData() {
+  return { kind: $('kind').value, format: $('format').value, headline: $('headline').value, line: $('message').value,
+    points: lines($('extra').value), when: $('when').value, time: $('time').value, where: $('where').value,
+    picture: $('picture').value, layout: $('layout').value, style: $('style').value }
+}
+/* a card from Copilot or from a link, made safe and put into the form */
+function cardToData(c) {
+  const kind = Object.keys(E.KINDS).find((k) => k.toLowerCase() === String(c.kind || '').trim().toLowerCase()) || 'Notice'
+  const pick = (v, table) => (table[String(v || '').trim().toLowerCase()] !== undefined ? String(v).trim().toLowerCase() : '')
+  return { kind, format: SIZE[String(c.size || c.format || '').trim().toLowerCase()] || 'a3', headline: (c.headline || '').trim(), line: (c.line || '').trim(),
+    points: String(c.points || '').split('|').map((x) => x.trim()).filter(Boolean).slice(0, 3),
+    when: (c.when || '').trim(), time: (c.time || '').trim(), where: (c.where || '').trim(),
+    picture: pick(c.picture, E.PICTURES), layout: pick(c.layout, E.LAYOUTS), style: pick(c.style || c.colour || c.color, E.STYLES) || 'light' }
+}
+function setForm(d) {
+  $('kind').value = d.kind; $('format').value = d.format; $('headline').value = d.headline; $('message').value = d.line
+  $('extra').value = d.points.join('\n'); $('when').value = d.when; $('time').value = d.time; $('where').value = d.where
+  $('picture').value = d.picture; $('layout').value = d.layout; $('style').value = d.style || 'light'
+}
+function designNotes(d, res) {
+  const f = FORMATS[d.format]
+  return ['AUDIENCE: A customer care team, seeing it on ' + f.seen + '.',
+    'LAYOUT: ' + WHY[res.layout],
+    'PICTURE: ' + (res.picture ? E.PICTURES[res.picture].name + ', drawn in solid charcoal so it reads at a distance.' : 'None. The headline carries it.'),
+    'WORDS: Typed by a person in Poster Studio. Nothing on the poster was invented.',
+    'STILL NEEDED: ' + (['when', 'time', 'where'].filter((k) => !d[k].trim()).join(', ') || 'nothing') + '.'].join('\n')
+}
+let look = 0
+function makeFromForm(shuffle) {
+  const d = formData()
+  if (!d.headline.trim()) { $('made').textContent = 'Type a headline first.'; $('headline').focus(); return }
+  if (shuffle) {      // the next combination of layout and picture that suits this kind
+    look++
+    const K = E.KINDS[d.kind]
+    const layouts = ['ring', 'split', 'sun', 'badge', 'arc', 'disc', 'column', 'steps', 'word', 'number'].filter((l) => (l !== 'number' || /\d/.test(d.when)) && (l !== 'steps' || d.points.length > 1))
+    const at = Math.max(0, layouts.indexOf(d.layout || K.layouts[0]))
+    d.layout = layouts[(at + 1) % layouts.length]
+    d.picture = K.pictures[look % K.pictures.length]
+    d.style = ['light', 'dark', 'sky'][look % 3]
+    $('layout').value = d.layout; $('picture').value = d.picture; $('style').value = d.style
+  }
+  const res = E.makePoster(d)
+  origin = 'form'; cards = []; options = [res.html]
+  $('options').hidden = true; $('options').innerHTML = ''
+  $('made').textContent = E.LAYOUTS[res.layout] + (res.picture ? ', ' + E.PICTURES[res.picture].name.toLowerCase() : '') + ', ' + E.STYLES[res.style].name.toLowerCase() + '.'
+  return run(res.html, designNotes(d, res))
+}
+$('make').onclick = () => makeFromForm(false)
+$('another').onclick = () => makeFromForm(true)
+
+/* words that may be on the poster: what was typed, plus the Studio's own labels */
 function allowedText() {
-  return [$('message').value, $('headline').value, $('when').value, $('time').value, $('where').value, $('extra').value, 'When Time Where'].join(' | ')
+  return [$('headline').value, $('message').value, $('when').value, $('time').value, $('where').value, $('extra').value,
+    'When Time Where', ...Object.values(E.KINDS).map((k) => k.tag)].join(' | ').replace(/\*/g, '')
 }
 
 async function copyText(text, sayEl, said) {
   try { await navigator.clipboard.writeText(text); sayEl.textContent = said }
-  catch { sayEl.textContent = 'Could not copy automatically. Select the text and copy it.' }
-  setTimeout(() => { sayEl.textContent = '' }, 4000)
+  catch { sayEl.textContent = 'Could not copy automatically. Open copilot/start.txt and copy it from there.' }
+  setTimeout(() => { sayEl.textContent = '' }, 5000)
 }
-$('copy').onclick = () => { const p = buildPrompt(); $('prompt').value = p; $('prompt').hidden = false; copyText(p, $('copied'), 'Copied. Paste it into Copilot.') }
-$('show').onclick = () => { $('prompt').value = buildPrompt(); $('prompt').hidden = !$('prompt').hidden }
+$('copy').onclick = () => copyText($('startblock').textContent.trim(), $('copied'), 'Copied. Paste it into Copilot, then tell it what you need.')
+
+/* a POSTER card: lines of "key: value" under the word POSTER */
+function parseCards(raw) {
+  const out = []
+  for (const block of raw.split(/^[ \t`]*POSTER[ \t]*$/im).slice(1)) {
+    const c = {}
+    for (const line of block.split('\n')) {
+      const m = line.match(/^\s*[-*]?\s*(kind|headline|line|points|picture|layout|style|colour|color|size|when|time|where)\s*:\s*(.*)$/i)
+      if (m) c[m[1].toLowerCase()] = m[2].trim().replace(/^["“]|["”]$/g, '')
+      else if (/^\s*```/.test(line) && Object.keys(c).length) break
+    }
+    if (c.headline) out.push(cardToData(c))
+  }
+  return out
+}
 
 /* ---------- 2. find the HTML in the reply ---------- */
 function extractHtml(raw) {
@@ -297,8 +304,8 @@ function extractAll(raw) {
 }
 /* everything Copilot wrote before the code is its research */
 function extractNotes(raw) {
-  const cut = raw.search(/```|<!doctype html|<html/i)
-  return (cut === -1 ? '' : raw.slice(0, cut)).replace(/\*\*/g, '').trim()
+  const cut = raw.search(/```|^[ \t]*POSTER[ \t]*$|<!doctype html|<html/im)
+  return (cut === -1 ? '' : raw.slice(0, cut)).replace(/\*\*/g, '').replace(/^#+\s*/gm, '').trim()
 }
 
 /* ---------- 3. preview ---------- */
@@ -382,6 +389,13 @@ function colourUnder(doc, x, y, skip) {
   for (const el of doc.elementsFromPoint(x, y)) {
     if (el === skip || el.classList.contains('__studio')) continue
     const cs = win.getComputedStyle(el)
+    if (el instanceof win.SVGElement) {          // a drawn shape: its own paint is what is behind the words
+      if (el.tagName.toLowerCase() === 'svg') continue
+      const fill = rgb(cs.fill), stroke = rgb(cs.stroke)
+      if (fill && fill.a > 0.5) return fill
+      if (stroke && stroke.a > 0.5) return stroke
+      continue
+    }
     const bw = parseFloat(cs.borderTopWidth) || 0
     if (bw > 2) {
       const r = el.getBoundingClientRect(), bc = rgb(cs.borderTopColor)
@@ -442,8 +456,9 @@ function check() {
   if (sizes.length) {
     const chars = {}
     items.forEach((i) => { const k = Math.round(i.size * 10) / 10; chars[k] = (chars[k] || 0) + i.text.length })
-    const body = +Object.keys(chars).sort((a, b) => chars[b] - chars[a])[0]
     const big = Math.max(...items.map((i) => i.size))
+    const rest = Object.keys(chars).filter((k) => +k < big - 0.05)
+    const body = +(rest.length ? rest : Object.keys(chars)).sort((a, b) => chars[b] - chars[a])[0]
     const k = big / body
     if (k < 3) add('WARN', 'type', 'The headline is only ' + k.toFixed(1) + ' times the reading size. Make it 4 times or more.')
     else add('PASS', 'type', 'The headline is ' + k.toFixed(1) + ' times the reading size')
@@ -500,7 +515,8 @@ function check() {
   if (withNumbers.length) add('FAIL', 'facts', 'Numbers or dates you did not give: ' + quote(withNumbers) + '. Remove them or put the real ones in the brief.')
   const wordsOnly = added.filter((i) => !withNumbers.includes(i))
   if (wordsOnly.length) add('WARN', 'facts', 'Words Copilot wrote, for you to confirm are true and wanted: ' + wordsOnly.slice(0, 8).map((i) => '"' + i.text.slice(0, 40) + '"').join(', '))
-  if (!added.length && items.length) add('PASS', 'facts', 'Every word on the poster came from your brief')
+  if (!added.length && items.length && origin !== 'copilot') add('PASS', 'facts', 'Every word on the poster came from you')
+  if (origin === 'copilot') add('WARN', 'facts', 'Copilot wrote the headline and the lines under it. Read them, and check the date, time and place against what you asked for. Change anything in the form above and press Make.')
 
   const order = { FAIL: 0, WARN: 1, PASS: 2 }
   out.sort((a, b) => order[a.level] - order[b.level])
@@ -531,23 +547,26 @@ let notes = ''
 async function run(html, research) {
   notes = research || ''
   $('sum').textContent = 'Checking ...'; $('results').innerHTML = ''
-  $('notes').textContent = notes || 'Copilot gave no research with this poster. Ask it: "Add the research part: audience, what works, three ideas, chosen, still needed."'
+  $('notes').textContent = notes || 'No notes with this poster.'
   await render(html)
   showResults(check())
   for (const id of ['all', 'pdf', 'png', 'notesfile', 'save', 'print']) $(id).disabled = false
 }
-let options = [], optionIndex = 0
+let options = [], optionIndex = 0, cards = [], origin = 'form'
 const tag = () => (options.length > 1 ? '-option-' + (optionIndex + 1) : '')
 function choose(i) {
   optionIndex = i
   $('options').querySelectorAll('button').forEach((b, n) => b.setAttribute('aria-pressed', String(n === i)))
-  return run(options[i], extractNotes($('html').value))
+  if (cards[i]) setForm(cards[i])          // the form shows what is on the poster, and can be edited and made again
+  return run(options[i], extractNotes($('html').value) || (cards[i] ? designNotes(cards[i], E.makePoster(cards[i])) : ''))
 }
 function start(raw) {
-  options = extractAll(raw)
+  cards = parseCards(raw)
+  options = cards.length ? cards.map((c) => E.makePoster(c).html) : extractAll(raw)
+  origin = cards.length ? 'copilot' : 'html'
   $('options').innerHTML = ''
   $('options').hidden = options.length < 2
-  if (!options.length) { $('sum').textContent = 'No HTML found in what you pasted. Ask Copilot to write the HTML file, not an image.'; $('results').innerHTML = ''; return }
+  if (!options.length) { $('sum').textContent = 'No poster found in what you pasted. Paste the whole reply, including the part that starts with POSTER.'; $('results').innerHTML = ''; return }
   options.forEach((_, n) => {
     const b = document.createElement('button'); b.className = 'quiet'; b.textContent = 'Option ' + (n + 1); b.onclick = () => choose(n)
     $('options').appendChild(b)
@@ -615,10 +634,10 @@ function notesFile() {
   const v = (id) => $(id).value.trim()
   const res = window.__results || []
   const f = res.filter((r) => r.level === 'FAIL').length, w = res.filter((r) => r.level === 'WARN').length
-  const brief = [['Kind', $('kind').value], ['Seen on', $('format').selectedOptions[0].text], ['The one message', v('message')], ['Headline', v('headline')], ['When', v('when')], ['Time', v('time')], ['Where', v('where')], ['Other words', lines($('extra').value).join('; ')]]
+  const brief = [['Kind', $('kind').value], ['Seen on', $('format').selectedOptions[0].text], ['Headline', v('headline').replace(/\*/g, '')], ['Line', v('message')], ['Points', lines($('extra').value).join('; ')], ['When', v('when')], ['Time', v('time')], ['Where', v('where')]]
   return ['# Poster notes', '',
     '## Brief', '', ...brief.map(([k, x]) => `- **${k}:** ${x || 'not given'}`), '',
-    '## Research', '', notes || 'No research was given with this poster.', '',
+    '## Research', '', notes || 'No notes.', '',
     '## Checks', '', `**${f} fail, ${w} warn, ${res.length - f - w} pass**`, '', ...res.map((r) => `- ${r.level} (${r.group}): ${r.msg}`), '',
     '## Files', '', '- `poster.png`: for screens, chat and slides', '- `poster.pdf`: for printing, at the exact paper size', '- `poster.html`: the source; open it in a browser or change it and check again', '',
     '## Before it goes up', '', '- Every fact on the poster was given by a person, not written by the assistant.', '- No member, patient or caller information.', '- The official logo file is added by hand if one is needed.', ''].join('\n')
@@ -655,40 +674,21 @@ $('print').onclick = () => {
   if (w.document.fonts && w.document.fonts.ready) w.document.fonts.ready.then(go); else go()
 }
 
-/* ---------- example, so the page can be tried without Copilot ---------- */
-const EXAMPLE = `<!doctype html><html lang="en"><head><meta charset="utf-8"><title>Lock it</title>
-<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@500;700;800&family=Newsreader:ital,wght@1,500&display=swap" rel="stylesheet">
-<style>
-:root{--u:1vmin;--cols:12}*{box-sizing:border-box;margin:0;padding:0}
-html,body{width:100vw;height:100vh;overflow:hidden;background:#faf8f2}
-body{font-family:'Figtree',sans-serif;color:#3d3c38}
-.poster{position:relative;width:100vw;height:100vh;overflow:hidden;padding:calc(7*var(--u))}
-.disc{position:absolute;width:calc(92*var(--u));aspect-ratio:1;border-radius:50%;background:#ff612b;right:calc(-35*var(--u));bottom:calc(-24*var(--u))}
-.lock{position:absolute;right:calc(8*var(--u));bottom:calc(13*var(--u));width:calc(36*var(--u))}
-.k{font-size:calc(2*var(--u));font-weight:700;letter-spacing:.12em;text-transform:uppercase}
-h1{margin-top:calc(6*var(--u));font-size:calc(15.5*var(--u));font-weight:800;line-height:.92;letter-spacing:-.04em;position:relative}
-h1 em{font-family:'Newsreader',serif;font-weight:500}
-ul{position:absolute;left:calc(7*var(--u));bottom:calc(7*var(--u));width:calc(30*var(--u));list-style:none}
-li{border-top:calc(.4*var(--u)) solid #3d3c38;padding:calc(1.7*var(--u)) 0;font-size:calc(3.1*var(--u));font-weight:700}
-</style></head><body><main class="poster">
-<div class="disc" data-decor></div>
-<svg class="lock" data-decor viewBox="0 0 200 240"><path d="M52 108V78a48 48 0 0 1 96 0v30" fill="none" stroke="#3d3c38" stroke-width="22" stroke-linecap="round"/><rect x="18" y="104" width="164" height="128" rx="26" fill="#3d3c38"/><circle cx="100" cy="158" r="15" fill="#ff612b"/><rect x="92" y="160" width="16" height="38" rx="8" fill="#ff612b"/></svg>
-<p class="k">Privacy</p>
-<h1>Lock it<br>before you<br><em>leave</em> it.</h1>
-<ul><li>Lock your screen.</li><li>Shred your notes.</li><li>Clear your desk.</li></ul>
-</main></body></html>`
-const EXAMPLE_NOTES = `AUDIENCE: Advocates leaving and returning to their desks, passing a corridor wall at about 3 metres, for 3 seconds.
-WHAT WORKS: One object that says the subject before a word is read. A headline that is an instruction, not a slogan. Three short actions in the order they are done.
-THREE IDEAS: Words: the headline alone, very large. Picture: a padlock on an orange disc cropped by the corner. Layout: three numbered steps as the whole poster.
-CHOSEN: The picture. The padlock reads from across the room; the words alone looked like a notice, and the steps alone had nothing to stop the eye.
-STILL NEEDED: nothing.`
+/* ---------- an example, and posters opened from a link ---------- */
 $('example').onclick = () => {
-  $('kind').value = 'Privacy or security reminder'; $('format').value = 'a3'; $('picture').value = 'object'
-  $('message').value = 'Lock your screen and clear your desk every time you step away.'
-  $('headline').value = 'Lock it before you leave it.'
-  $('extra').value = 'Privacy\nLock your screen.\nShred your notes.\nClear your desk.'
-  $('html').value = EXAMPLE_NOTES + '\n\n```html\n' + EXAMPLE + '\n```'
-  start($('html').value)
+  setForm({ kind: 'Team building', format: 'a3', headline: 'Headsets off. *Hands* up.', line: 'Time away from the queue, with the people who share it.',
+    points: [], when: 'Friday 12 December', time: '3 pm', where: '14th floor', picture: 'highfive', layout: 'ring', style: 'light' })
+  makeFromForm(false)
+}
+/* studio.html#kind=Team+building&headline=...  The part after # never leaves this computer. */
+if (location.hash.length > 1) {
+  const q = new URLSearchParams(location.hash.slice(1)), c = {}
+  for (const [k, v] of q) c[k.toLowerCase()] = v
+  if (c.headline) {
+    const d = cardToData(c)
+    setForm(d); origin = 'copilot'; cards = [d]; options = [E.makePoster(d).html]
+    run(options[0], designNotes(d, E.makePoster(d)))
+  }
 }
 </script>
 </body>

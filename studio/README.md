@@ -5,6 +5,8 @@
 | File | What it is |
 |---|---|
 | `src.html` | The Studio itself. Edit this, never `studio.html`. |
+| `engine.js` | The design engine: ten layouts, three colour styles and ten pictures. `makePoster(data)` returns one finished HTML poster. |
+| `../copilot/start.txt` | The block for Copilot. The Studio's copy button carries it. |
 | `fonts/figtree-latin.woff2` | Figtree, variable weight, Latin. SIL Open Font License 1.1. |
 | `fonts/newsreader-italic-latin.woff2` | Newsreader Italic, Latin. SIL Open Font License 1.1. |
 | `vendor/html-to-image.js` | html-to-image 1.11.11, MIT. Turns the previewed poster into a PNG. |

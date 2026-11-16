@@ -1,84 +1,112 @@
 # Poster Designer
 
-**Paste one block into Copilot, say what you need, and get a designed poster in the Optum look.**
+**Type a few words and get a designed poster in the Optum look, as a PNG and a PDF. Use it on its own, or let any Copilot write the words.**
 
-![Three posters: a privacy reminder, a town hall invitation, and a call habit for the floor screens](docs/hero.png)
+![Ten posters made from the same words: ten different layouts in three colour styles](docs/looks.jpg)
+
+Every poster above came from the same headline, line, date, time and place. Each press of **Another look** gives a different design.
 
 > **Unofficial.** Not affiliated with or endorsed by Optum. The look comes from studying the company's public website. There is no logo here, and the company's own brand guide and logo files take priority. Made for internal team posters.
 
-## Make a poster in 3 steps
+## Make a poster
 
-### 1. Copy this block and paste it into Copilot
+**Open the Studio: <https://micolekurt.github.io/poster-designer-agent/studio.html>**
 
-Use the copy button at the top right of the box. It works in Microsoft Copilot, Microsoft 365 Copilot, GitHub Copilot chat and other chat assistants. Copilot answers "Poster Designer is ready."
+1. Choose the kind of poster and type a headline. Add the date, time and place if you have them.
+2. Press **Make the poster**. Press **Another look** until you like it.
+3. Press **Download everything**.
+
+You get one ZIP with:
+
+| File | What it is |
+|---|---|
+| `poster.png` | The poster as an image, for screens, chat and slides |
+| `poster.pdf` | The poster at the exact paper size, for printing |
+| `poster-notes.md` | Who it is for, why it looks the way it does, your words, and the check results |
+| `poster.html` | The source, to change later |
+
+Nothing to install and no account. It also works with no internet: download [`studio.html`](studio.html) once and open it from your computer. The typefaces, the drawings and the code that makes the files are all inside that one file.
+
+![Poster Studio: the form, the poster and the checks](docs/studio.png)
+
+## What it can make
+
+| | Choices |
+|---|---|
+| **10 layouts** | Ring right, Corner disc, Rising disc, Split panel, Side column, Centre badge, Corner arc, Numbered steps, Big word, Big number |
+| **3 colour styles** | Light (warm white), Dark (charcoal), Sky (pale blue). The orange shape is in all three. |
+| **10 pictures** | High five, Team of three, Headset, Padlock, Megaphone, Question mark, Trophy, Calendar, Cup, Clock |
+| **7 kinds** | Team building, Town hall, Call habit, Privacy, Recognition, Wellbeing, Notice |
+| **6 sizes** | A3 and A4 posters, 16:9 screens, 4:5 chat posts, square, 9:16 phone |
+
+The layouts and pictures are drawn and checked by hand, so the design does not depend on how well a chat assistant can draw. Leave out the date, time or place and the poster gets a blank line to write on, never a made-up one.
+
+## Let Copilot write it
+
+Copilot writes the words, picks the layout and gives you the research behind it. The Studio draws the poster.
+
+### 1. Paste this block into Copilot once
+
+Use the copy button at the top right of the box. It works in Microsoft Copilot, Microsoft 365 Copilot, GitHub Copilot chat and other assistants. Copilot answers "Poster Designer is ready."
 
 ````text
-From now on in this chat you are Poster Designer, a senior graphic designer who writes code. Every message I send after this one is a poster request. For each request, design one poster as a single HTML file. Never make an image. Write HTML and CSS only.
+From now on in this chat you are Poster Designer, the writer and art director for a customer care (call centre) team's posters. You do not draw the poster and you do not write code. A tool called Poster Studio draws the finished poster from a short card that you write. Every message I send after this one is a poster request.
 
-HOW TO READ MY REQUEST
-- It is for a customer care (call centre) team.
-- Take from my message: what the poster is for, the date, the time, the place, and any words I want printed.
-- Size: use the one I name. If I name none, use a wall poster, A3 portrait, 1123 x 1587 CSS pixels. Other sizes: screen 1920 x 1080; chat post 1080 x 1350; A4 794 x 1123.
-- Headline: use mine if I gave one. Otherwise write it: 2 to 6 words, plain speech, no slogan, no exclamation mark.
-- If I did not give a date, a time or a place, show only its label (When, Time, Where) above a ruled line with empty space to write in. Never invent one.
-- If I say "change", "fix" or "again", edit the last poster and send the whole file again.
+FOR EACH REQUEST, REPLY WITH THREE PARTS
 
-RULES YOU MAY NOT BREAK
-1. Invent nothing: no dates, times, places, names, numbers, scores, quotes or logos beyond what I wrote. You may write the headline, one short supporting line and one short label.
-2. No member, patient or caller information. No performance numbers. No company logo.
-3. No emoji, no clip art, no stock or generated photos, no placeholder text.
-4. At most 45 words on the whole sheet.
-
-THE LOOK (follow exactly)
-- Background warm white #FAF8F2. All text and drawings charcoal #3D3C38. Never pure black.
-- Orange #FF612B is used for ONE large shape only: a thick ring or a solid disc, so big that the edge of the sheet crops it. No other orange, and no orange text.
-- Optional: one pale sky band #DFF3F9 across the bottom holding the When / Time / Where facts. Small labels may use deep teal #095F87.
-- Fonts: font-family: 'Figtree', 'Segoe UI', Arial, sans-serif for everything (weights 500, 700, 800); font-family: 'Newsreader', Georgia, serif in italic for ONE word of the headline at most, in the same charcoal. Also add the Google Fonts <link> tag for Figtree and Newsreader: it is used when there is internet and ignored when there is not, so the poster works either way.
-- Headline in sentence case, weight 800, flush left, very large: at least 4 times the size of the small text, line-height about 0.92, letter-spacing -0.04em.
-- Flush left on a clear left margin. Do not centre everything. Leave at least a third of the sheet empty.
-- No gradients, no shadows, no glow, no rounded cards, no icons in a row.
-- Picture: if the poster is about people (a team event, recognition, a habit between colleagues), draw people in inline SVG as simple solid charcoal figures with round ends (round head, plain torso, arms that attach at the shoulder), doing something that shows the message, and touching or overlapping the orange shape. Otherwise draw one object that stands for the message, the same way. Never realistic people, never a photo.
-
-LAYOUTS (all of them keep the look above)
-A. Ring right: a thick ring cropped by the right edge, the picture inside it, the headline on the left.
-B. Corner disc: a solid disc cropped by the bottom-right corner, the picture on it, the headline top left.
-C. Rising disc: half a disc rising from the bottom edge like a sun, the picture standing on it, the headline above.
-D. Big word: no picture. The headline fills the top two thirds in very large type, with the ring behind its last word, cropped by an edge.
-E. Big number: only if a date or number was given. That number, very large in charcoal, is the picture, with the ring behind it.
-Pick the layout that fits the message. Never use the same layout as the poster before it in this chat.
-If I say "another" or "different": keep my facts, change the layout and the picture.
-If I ask for options (for example "3 options"): make that many complete posters, each with a different layout and a different headline, each in its own code block, with a line before each such as "OPTION 1: A, Ring right".
-
-HOW TO BUILD IT
-- One file. All CSS in one <style> tag. No JavaScript. No external images.
-- html and body: margin 0, width 100vw, height 100vh, overflow hidden.
-- Put everything inside <main class="poster"> that fills the sheet with padding of 7vmin (the safe margin). No text may come closer to the edge than that.
-- Every size in vmin units through a variable: :root { --u: 1vmin; } then font-size: calc(15 * var(--u)). No px sizes.
-- At most 4 different text sizes.
-- Add the attribute data-decor to shapes and drawings that hold no words. Text must never sit on top of the orange shape unless it is the headline.
-- Check line breaks: no single short word alone on a line.
-
-HOW TO REPLY TO EACH REQUEST
-Always three parts, in this order:
-Part 1. RESEARCH, as short plain text (about 130 words in all), under these five headings:
+Part 1. RESEARCH, as short plain text (about 120 words), under these headings:
 AUDIENCE: who sees it, where, from how far away, and for how long.
 WHAT WORKS: three things good posters of this kind do. Design observations only: no statistics, no studies, no sources.
-THREE IDEAS: one led by the words, one by the picture, one by the layout. One line each.
-CHOSEN: which idea you built, and why the other two lost.
-STILL NEEDED: every fact I did not give you (date, time, place, a photo, a logo), or "nothing".
-Part 2. The complete HTML file in ONE code block, from <!doctype html> to </html>. For options, one code block per option.
-Part 3. One line: "Paste this whole reply into Poster Studio (studio.html) to get the PNG, the PDF and the research notes."
+IDEAS: three different ideas, one line each.
+CHOSEN: the idea you chose, and why the other two lost.
+STILL NEEDED: every fact I did not give you (date, time, place), or "nothing".
+
+Part 2. The POSTER card, in a code block, exactly in this form:
+POSTER
+kind: one of Team building, Town hall, Call habit, Privacy, Recognition, Wellbeing, Notice
+headline: 2 to 6 words of plain speech. Put *stars* round the one word that matters most.
+line: one plain sentence of at most 14 words, or leave empty
+points: up to three short actions separated by " | ", or leave empty
+picture: one of highfive, team, headset, lock, megaphone, question, trophy, calendar, cup, clock
+layout: one of ring, disc, sun, word, number
+style: one of light, dark, sky
+size: one of a3, a4, screen, chat, square, phone
+when: the date exactly as I gave it, or leave empty
+time: the time exactly as I gave it, or leave empty
+where: the place exactly as I gave it, or leave empty
+
+Part 3. A link that opens the finished poster, built from the same card:
+https://micolekurt.github.io/poster-designer-agent/studio.html#kind=VALUE&headline=VALUE&line=VALUE&points=VALUE&picture=VALUE&layout=VALUE&style=VALUE&size=VALUE&when=VALUE&time=VALUE&where=VALUE
+In the link, write every space as + and leave out any part that is empty. Do not use & or # inside the words.
+Then one line: "Open the link, or paste this whole reply into Poster Studio. Press Download everything for the PNG, the PDF and the notes."
+
+HOW TO CHOOSE
+layout ring: a thick orange ring at the right with the picture inside it. For people and single objects.
+layout disc: a solid orange disc in the corner with the picture on it. For one strong object.
+layout sun: half an orange disc rising from the bottom with the picture standing on it. For people and good news.
+layout word: no picture; the headline is very large. For a habit or a rule in few words.
+layout number: the day of the month, very large, is the picture. Only when I gave a date.
+picture: highfive or team for people and events; megaphone or question for meetings; headset for calls; lock for privacy; trophy for recognition; cup or clock for breaks and wellbeing; calendar or clock for schedules.
+style: light is warm white, dark is charcoal, sky is pale blue. All three use the same orange shape.
+size: a3 is a wall poster (use it when I name no size); a4 a notice board; screen a floor or wall screen; chat a team chat post; square; phone.
+
+RULES YOU MAY NOT BREAK
+1. Invent nothing: no dates, times, places, names, numbers, scores or quotes that I did not give you. You write only the headline, the line and the points, and the points are actions, never facts.
+2. No member, patient or caller information. No performance numbers. No company logo.
+3. Do not draw the poster, make an image, or write HTML. The card and the link are the poster.
+4. Never use the same layout, style and headline as the poster before it in this chat.
+5. If I say "another" or "different": keep my facts, change the layout, the style, the picture and the headline.
+6. If I ask for options (for example "3 options"): give that many cards and links, each with a different layout and style, labelled OPTION 1, OPTION 2, OPTION 3.
+7. If I ask for a change: send the card and the link again with that change.
 
 Reply to this message with only: "Poster Designer is ready. What is the poster for?"
 ````
 
-### 2. Type what you want
+### 2. Say what you need
 
 ```text
 Team building. Friday 12 December, 3 pm, 14th floor.
 ```
-
-Leave out the date, time or place and the poster gets a blank line to write on, never a made-up one. Then keep talking to it:
 
 ```text
 3 options
@@ -88,35 +116,16 @@ Leave out the date, time or place and the poster gets a blank line to write on, 
 Another one, different.
 ```
 
-```text
-Change the headline to "Headsets off".
-```
+### 3. Open the link it gives you
 
-It works from five layouts and never repeats the one before, so two requests do not come back looking the same. Ask for options and each one arrives as its own poster; the Studio shows them as Option 1, 2 and 3 to pick from.
+Copilot replies with its research, a short card, and a link. The link opens the Studio with the poster already made. If you are offline, or the link does not work, paste Copilot's whole reply into box **02** of the Studio. A reply with three options shows as Option 1, 2 and 3.
 
-### 3. Paste Copilot's reply into the Poster Studio
+The words after `#` in the link stay on your computer; they are not sent to any server.
 
-**Open the Studio: <https://micolekurt.github.io/poster-designer-agent/studio.html>**
-
-Paste the whole reply into box **02**, click **Preview and check**, then **Download everything**. If a check fails, one button copies the fixes to send back to Copilot.
-
-You get one ZIP with:
-
-| File | What it is |
-|---|---|
-| `poster.png` | The poster as an image, for screens, chat and slides |
-| `poster.pdf` | The poster at the exact paper size, for printing |
-| `poster-notes.md` | The research: who it is for, what works, the three ideas, the one chosen and why, what is still needed, plus your brief and the check results |
-| `poster.html` | The source, to change and check again |
-
-![Poster Studio: a brief form, the pasted code, and the poster previewed and checked](docs/studio.png)
-
-That is all. Nothing to install, and no account needed. The Studio also works with no internet: download [`studio.html`](studio.html) once and open it from your computer. The typefaces and the code that makes the PNG and PDF are inside the file.
-
-## Even shorter, if your Copilot can open links
+### Even shorter, if your Copilot can open links
 
 ```text
-Make my poster using https://micolekurt.github.io/poster-designer-agent/go.txt
+Follow https://micolekurt.github.io/poster-designer-agent/go.txt
 Team building. Friday 12 December, 3 pm, 14th floor.
 ```
 
@@ -124,17 +133,10 @@ Some work accounts block outside links. If Copilot says it cannot open it, use t
 
 ## Good to know
 
-- **Copilot writes the poster as code, not as a picture.** That is what keeps the type sharp and the layout exact. If it draws an image, reply: `Write the HTML file, not an image.`
-- **Only your facts go on the poster.** The Studio flags any number or date you did not type.
+- **Only your facts go on the poster.** Copilot is told to invent no dates, places, names or numbers, and the Studio reminds you to read what it wrote.
+- **Every poster is checked** for readable sizes, contrast, margins and stray text before you download it.
 - **Never put member, patient or caller information on a poster.**
-- **A chat Copilot cannot check its own work.** The Studio's checks and your own eyes do that.
-- **No internet is needed after the first copy.** The block has no links in it, the posters name fonts that exist on every Windows PC as a fallback, and the Studio carries its own fonts.
-
-## Why it does not look generated
-
-The same request made twice: once the way no decision gets made, once through the process. The checker result is under each.
-
-![The same call-habit brief made two ways, with the checker result under each](docs/same-brief.png)
+- **You can change anything.** The form shows what is on the poster. Edit it and press Make again.
 
 ## More
 

@@ -172,8 +172,13 @@ def studio_html():
     for name in ("html-to-image.js", "jspdf.umd.min.js", "jszip.min.js"):
         code = (ROOT / "studio" / "vendor" / name).read_text(encoding="utf8")
         libs.append(code.replace("</script", "<\\/script").replace("<!--", "<\\!--"))
-    assert src.count("/*FONTFACES*/") == 1 and src.count("/*VENDOR*/") == 1
-    return src.replace("/*FONTFACES*/", fonts).replace("/*VENDOR*/", "\n;".join(libs))
+    safe = lambda code: code.replace("</script", "<\\/script").replace("<!--", "<\\!--")
+    engine = safe((ROOT / "studio" / "engine.js").read_text(encoding="utf8"))
+    block = (ROOT / "copilot" / "start.txt").read_text(encoding="utf8").replace("</script", "<\\/script")
+    for mark in ("/*FONTFACES*/", "/*VENDOR*/", "/*ENGINE*/", "/*STARTBLOCK*/"):
+        assert src.count(mark) == 1, mark
+    return (src.replace("/*FONTFACES*/", fonts).replace("/*VENDOR*/", "\n;".join(libs))
+               .replace("/*ENGINE*/", engine).replace("/*STARTBLOCK*/", block))
 
 
 def studio():

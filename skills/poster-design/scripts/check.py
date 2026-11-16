@@ -174,8 +174,9 @@ def main():
         chars = {}
         for i in items:
             chars[round(i["size"], 1)] = chars.get(round(i["size"], 1), 0) + len(i["text"])
-        body = max(chars, key=chars.get)   # the size most of the words are set in
         big = max(round(i["size"], 1) for i in items)   # display type counts even when it bleeds
+        rest = {k: v for k, v in chars.items() if k < big} or chars
+        body = max(rest, key=rest.get)     # the size most of the words are set in, apart from the headline
         ratio = big / body if body else 0
         if ratio < 3:
             add("WARN", "type", f"headline is only {ratio:.1f}x the reading size. Push the scale: 4x or more reads as a poster, less reads as a document.")
