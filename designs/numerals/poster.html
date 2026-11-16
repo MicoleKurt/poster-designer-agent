@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Town hall, Thursday 4 December</title>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300..900&family=Newsreader:ital,opsz,wght@0,6..72,300..700;1,6..72,300..700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --u:1vmin;
+    --margin:calc(7*var(--u));
+    --cols:12;
+    --paper:#FAF8F2; --ink:#3D3C38; --orange:#FF612B; --sky:#DFF3F9; --teal:#095F87;
+    /* the numeral: font size, left of its box, top of its ink, all in u */
+    --F:228; --x0:5.37; --y0:7.65;
+    /* the ring, in ems of the numeral: centre x, centre y (from the ink top), outer radius, band */
+    --cx:.166; --cy:.3475; --ro:.156; --band:.058;
+  }
+  html,body{margin:0;width:100vw;height:100vh;overflow:hidden}
+  .poster{position:relative;width:100vw;height:100vh;overflow:hidden;background:var(--paper);color:var(--ink);font-family:Figtree,sans-serif}
+
+  /* Figtree Black: the ink of the 4 starts .1498em under the top of a line-height 1 box */
+  .four{position:absolute;z-index:2;margin:0;
+    left:calc(var(--x0)*var(--u));
+    top:calc((var(--y0) - var(--F)*.1498)*var(--u));
+    font:900 calc(var(--F)*var(--u))/1 Figtree,sans-serif;color:var(--ink);white-space:nowrap}
+
+  .ring{position:absolute;box-sizing:border-box;border-radius:50%;
+    left:calc((var(--x0) + var(--F)*(var(--cx) - var(--ro)))*var(--u));
+    top:calc((var(--y0) + var(--F)*(var(--cy) - var(--ro)))*var(--u));
+    width:calc(var(--F)*var(--ro)*2*var(--u));
+    height:calc(var(--F)*var(--ro)*2*var(--u));
+    border:calc(var(--F)*var(--band)*var(--u)) solid var(--orange)}
+  .ring.back{z-index:1}
+  /* the half of the ring that passes in front of the numeral: cut along the normal of the diagonal */
+  .ring.front{z-index:3;clip-path:polygon(-16.1% 5%, 116.1% 95%, 71.1% 161.1%, -61.1% 71.1%)}
+
+  /* the text hangs from the top line of the numeral; column 1 starts on the numeral's left tip
+     (which is also the ring's left tangent), column 2 on the ring's vertical axis */
+  .info{position:absolute;z-index:4;left:calc(7.65*var(--u));top:calc(var(--y0)*var(--u));
+    display:grid;grid-template-columns:calc((var(--x0) + var(--F)*var(--cx) - 7.65)*var(--u)) auto;align-items:start}
+  .kind{margin:calc(-.24*var(--u)) 0 0;font:700 calc(1.6*var(--u))/1 Figtree,sans-serif;letter-spacing:.16em;text-transform:uppercase;color:var(--teal)}
+  h1{margin:calc(2.5*var(--u)) 0 0;font:500 calc(6.4*var(--u))/.96 Newsreader,serif;letter-spacing:-.015em}
+  .line{margin:calc(3*var(--u)) 0 0;font:400 calc(2.2*var(--u))/1.4 Figtree,sans-serif}
+  .facts{margin:calc(-.76*var(--u)) 0 0;font:600 calc(2.2*var(--u))/1.4 Figtree,sans-serif}
+  .facts span{display:block}
+</style>
+</head>
+<body>
+<main class="poster">
+  <div class="ring back" data-decor></div>
+  <p class="four" data-bleed>4</p>
+  <div class="ring front" data-decor></div>
+
+  <div class="info">
+    <div class="voice">
+      <p class="kind">Town hall</p>
+      <h1>Bring one<br>question.</h1>
+      <p class="line">Ask anything.<br>We answer in the room.</p>
+    </div>
+    <p class="facts"><span>Thursday 4 December</span><span>3 pm</span><span>Training Room B</span></p>
+  </div>
+</main>
+</body>
+</html>

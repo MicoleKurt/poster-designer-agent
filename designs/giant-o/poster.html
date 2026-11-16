@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Headsets off. Hands up.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300..900&family=Newsreader:ital,opsz,wght@0,6..72,300..700;1,6..72,300..700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --u:1vmin;
+  --margin:7vmin;
+  --paper:#FAF8F2;
+  --ink:#3D3C38;
+  --orange:#FF612B;
+  --sky:#DFF3F9;
+  --teal:#095F87;
+
+  /* the O: centre, radius of the hole, outer radius (all in u) */
+  --cx:61; --cy:101; --r:50; --R:90;
+  /* the two type axes: headline, and the small text tucked into its ragged right */
+  --ax1:21.8; --ax2:55.6;
+  /* headline size and where its first line box starts */
+  --h:17; --top:72.1;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{margin:0;width:100vw;height:100vh;overflow:hidden;background:var(--paper)}
+.poster{position:relative;width:100vw;height:100vh;overflow:hidden;background:var(--paper);color:var(--ink);
+  font-family:"Figtree",sans-serif}
+
+/* the letter O: one ring, leaving the sheet left, right and below; its counter is open sky */
+.o{position:absolute;
+  left:calc((var(--cx) - var(--R))*var(--u));
+  top:calc((var(--cy) - var(--R))*var(--u));
+  width:calc(2*var(--R)*var(--u));height:calc(2*var(--R)*var(--u));
+  border-radius:50%;
+  border:calc((var(--R) - var(--r))*var(--u)) solid var(--orange);
+  background:var(--sky);background-clip:padding-box}
+
+/* the caption: the only thing outside the O */
+.kind{position:absolute;left:calc(7*var(--u));top:calc(7*var(--u));
+  font-weight:600;font-size:calc(1.7*var(--u));line-height:1;letter-spacing:.01em;color:var(--teal)}
+
+/* everything else stands in the counter: four headline lines, small text on their baselines */
+.lock{position:absolute;left:calc(var(--ax1)*var(--u));top:calc(var(--top)*var(--u))}
+.row{display:grid;grid-template-columns:calc((var(--ax2) - var(--ax1))*var(--u)) max-content;
+  align-items:last baseline;height:calc(var(--h)*.85*var(--u))}
+.w{font-weight:900;font-size:calc(var(--h)*var(--u));line-height:.85;letter-spacing:-.035em;white-space:nowrap}
+.w.round{margin-left:.02em} /* the round o overshoots the H stem; pull it back onto the axis */
+
+.small span{display:block;white-space:nowrap}
+.line{font-family:"Newsreader",serif;font-style:italic;font-weight:400;
+  font-size:calc(3.3*var(--u));line-height:1.2}
+.facts{font-weight:800;font-size:calc(3.1*var(--u));line-height:1.2}
+</style>
+</head>
+<body>
+<main class="poster">
+  <div class="o" data-decor></div>
+
+  <p class="kind">Team building</p>
+
+  <div class="lock">
+    <div class="row"><span class="w">Headsets</span></div>
+    <div class="row"><span class="w round">off.</span>
+      <p class="small line"><span>Time away from the queue,</span><span>with the people</span><span>who share it.</span></p></div>
+    <div class="row"><span class="w">Hands</span></div>
+    <div class="row"><span class="w">up.</span>
+      <p class="small facts"><span>Friday 12 December</span><span>3 pm</span><span>14th floor</span></p></div>
+  </div>
+</main>
+</body>
+</html>

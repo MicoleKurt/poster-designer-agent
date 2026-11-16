@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Headsets off. Hands up.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300..900&family=Newsreader:ital,opsz,wght@0,6..72,300..700;1,6..72,300..700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --u: 1vmin;
+    --n: tan(atan2(var(--u), 1px));   /* how many px one u is, as a plain number, to scale the ring paths */
+    --margin: calc(7 * var(--u));
+    --white: #FAF8F2; --ink: #3D3C38; --orange: #FF612B; --sky: #DFF3F9;
+    --cx: 50; --cy: 91.3;       /* centre of every ring, in u */
+  }
+  html, body { margin: 0; width: 100vw; height: 100vh; overflow: hidden; }
+  .poster { position: relative; width: 100vw; height: 100vh; overflow: hidden; background: var(--white); color: var(--ink); }
+
+  /* the Big O: one solid orange ring, wider than the sheet, with a pale sky counter */
+  .o, .counter { position: absolute; border-radius: 50%;
+    left: calc((var(--cx) - var(--r)) * var(--u)); top: calc((var(--cy) - var(--r)) * var(--u));
+    width: calc(2 * var(--r) * var(--u)); height: calc(2 * var(--r) * var(--u)); }
+  .o { --r: 55; background: var(--orange); }
+  .counter { --r: 37.5; background: var(--sky); }
+
+  /* rings of type: paths are drawn in u round 0,0 and scaled to the sheet */
+  .rings { position: absolute; left: 0; top: 0; width: 100vw; height: 100vh; overflow: visible; }
+  .rings path { transform: translate(calc(var(--cx) * var(--u)), calc(var(--cy) * var(--u))) scale(var(--n)); }
+  .rings text { font-family: Figtree, sans-serif; text-transform: uppercase; text-anchor: middle; color: var(--ink); fill: currentColor; }
+  .head { font-weight: 900; font-size: calc(10.5 * var(--u)); }
+  .fact { font-weight: 700; font-size: calc(4.5 * var(--u)); }
+
+  /* the quiet sentence sits straight, in the middle of the O */
+  .line { position: absolute; margin: 0; left: calc(var(--cx) * var(--u)); top: calc(var(--cy) * var(--u)); transform: translate(-50%, -50%);
+    font-family: Newsreader, serif; font-style: italic; font-weight: 400; font-size: calc(2.6 * var(--u)); line-height: 1.22;
+    text-align: center; white-space: nowrap; color: var(--ink); }
+</style>
+</head>
+<body>
+<main class="poster">
+  <div class="o" data-decor></div>
+  <div class="counter" data-decor></div>
+  <svg class="rings" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <path id="h1" d="M0,-67.75 A67.75,67.75 0 1 1 0,67.75 A67.75,67.75 0 1 1 0,-67.75 A67.75,67.75 0 1 1 0,67.75 A67.75,67.75 0 1 1 0,-67.75"/>
+      <path id="h2" d="M0,-57.7 A57.7,57.7 0 1 1 0,57.7 A57.7,57.7 0 1 1 0,-57.7 A57.7,57.7 0 1 1 0,57.7 A57.7,57.7 0 1 1 0,-57.7"/>
+      <path id="f1" d="M0,-31.75 A31.75,31.75 0 1 1 0,31.75 A31.75,31.75 0 1 1 0,-31.75 A31.75,31.75 0 1 1 0,31.75 A31.75,31.75 0 1 1 0,-31.75"/>
+      <path id="f2" d="M0,-26.0 A26.0,26.0 0 1 1 0,26.0 A26.0,26.0 0 1 1 0,-26.0 A26.0,26.0 0 1 1 0,26.0 A26.0,26.0 0 1 1 0,-26.0"/>
+    </defs>
+    <text class="head"><textPath href="#h1" startOffset="50.000%">Headsets off.</textPath></text>
+    <text class="head" data-bleed><textPath href="#h1" startOffset="60.000%">Headsets off.</textPath></text>
+    <text class="head" data-bleed><textPath href="#h1" startOffset="70.000%">Headsets off.</textPath></text>
+    <text class="head" data-bleed><textPath href="#h1" startOffset="30.000%">Headsets off.</textPath></text>
+    <text class="head" data-bleed><textPath href="#h1" startOffset="40.000%">Headsets off.</textPath></text>
+    <text class="head"><textPath href="#h2" startOffset="50.000%">Hands up.</textPath></text>
+    <text class="head" data-bleed><textPath href="#h2" startOffset="58.333%">Hands up.</textPath></text>
+    <text class="head" data-bleed><textPath href="#h2" startOffset="66.667%">Hands up.</textPath></text>
+    <text class="head" data-bleed><textPath href="#h2" startOffset="75.000%">Hands up.</textPath></text>
+    <text class="head" data-bleed><textPath href="#h2" startOffset="33.333%">Hands up.</textPath></text>
+    <text class="head" data-bleed><textPath href="#h2" startOffset="41.667%">Hands up.</textPath></text>
+    <text class="fact"><textPath href="#f1" startOffset="50.000%">Friday 12 December</textPath></text>
+    <text class="fact" aria-hidden="true"><textPath href="#f1" startOffset="62.500%">Friday 12 December</textPath></text>
+    <text class="fact" aria-hidden="true"><textPath href="#f1" startOffset="75.000%">Friday 12 December</textPath></text>
+    <text class="fact" aria-hidden="true"><textPath href="#f1" startOffset="37.500%">Friday 12 December</textPath></text>
+    <text class="fact"><textPath href="#f2" startOffset="45.622%">3 pm</textPath></text>
+    <text class="fact"><textPath href="#f2" startOffset="51.872%">14th floor</textPath></text>
+    <text class="fact" aria-hidden="true"><textPath href="#f2" startOffset="58.122%">3 pm</textPath></text>
+    <text class="fact" aria-hidden="true"><textPath href="#f2" startOffset="64.372%">14th floor</textPath></text>
+    <text class="fact" aria-hidden="true"><textPath href="#f2" startOffset="70.622%">3 pm</textPath></text>
+    <text class="fact" aria-hidden="true"><textPath href="#f2" startOffset="26.872%">14th floor</textPath></text>
+    <text class="fact" aria-hidden="true"><textPath href="#f2" startOffset="33.122%">3 pm</textPath></text>
+    <text class="fact" aria-hidden="true"><textPath href="#f2" startOffset="39.372%">14th floor</textPath></text>
+  </svg>
+  <p class="line">Time away<br>from the queue,<br>with the people<br>who share it.</p>
+</main>
+</body>
+</html>

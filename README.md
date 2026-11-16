@@ -2,9 +2,11 @@
 
 **Type a few words and get a designed poster in the Optum look, as a PNG and a PDF. Use it on its own, or let any Copilot write the words.**
 
-![Ten posters made from the same words: ten different layouts in three colour styles](docs/looks.jpg)
+![Ten posters in the Big O theme: the orange ring as the hero, heavy type, no icons](docs/big-o.jpg)
 
-Every poster above came from the same headline, line, date, time and place. Each press of **Another look** gives a different design.
+**The Big O.** The orange ring is the hero of every poster: a letter in the headline, a giant cropped O, a cluster of discs, a record with one dot, rings of type, arcs carrying across a room. No icons, no drawn people, no label pills. Each one is built from a move found in real poster work (Swiss posters, Experimental Jetset, Paula Scher, Headspace, Mastercard); the notes are in [`designs/NOTES.md`](designs/NOTES.md) and the ten sources are in [`designs/`](designs).
+
+These ten are the new direction. The Studio below still draws the earlier layouts and is being moved onto these designs.
 
 > **Unofficial.** Not affiliated with or endorsed by Optum. The look comes from studying the company's public website. There is no logo here, and the company's own brand guide and logo files take priority. Made for internal team posters.
 

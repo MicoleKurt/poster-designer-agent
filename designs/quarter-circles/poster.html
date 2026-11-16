@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Take your break.</title>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300..900&family=Newsreader:ital,opsz,wght@0,6..72,300..700;1,6..72,300..700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --u:1vmin;
+    --margin:7vmin;
+    --paper:#FAF8F2;
+    --ink:#3D3C38;
+    --orange:#FF612B;
+    --sky:#DFF3F9;
+    --teal:#095F87;
+  }
+  html,body{margin:0;width:100vw;height:100vh;overflow:hidden;background:var(--paper)}
+  .poster{position:relative;width:100vw;height:100vh;overflow:hidden;background:var(--paper);color:var(--ink);
+    font-family:'Figtree',sans-serif}
+
+  /* the tile field: a 26u module hung from the left margin (7u), sliding off the top and the right */
+  .field{position:absolute;left:0;top:0;width:calc(100*var(--u));height:calc(94*var(--u));display:block}
+  .field .ink{fill:var(--ink)}
+  .field .orange{fill:var(--orange)}
+  .field .sky{fill:var(--sky)}
+  .field .ring{fill:none;stroke:var(--orange);stroke-width:13}
+
+  /* the foot: type hangs from the same column lines as the tiles (7u, 33u, 59u) */
+  .keys{position:absolute;left:calc(7*var(--u));top:calc(97.2*var(--u));display:flex;align-items:baseline;margin:0}
+  .time{width:calc(26*var(--u));margin:0;font-weight:700;font-size:calc(1.7*var(--u));line-height:1.2;
+    letter-spacing:0.09em;text-transform:uppercase;color:var(--teal)}
+  .line{width:calc(52*var(--u));margin:0;font-family:'Newsreader',serif;font-style:italic;font-weight:400;
+    font-size:calc(2.3*var(--u));line-height:1.2}
+  .headline{position:absolute;left:calc(7*var(--u));bottom:calc(7*var(--u));margin:0;
+    font-weight:800;font-size:calc(7.3*var(--u));line-height:1;letter-spacing:-0.035em;white-space:nowrap}
+</style>
+</head>
+<body>
+<main class="poster">
+  <svg class="field" data-decor viewBox="0 0 100 94" preserveAspectRatio="none" aria-hidden="true">
+    <!-- top right: sky tile, big quarter leaving through the corner -->
+    <rect class="sky" x="58.5" y="-10" width="52.5" height="52"/>
+    <path class="orange" d="M111,-10 L59,-10 A52,52 0 0,0 111,42 Z"/>
+    <!-- top left: big quarter, radius 52 -->
+    <path class="ink" d="M59,42 L7,42 A52,52 0 0,1 59,-10 Z"/>
+    <!-- lower left: the dark leg, and a small quarter in the corner of the field -->
+    <path class="sky" d="M7,94 L7,68 A26,26 0 0,1 33,94 Z"/>
+    <path class="ink" d="M7,41.8 L33,41.8 L33,94 A26,26 0 0,0 7,68 Z"/>
+    <!-- lower right: a disc leaving the sheet -->
+    <circle class="ink" cx="111" cy="68" r="26"/>
+    <!-- the one full ring, set under the seam -->
+    <circle class="ring" cx="59" cy="68" r="19.5"/>
+  </svg>
+
+  <div class="keys">
+    <p class="time">Every two hours</p>
+    <p class="line">Ten minutes away from the screen.</p>
+  </div>
+  <h1 class="headline">Take your break.</h1>
+</main>
+</body>
+</html>

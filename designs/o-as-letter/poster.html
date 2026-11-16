@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Lock it before you leave it.</title>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300..900&family=Newsreader:ital,opsz,wght@0,6..72,300..700;1,6..72,300..700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --u:1vmin;
+  --margin:calc(7*var(--u));
+  --cols:12;
+  --paper:#FAF8F2;
+  --ink:#3D3C38;
+  --orange:#FF612B;
+  --teal:#095F87;
+}
+html,body{margin:0;width:100vw;height:100vh;overflow:hidden}
+.poster{position:relative;width:100vw;height:100vh;overflow:hidden;background:var(--paper);color:var(--ink)}
+
+/* the headline: every line is fitted to the sheet width and bleeds off both sides */
+.head{margin:0;font-family:"Figtree",sans-serif;font-weight:900;text-transform:uppercase}
+.ln{
+  position:absolute;display:block;white-space:nowrap;line-height:1;letter-spacing:-0.01em;
+  left:calc(var(--x)*var(--u));top:calc(var(--y)*var(--u));
+  font-size:calc(var(--fs)*var(--u));
+}
+
+/* the Big O: a true circle laid over each letter O, at the size of the letter.
+   the paper-coloured ellipse behind it hides the glyph it replaces */
+.o{
+  position:absolute;left:calc((var(--ox) + .01375)*1em);top:.125em;
+  width:.77em;height:.75em;border-radius:50%;background:var(--paper);
+}
+.o::before{
+  content:"";position:absolute;left:.01em;top:0;width:.75em;height:.75em;box-sizing:border-box;
+  border-radius:50%;border:.19em solid var(--orange);
+}
+/* the O in "Lock" is shut: a disc, and its counter is the keyway */
+.o.lock::before{content:none}
+.o.lock svg{position:absolute;left:.01em;top:0;width:.75em;height:.75em;display:block;fill:var(--orange)}
+
+/* small text, in the gap the last line leaves: label on its cap line, points on its baseline */
+.note{
+  position:absolute;left:calc(72.837*var(--u));top:calc(108.654*var(--u));height:calc(24.717*var(--u));
+  display:flex;flex-direction:column;justify-content:space-between;
+}
+.kind{
+  margin:calc(-.24*var(--u)) 0 0;font-family:"Figtree",sans-serif;font-weight:700;
+  font-size:calc(1.6*var(--u));line-height:1;letter-spacing:.14em;text-transform:uppercase;color:var(--teal);
+}
+.points{margin:0 0 -.408em;padding:0;list-style:none;font-family:"Newsreader",serif;font-weight:500;
+  font-size:calc(2.4*var(--u));line-height:1.3}
+</style>
+</head>
+<body>
+<main class="poster">
+  <h1 class="head" data-bleed>
+    <span class="ln " style="--fs:38.964;--x:-4.676;--y:-8.066">Lock<i class="o lock" data-decor style="--ox:0.5330"><svg viewBox="0 0 100 100" aria-hidden="true"><path fill-rule="evenodd" d="M50 0a50 50 0 1 0 0 100a50 50 0 1 0 0-100zM47.2 33.5h5.6v33h-5.6z"/></svg></i></span>
+    <span class="ln " style="--fs:21.509;--x:-2.581;--y:23.992">it before<i class="o" data-decor style="--ox:2.8530"></i></span>
+    <span class="ln " style="--fs:50.303;--x:-3.270;--y:36.980">you<i class="o" data-decor style="--ox:0.6759"></i></span>
+    <span class="ln " style="--fs:35.159;--x:-4.219;--y:76.669">leave</span>
+    <span class="ln " style="--fs:35.159;--x:-4.219;--y:103.486">it.</span>
+  </h1>
+  <div class="note">
+    <p class="kind">Privacy reminder</p>
+    <ul class="points">
+      <li>Lock your screen.</li>
+      <li>Shred your notes.</li>
+      <li>Clear your desk.</li>
+    </ul>
+  </div>
+</main>
+</body>
+</html>

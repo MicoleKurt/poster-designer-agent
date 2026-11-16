@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Listen first. Then solve.</title>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300..900&family=Newsreader:ital,opsz,wght@0,6..72,300..700;1,6..72,300..700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --u:1vmin;
+  --margin:calc(7*var(--u));
+  --paper:#FAF8F2; --ink:#3D3C38; --orange:#FF612B; --teal:#095F87;
+  /* the disc sets the grid: its left edge is the headline's flush-left axis,
+     its centre is the dot, and the small column hangs on the dot's left edge.
+     The dot is the size of the headline's full stops; the gap between headline
+     and disc is one stem of the headline. */
+  --r:70; --cx:77.3; --cy:121.58; --dd:4.55;
+  --row:2.71; /* baseline grid of the small column, in u */
+}
+html,body{margin:0;width:100vw;height:100vh;overflow:hidden;background:var(--paper)}
+.poster{position:relative;width:100vw;height:100vh;overflow:hidden;background:var(--paper);
+  color:var(--ink);font-family:'Figtree',sans-serif}
+
+.disc{position:absolute;border-radius:50%;background:var(--orange);
+  left:calc((var(--cx) - var(--r))*var(--u));top:calc((var(--cy) - var(--r))*var(--u));
+  width:calc(2*var(--r)*var(--u));height:calc(2*var(--r)*var(--u))}
+.dot{position:absolute;border-radius:50%;background:var(--ink);
+  left:calc((var(--cx) - var(--dd)/2)*var(--u));top:calc((var(--cy) - var(--dd)/2)*var(--u));
+  width:calc(var(--dd)*var(--u));height:calc(var(--dd)*var(--u))}
+
+h1{position:absolute;left:var(--margin);top:calc(7.4*var(--u));margin:0;
+  font-weight:900;font-size:calc(17.2*var(--u));line-height:.8;letter-spacing:-.031em}
+h1 span{display:block;white-space:nowrap}
+
+.notes{position:absolute;left:calc((var(--cx) - var(--dd)/2 - .15)*var(--u));top:calc(7.67*var(--u));
+  margin:0;padding:0;list-style:none;white-space:nowrap;
+  font-weight:500;font-size:calc(2*var(--u));line-height:calc(var(--row)*var(--u))}
+.notes li{margin-bottom:calc(var(--row)*var(--u))}
+.notes .kind{font-weight:700;color:var(--teal)}
+</style>
+</head>
+<body>
+<main class="poster">
+  <div class="disc" data-decor></div>
+  <div class="dot" data-decor></div>
+  <h1><span>Listen</span><span>first.</span><span>Then solve.</span></h1>
+  <ul class="notes">
+    <li class="kind">Call habit</li>
+    <li>Let the caller<br>finish.</li>
+    <li>Say back what<br>you heard.</li>
+    <li>Confirm the fix<br>before you close.</li>
+  </ul>
+</main>
+</body>
+</html>
