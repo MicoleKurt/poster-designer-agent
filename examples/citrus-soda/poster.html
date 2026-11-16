@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Kalamansi Soda</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=DM+Sans:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  /* Concept: the word the drink tastes like, with the can standing in it.
+     Depth comes from order: ground, word, shadow on the word, can.
+     ONE light, from the top left. Everything obeys it: the can is lit on its
+     left and dark on its right, the shadow falls to the lower right, and the
+     ground is brighter where the light lands. Palette is taken from the fruit. */
+  :root {
+    --u: 1vmin; --margin: calc(6 * var(--u)); --cols: 12; --gutter: calc(1.6 * var(--u));
+    --ground: #0e3b2c; --ground-lit: #1b6a4b; --ground-dark: #072117;
+    --fruit: #f3d23b; --paper: #f6f1e1;
+    --t-note: calc(1.9 * var(--u)); --t-body: calc(2.5 * var(--u)); --t-sub: calc(5.4 * var(--u));
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 100vw; height: 100vh; overflow: hidden; background: var(--ground); }
+  body { font-family: 'DM Sans', sans-serif; color: var(--paper); -webkit-font-smoothing: antialiased; }
+  .poster { position: relative; width: 100vw; height: 100vh; overflow: hidden; padding: var(--margin);
+    display: grid; grid-template-columns: repeat(var(--cols), 1fr); column-gap: var(--gutter); grid-template-rows: auto 1fr auto;
+    /* two tones of one hue, brighter toward the light */
+    background:
+      radial-gradient(90% 70% at 18% 12%, var(--ground-lit) 0%, transparent 62%),
+      radial-gradient(80% 60% at 100% 100%, var(--ground-dark) 0%, transparent 70%),
+      var(--ground); }
+
+  /* the word is the stage, and the can is one of its letters:
+     it stands where the O belongs, and the cut fruit on its label is the O */
+  .word { position: absolute; left: 50%; top: calc(33 * var(--u)); transform: translateX(-50%);
+    font-family: 'Anton', sans-serif; font-size: calc(55 * var(--u)); line-height: .82; letter-spacing: -.005em;
+    color: var(--fruit); white-space: nowrap; }
+  .slot { display: inline-block; position: relative; width: .5em; height: .72em; vertical-align: baseline; }
+  .can { position: absolute; z-index: 3; left: 50%; bottom: -.12em; width: .56em;
+    transform: translateX(-50%) rotate(-5deg); transform-origin: 50% 92%; overflow: visible; }
+  /* the can's shadow falls on the next letter, away from the light */
+  .onletter { position: absolute; z-index: 2; left: 62%; bottom: -.02em; width: .5em; height: .86em;
+    background: linear-gradient(90deg, rgba(40, 28, 0, .5), rgba(40, 28, 0, 0) 78%);
+    transform: skewX(-9deg); filter: blur(calc(.9 * var(--u))); mix-blend-mode: multiply; }
+  /* contact shadow: small, dark, tight under the base */
+  .contact { position: absolute; z-index: 2; left: 50%; bottom: -.2em; width: .78em; height: .13em; border-radius: 50%;
+    transform: translateX(-40%);
+    background: radial-gradient(closest-side, rgba(2, 10, 6, .9), rgba(2, 10, 6, 0)); filter: blur(calc(.5 * var(--u))); }
+
+  .brand { grid-column: 1 / span 6; font-size: var(--t-body); font-weight: 700; letter-spacing: .14em; text-transform: uppercase; }
+  .size { grid-column: 9 / span 4; text-align: right; font-size: var(--t-body); font-weight: 500; }
+  .line { grid-column: 1 / span 8; align-self: end; position: relative; z-index: 5;
+    font-size: var(--t-sub); font-weight: 700; line-height: 1.02; letter-spacing: -.02em; }
+  .line em { font-style: normal; color: var(--fruit); }
+  .facts { grid-column: 9 / span 4; align-self: end; text-align: right; position: relative; z-index: 5;
+    font-size: var(--t-note); font-weight: 500; line-height: 1.45; }
+</style>
+</head>
+<body>
+  <main class="poster">
+    <div class="word" data-bleed aria-label="SOUR">S<span class="slot"><i class="onletter" data-decor></i><i class="contact" data-decor></i>
+    <svg class="can" viewBox="0 0 400 720" role="img" aria-label="A can of Kalamansi Soda">
+      <defs>
+        <!-- body: lit on the left, falling to shade on the right, with a thin bounce of ground colour at the far edge -->
+        <linearGradient id="body" x1="0" x2="1">
+          <stop offset="0" stop-color="#b9d98a"/>
+          <stop offset=".1" stop-color="#f8f3d6"/>
+          <stop offset=".24" stop-color="#f3d23b"/>
+          <stop offset=".58" stop-color="#d9a91c"/>
+          <stop offset=".86" stop-color="#8a6610"/>
+          <stop offset=".96" stop-color="#5d450c"/>
+          <stop offset="1" stop-color="#2f6a4a"/>
+        </linearGradient>
+        <linearGradient id="steel" x1="0" x2="1">
+          <stop offset="0" stop-color="#eef2ee"/><stop offset=".3" stop-color="#ffffff"/>
+          <stop offset=".6" stop-color="#aab3ad"/><stop offset="1" stop-color="#59615c"/>
+        </linearGradient>
+        <linearGradient id="lid" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="#ffffff"/><stop offset=".5" stop-color="#c9d0cb"/><stop offset="1" stop-color="#7f8782"/>
+        </linearGradient>
+        <linearGradient id="band" x1="0" x2="1">
+          <stop offset="0" stop-color="#1d6b4b"/><stop offset=".2" stop-color="#17573d"/>
+          <stop offset=".7" stop-color="#0c3323"/><stop offset="1" stop-color="#06190f"/>
+        </linearGradient>
+        <clipPath id="clip"><path d="M40 108 C40 84 360 84 360 108 L360 640 C360 668 40 668 40 640 Z"/></clipPath>
+      </defs>
+
+      <!-- shoulder and neck -->
+      <path d="M40 110 C40 70 78 44 96 34 L304 34 C322 44 360 70 360 110 Z" fill="url(#steel)"/>
+      <ellipse cx="200" cy="34" rx="104" ry="16" fill="url(#lid)"/>
+      <ellipse cx="200" cy="33" rx="88" ry="11.5" fill="#b9c1bc"/>
+      <ellipse cx="200" cy="31" rx="88" ry="11" fill="#dfe5e1"/>
+      <path d="M176 30 c8 -7 40 -7 48 0 c-8 6 -40 6 -48 0Z" fill="#8f9893"/>
+      <ellipse cx="232" cy="33" rx="16" ry="4.2" fill="#6f7873"/>
+
+      <!-- body -->
+      <path d="M40 108 C40 84 360 84 360 108 L360 640 C360 668 40 668 40 640 Z" fill="url(#body)"/>
+      <g clip-path="url(#clip)">
+        <!-- label band -->
+        <path d="M40 236 C140 262 260 262 360 236 L360 470 C260 496 140 496 40 470 Z" fill="url(#band)"/>
+        <!-- the fruit: a cut kalamansi, drawn, not pasted -->
+        <g transform="translate(200 352)">
+          <circle r="86" fill="#f3d23b"/><circle r="74" fill="#fbeea0"/>
+          <g fill="#f3d23b">
+            <path d="M0 -6 L-26 -66 A70 70 0 0 1 26 -66Z"/><path d="M6 -3 L46 -54 A70 70 0 0 1 68 -8Z"/>
+            <path d="M6 4 L68 10 A70 70 0 0 1 42 56Z"/><path d="M2 8 L30 64 A70 70 0 0 1 -30 64Z"/>
+            <path d="M-5 5 L-43 56 A70 70 0 0 1 -68 10Z"/><path d="M-6 -3 L-68 -8 A70 70 0 0 1 -46 -54Z"/>
+          </g>
+          <circle r="7" fill="#fbeea0"/>
+        </g>
+        <!-- the light: one hard strip and one soft one on the lit side, shade on the far side -->
+        <rect x="64" y="84" width="16" height="590" fill="#ffffff" opacity=".62"/>
+        <rect x="90" y="84" width="46" height="590" fill="#ffffff" opacity=".16"/>
+        <rect x="286" y="84" width="80" height="590" fill="#000000" opacity=".16"/>
+      </g>
+      <!-- base rim -->
+      <path d="M40 640 C40 668 360 668 360 640 L346 676 C320 700 80 700 54 676 Z" fill="url(#steel)"/>
+      <path d="M54 676 C80 700 320 700 346 676" fill="none" stroke="#3c433f" stroke-width="3" opacity=".5"/>
+      <!-- rim light picked up from the bright side of the ground -->
+      <path d="M41 112 L41 638" stroke="#d8f0b4" stroke-width="3" opacity=".8"/>
+    </svg></span>UR</div>
+
+    <p class="brand">Kalamansi Soda</p>
+    <p class="size">330 ml</p>
+    <p class="line">Sour first.<br><em>Sweet</em> if you wait.</p>
+    <p class="facts">Real kalamansi juice<br>Lightly sparkling<br>No artificial colour</p>
+  </main>
+</body>
+</html>

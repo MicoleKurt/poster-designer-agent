@@ -1,0 +1,77 @@
+{
+  "name": "Optum customer care floor (unofficial)",
+  "official": false,
+  "source": "Observed from the public site optum.com on 2026-11-16: computed colours and font names, and the look of the home page. This is not the company's brand guide.",
+  "use": "Internal posters and floor-screen slides for a customer care team. The organisation's own brand guide, templates and logo files always win over this file.",
+
+  "colour": {
+    "ground": { "hex": "#FAF8F2", "role": "Warm white. The default background of every sheet." },
+    "paper":  { "hex": "#FFFFFF", "role": "Panels and cards, used sparingly." },
+    "ink":    { "hex": "#3D3C38", "role": "Charcoal. All text and line drawings. Never pure black." },
+    "accent": { "hex": "#FF612B", "role": "Orange. One large shape per sheet, or the single thing to act on. Not for small text on the warm white: it does not reach 3:1.", "note": "Approximate value for the brand orange; confirm against the brand guide." },
+    "tint":   { "hex": "#DFF3F9", "role": "Pale sky blue. A quiet band or panel for secondary information." },
+    "link":   { "hex": "#095F87", "role": "Deep teal blue. Small labels, numbers and links where orange would fail contrast." }
+  },
+  "colour_rules": [
+    "One orange element per sheet. If two things are orange, neither is the signal.",
+    "Text is charcoal on warm white or white, or white on charcoal.",
+    "No gradients, no glow, no drop shadows."
+  ],
+
+  "type": {
+    "display": { "brand_face": "Enterprise Sans Bold (proprietary)", "stand_in": "Figtree 800", "use": "Headlines. Sentence case, tight leading, slightly negative tracking." },
+    "text":    { "brand_face": "Enterprise Sans (proprietary)", "stand_in": "Figtree 500", "use": "Everything else." },
+    "emphasis": { "brand_face": "Enterprise Serif Text Italic (proprietary)", "stand_in": "Newsreader Italic 500", "use": "One word or phrase in a headline, in the same charcoal as the rest. Once per sheet." }
+  },
+  "type_rules": [
+    "If the brand fonts are installed on the machine, use them and drop the stand-ins.",
+    "Sentence case. No all-capitals headlines. Capitals only for one small tracked label.",
+    "Headlines speak plainly, as a person would: short, active, no slogans."
+  ],
+
+  "shape": {
+    "signature": "A thick orange ring or disc, large, cropped by the edge of the sheet so it is never seen whole. People or the subject sit inside or in front of it.",
+    "controls": "Pill-shaped buttons and tags (fully rounded ends).",
+    "drawing": "Simple charcoal line or solid drawings with round ends. No clip art, no emoji.",
+    "photography": "Real people, candid and warm, cut out against the ring or on plain ground. Use only photographs supplied by the team with permission. Never generated people."
+  },
+
+  "layout": {
+    "margin": "7% of the short side",
+    "grid": 12,
+    "space": "Generous. At least a third of the sheet is empty warm white.",
+    "alignment": "Flush left. The ring sits right and bleeds off the edge."
+  },
+
+  "tone": ["warm", "plain", "respectful"],
+  "tone_rules": [
+    "Speak to a colleague, not at a workforce. Encourage, never scold.",
+    "One habit, one event or one reminder per sheet.",
+    "Recognition names the person and what they did, in their words where possible."
+  ],
+
+  "formats": [
+    { "use": "Floor and wall screens", "format": "landscape" },
+    { "use": "Break room and corridor posters", "format": "a3" },
+    { "use": "Team chat and intranet posts", "format": "ig-portrait" }
+  ],
+
+  "hard_rules": [
+    "No member, patient or caller information of any kind: no names, IDs, dates of birth, call details, screenshots of systems. When in doubt, leave it out and ask.",
+    "No performance numbers, targets, rankings or quotes unless they are in the brief.",
+    "Do not redraw or approximate the logo. Place the official logo file if it is supplied, following its clear-space rules; otherwise leave the logo off.",
+    "Nothing that could be mistaken for an official company statement to the public. These sheets are for the team.",
+    "Health or benefits claims are never written by the designer. They come from approved copy only.",
+    "Contrast of 4.5:1 for all reading text, and images of people that reflect the team."
+  ],
+
+  "typical_briefs": [
+    "A call-quality habit for the week",
+    "Team huddle topic",
+    "Recognition: advocate of the month",
+    "Schedule or system change notice",
+    "Wellbeing and break reminders",
+    "Privacy and security reminders",
+    "Team event or town hall"
+  ]
+}

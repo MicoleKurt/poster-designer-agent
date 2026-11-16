@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Type Night 03</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62,800;100,500;100,800&display=swap" rel="stylesheet">
+<style>
+  /* Concept: the edition number IS the picture. One giant numeral, cropped by
+     the sheet, with one red disc. Everything else is small and sits on the grid.
+     Lineage: International Typographic Style. Three colours, one family. */
+  :root {
+    --u: 1vmin; --margin: calc(6 * var(--u)); --cols: 12; --gutter: calc(1.6 * var(--u));
+    --ground: #f1ece2; --ink: #131313; --accent: #e5401b;
+    --t-note: calc(1.6 * var(--u)); --t-body: calc(2.15 * var(--u)); --t-head: calc(16 * var(--u));
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 100vw; height: 100vh; overflow: hidden; background: var(--ground); }
+  body { font-family: 'Archivo', sans-serif; font-stretch: 100%; color: var(--ink); -webkit-font-smoothing: antialiased; }
+  .poster { position: relative; width: 100vw; height: 100vh; overflow: hidden; padding: var(--margin);
+    display: grid; grid-template-columns: repeat(var(--cols), 1fr); column-gap: var(--gutter); grid-template-rows: auto 1fr auto; }
+
+  /* the picture: numeral and disc, both allowed to leave the sheet */
+  .disc { position: absolute; width: calc(74 * var(--u)); aspect-ratio: 1; border-radius: 50%; background: var(--accent);
+    right: calc(-19 * var(--u)); top: calc(31 * var(--u)); }
+  .num { position: absolute; right: calc(-8 * var(--u)); bottom: calc(-16.5 * var(--u));
+    font-size: calc(97 * var(--u)); font-weight: 800; font-stretch: 62%; line-height: .8; letter-spacing: -.05em;
+    color: var(--ink); mix-blend-mode: multiply; }
+
+  .series { grid-column: 1 / span 6; font-size: var(--t-body); font-weight: 500; line-height: 1.3; }
+  .series b { font-weight: 800; }
+  .date { grid-column: 9 / span 4; font-size: var(--t-body); font-weight: 500; line-height: 1.3; text-align: right; }
+
+  .head { position: relative; z-index: 2; grid-column: 1 / span 10; align-self: start; margin-top: calc(7 * var(--u));
+    font-size: var(--t-head); font-weight: 800; line-height: .84; letter-spacing: -.045em; }
+
+  .talks { grid-column: 1 / span 4; align-self: end; font-size: var(--t-body); line-height: 1.32; position: relative; z-index: 2; }
+  .talks li { list-style: none; padding: calc(1.25 * var(--u)) 0; border-top: calc(.22 * var(--u)) solid var(--ink); display: grid; grid-template-columns: calc(6.5 * var(--u)) 1fr; }
+  .talks li:last-child { border-bottom: calc(.22 * var(--u)) solid var(--ink); }
+  .talks b { font-weight: 800; }
+  .talks span { font-weight: 500; }
+  .where { grid-column: 1 / span 5; margin-top: calc(3 * var(--u)); font-size: var(--t-note); font-weight: 500; line-height: 1.45; position: relative; z-index: 2; }
+</style>
+</head>
+<body>
+  <main class="poster">
+    <div class="disc" data-decor></div>
+    <div class="num" data-bleed>03</div>
+
+    <p class="series"><b>Type Night</b><br>Talks on letters, for people who set them</p>
+    <p class="date">Thursday 12 March<br>7 pm, doors 6:30</p>
+
+    <h1 class="head">Small<br>caps,<br>big<br>ideas.</h1>
+
+    <ul class="talks">
+      <li><b>7:00</b><span>Why your headline is too polite</span></li>
+      <li><b>7:40</b><span>A grid is a promise</span></li>
+      <li><b>8:20</b><span>Kerning by ear</span></li>
+    </ul>
+    <p class="where">The Print Room, 2nd floor<br>Free entry · Seats for 80</p>
+  </main>
+</body>
+</html>

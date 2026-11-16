@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Listen first</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<!-- Stand-ins for the brand's own typefaces: a warm sans and a serif italic used for one phrase only -->
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@500;700;800&family=Newsreader:ital,wght@1,500&display=swap" rel="stylesheet">
+<style>
+  /* Profile: profiles/optum-callcenter.json (unofficial, observed from the public site).
+     Concept: one habit, said plainly. The ring is the listener: an open shape
+     with the headline speaking into it. Warm white ground, charcoal type,
+     one orange. The serif italic carries the single word that matters, in the same charcoal:
+     the orange is kept for the ring alone, so it stays a signal and not a decoration.
+     Made for a floor screen: read from 6 metres, in 3 seconds. */
+  :root {
+    --u: 1vmin; --margin: calc(7 * var(--u)); --cols: 12; --gutter: calc(2 * var(--u));
+    --ground: #faf8f2; --ink: #3d3c38; --accent: #ff612b; --tint: #dff3f9; --link: #095f87;
+    --t-note: calc(2.5 * var(--u)); --t-body: calc(3.5 * var(--u)); --t-head: calc(14.5 * var(--u));
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 100vw; height: 100vh; overflow: hidden; background: var(--ground); }
+  body { font-family: 'Figtree', sans-serif; color: var(--ink); -webkit-font-smoothing: antialiased; }
+  .poster { position: relative; width: 100vw; height: 100vh; overflow: hidden; padding: var(--margin);
+    display: grid; grid-template-columns: repeat(var(--cols), 1fr); column-gap: var(--gutter); grid-template-rows: auto 1fr auto; }
+
+  /* the ring: thick, cropped by the sheet, never a full circle in view */
+  .ring { position: absolute; width: calc(112 * var(--u)); aspect-ratio: 1; border-radius: 50%;
+    border: calc(15 * var(--u)) solid var(--accent); right: calc(-36 * var(--u)); top: calc(-8 * var(--u)); }
+  /* a headset, as three strokes, sitting in the ring */
+  .headset { position: absolute; right: calc(9 * var(--u)); top: calc(26 * var(--u)); width: calc(40 * var(--u)); }
+
+  .kicker { grid-column: 1 / span 6; font-size: var(--t-note); font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
+  .head { grid-column: 1 / span 8; align-self: center; position: relative; z-index: 2;
+    font-size: var(--t-head); font-weight: 800; line-height: .94; letter-spacing: -.035em; }
+  .head em { font-family: 'Newsreader', serif; font-weight: 500; font-style: italic; letter-spacing: -.02em; }
+  .habits { grid-column: 1 / span 7; align-self: end; display: grid; grid-template-columns: repeat(3, 1fr); column-gap: calc(2.4 * var(--u));
+    list-style: none; position: relative; z-index: 2; }
+  .habits li { border-top: calc(.45 * var(--u)) solid var(--ink); padding-top: calc(1.6 * var(--u)); font-size: var(--t-body); font-weight: 500; line-height: 1.18; }
+  .habits b { display: block; font-weight: 800; font-size: var(--t-note); letter-spacing: .1em; margin-bottom: calc(.8 * var(--u)); color: var(--link); }
+</style>
+</head>
+<body>
+  <main class="poster">
+    <div class="ring" data-decor></div>
+    <svg class="headset" data-decor viewBox="0 0 200 200" fill="none" stroke="#3d3c38" stroke-width="13" stroke-linecap="round" aria-hidden="true">
+      <path d="M38 118 V98 a62 62 0 0 1 124 0 v20"/>
+      <rect x="22" y="104" width="30" height="52" rx="14" fill="#3d3c38"/>
+      <rect x="148" y="104" width="30" height="52" rx="14" fill="#3d3c38"/>
+      <path d="M163 156 v8 a28 28 0 0 1 -28 28 h-22"/>
+      <circle cx="104" cy="192" r="7" fill="#3d3c38" stroke="none"/>
+    </svg>
+
+    <p class="kicker">Every call · Team huddle</p>
+    <h1 class="head">Listen first.<br>Then <em>solve.</em></h1>
+    <ul class="habits">
+      <li><b>01</b>Let the caller finish.</li>
+      <li><b>02</b>Say back what you heard.</li>
+      <li><b>03</b>Confirm the fix before you close.</li>
+    </ul>
+  </main>
+</body>
+</html>

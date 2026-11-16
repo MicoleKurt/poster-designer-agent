@@ -1,0 +1,18 @@
+{
+  "project": "Kalamansi Soda launch (fictional sample)",
+  "audience": "People scrolling a feed, 18 to 30",
+  "one_message": "It is properly sour, and that is the point.",
+  "action": "Notice the can and remember the name",
+  "format": "ig-portrait",
+  "seen_from": "A phone, for under two seconds",
+  "tone": "Sharp, confident, a little dry",
+  "direction": "The can stands in for the O of one giant word, and the cut fruit on its label is the O; palette taken from the fruit; one light from the top left",
+  "copy": {
+    "word": "SOUR",
+    "word_as_set": ["S", "UR"],
+    "brand": "Kalamansi Soda",
+    "size": "330 ml",
+    "headline": "Sour first. Sweet if you wait.",
+    "facts": ["Real kalamansi juice", "Lightly sparkling", "No artificial colour"]
+  }
+}

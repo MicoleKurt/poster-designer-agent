@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Poster</title>
+<!-- Two typefaces at most: one to shout, one to explain. Load only the weights you use. -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;800&display=swap" rel="stylesheet">
+<style>
+  /* ---- The sheet -------------------------------------------------------
+     The poster fills the viewport, so render.py can output any format from
+     this one file. Every size is in --u (1% of the short side): type and
+     spacing then scale with the sheet instead of being fixed pixels. */
+  :root {
+    --u: 1vmin;
+    --margin: calc(6 * var(--u));     /* safe margin: no text outside it */
+    --cols: 12;                       /* the grid render.py --grid draws */
+    --gutter: calc(1.6 * var(--u));
+
+    /* Palette: name every colour by its job. Two hues plus neutrals. */
+    --ground: #f2ede4;
+    --ink: #121212;
+    --accent: #e8421a;
+
+    /* Type scale: big jumps. 1 : 2 : 5 : 14, not 14/16/18/24. */
+    --t-note: calc(1.55 * var(--u));
+    --t-body: calc(2.1 * var(--u));
+    --t-sub: calc(4.6 * var(--u));
+    --t-head: calc(15 * var(--u));
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 100vw; height: 100vh; overflow: hidden; background: var(--ground); }
+  body { font-family: 'Archivo', sans-serif; color: var(--ink); -webkit-font-smoothing: antialiased; }
+
+  .poster {
+    position: relative; width: 100vw; height: 100vh; overflow: hidden;
+    padding: var(--margin);
+    display: grid; grid-template-columns: repeat(var(--cols), 1fr); column-gap: var(--gutter);
+    grid-template-rows: auto 1fr auto;
+  }
+  .head { grid-column: 1 / span 9; font-size: var(--t-head); font-weight: 800; line-height: .88; letter-spacing: -.035em; }
+  .sub  { grid-column: 1 / span 7; font-size: var(--t-sub); line-height: 1.08; align-self: end; }
+  .facts { grid-column: 1 / span 5; font-size: var(--t-body); line-height: 1.35; align-self: end; }
+  .note { grid-column: 9 / span 4; font-size: var(--t-note); line-height: 1.4; align-self: end; text-align: right; }
+</style>
+</head>
+<body>
+  <main class="poster">
+    <h1 class="head">One idea,<br>said big.</h1>
+    <p class="sub">The line that makes someone stop and read the rest.</p>
+    <p class="facts">What · when · where<br>The one thing to do next</p>
+    <p class="note">Who is behind it</p>
+  </main>
+</body>
+</html>
