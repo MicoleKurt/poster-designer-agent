@@ -1,0 +1,22 @@
+{
+  "project": "Team town hall invitation for the team chat (sample; the date and room are placeholders for the real ones)",
+  "profile": "profiles/optum-callcenter.json",
+  "audience": "The whole customer care team, reading on a phone between calls",
+  "one_message": "Come to the town hall with one question you want answered.",
+  "action": "Think of a question and turn up",
+  "format": "ig-portrait",
+  "seen_from": "A phone, for under 2 seconds",
+  "tone": "Warm, plain, respectful. An invitation, not a summons.",
+  "direction": "A giant serif-italic question mark standing in the orange ring; a pale sky band at the foot for the three facts",
+  "must_not": ["performance numbers", "names of leaders unless supplied", "the company logo redrawn by hand"],
+  "copy": {
+    "kicker": "Team town hall",
+    "headline": "Bring one question.",
+    "mark": "?",
+    "facts": [
+      "When", "Thursday 4 December",
+      "Time", "3:00 pm",
+      "Where", "14th floor, Training Room B"
+    ]
+  }
+}

@@ -1,27 +1,29 @@
 # Poster Designer
 
-**A Claude Code agent that designs posters the way a studio does: brief first, three ideas before one, and nothing leaves until it has been measured.**
+**A Claude Code agent that designs posters for a customer care floor in the Optum look, the way a studio does: brief first, three ideas before one, and nothing leaves until it has been measured.**
 
 It writes each poster as HTML and CSS, renders it with a real browser to print-ready PNG and PDF, and checks the result with a script that fails on weak hierarchy, low contrast, text outside the margin, and any word the brief did not contain.
 
-![Three posters made with the agent: a typographic event poster, a product poster, and a floor-screen slide in a brand profile](docs/hero.png)
+![Three posters made with the agent: a privacy reminder, a town hall invitation, and a call habit for the floor screens](docs/hero.png)
 
 All three were made with the files in this repository. Sources and briefs are in [`examples/`](examples).
 
+> **Unofficial.** This project is not affiliated with or endorsed by Optum. The look comes from a profile built by studying the company's public website. It contains no logo, the agent will not redraw one, and the company's own brand guide, templates and logo files take priority over everything here. It is meant for internal team posters, not for anything presented as an official statement.
+
 ## The same brief, twice
 
-The poster on the left is what you get when no decision is made: the default gradient, a centred stack, four typefaces, glow, emoji for icons, a discount nobody offered. The one on the right is the same brief after the process. The checker is run on both.
+The slide on the left is what you get when no decision is made: the default gradient, a centred stack, four typefaces, glow, emoji for icons, and a satisfaction score nobody supplied. The one on the right is the same brief after the process. The checker is run on both.
 
-![The same soda brief made two ways, with the checker result under each](docs/same-brief.png)
+![The same call-habit brief made two ways, with the checker result under each](docs/same-brief.png)
 
 ```text
-$ python check.py slop.html --format ig-portrait --brief brief.json
+$ python check.py slop.html --format landscape --brief brief.json
 
 FAIL  type      4 typefaces (Bebas Neue, Montserrat, Pacifico, Poppins). Use two: one to shout, one to explain.
-FAIL  contrast  low contrast: 'Soda' 1.0:1 (needs 3.0); 'Lorem ipsum dolor sit amet, ' 2.2:1 (needs 4.5) ...
+FAIL  contrast  low contrast: 'Excellence' 1.0:1 (needs 3.0); 'Lorem ipsum dolor sit amet, ' 2.8:1 (needs 4.5) ...
 FAIL  copy      placeholder text on the poster: 'Lorem ipsum'
 FAIL  copy      emoji used as graphics. Draw an icon or drop it.
-FAIL  brief     text that is not in the brief (invented or mistyped): '50% OFF!'; 'Taste the Refreshing Difference!'; '100% Natural' ...
+FAIL  brief     text that is not in the brief (invented or mistyped): '99% CSAT!'; 'Customer Service'; 'Delivering Smiles On Every Call!' ...
 WARN  type      8 different text sizes. A poster needs 3 to 5 clear levels.
 WARN  layout    almost everything is centred. A centred stack is the default; choose an axis, an edge or a deliberate asymmetry.
 WARN  colour    7 separate hues in play. Pick 1 or 2 and give each a job; the rest should be neutrals.
@@ -32,7 +34,31 @@ WARN  colour    text-shadow on several pieces of text. Fix legibility with contr
 5 fail, 6 warn, 3 pass
 ```
 
-The last FAIL is the one that matters most. With `--brief`, every word on the sheet has to come from the brief. A poster cannot ship with an invented price, claim or award.
+The last FAIL is the one that matters most on a care floor. With `--brief`, every word on the sheet has to come from the brief. A poster cannot ship with an invented score, claim or name.
+
+## The house look
+
+Everything the agent makes starts from [`profiles/optum-callcenter.json`](skills/poster-design/profiles/optum-callcenter.json).
+
+| Part | Rule |
+|---|---|
+| Ground | Warm white `#FAF8F2`. At least a third of every sheet stays empty. |
+| Type colour | Charcoal `#3D3C38`, never pure black. |
+| Orange `#FF612B` | One large shape per sheet: a thick ring or a disc, cropped by the edge so it is never seen whole. |
+| Pale sky `#DFF3F9` | A quiet band for the facts needed to act (when, where). |
+| Deep teal `#095F87` | Small labels and numbers, where orange would fail contrast. |
+| Headlines | A warm bold sans in sentence case, flush left, with at most one word in serif italic. |
+| Drawing | Simple charcoal shapes with round ends. No clip art, no emoji, no generated people. |
+| Voice | Warm, plain, respectful. A colleague speaking, never a warning. |
+
+Rules that hold whatever the brief says:
+
+- No member, patient or caller information of any kind.
+- No performance numbers, rankings or quotes unless they are in the brief.
+- The logo is placed from the official file or left off. It is never redrawn.
+- Health and benefits claims come from approved copy only.
+
+The typefaces in the examples are open-licence stand-ins (Figtree and Newsreader) for the brand's own faces. If the brand fonts are installed on your machine, the profile tells the agent to use those.
 
 ## How it works
 
@@ -41,7 +67,7 @@ The last FAIL is the one that matters most. With `--brief`, every word on the sh
 | Step | What the agent produces |
 |---|---|
 | 1. Brief | `brief.json`: audience, the one message, the one action, format, viewing distance, and the exact copy |
-| 2. Look | The design lineage it is working in, and notes on real references |
+| 2. Look | The profile loaded, and notes on real references for the subject |
 | 3. Three concepts | A type-led, an image-led and a structure-led thumbnail, side by side; one chosen, with the reason |
 | 4. Build | Grid, then type scale, then colour, then image, in `poster.html` |
 | 5. Measure | `check.py` at 0 FAIL; every WARN fixed or explained |
@@ -52,7 +78,7 @@ The last FAIL is the one that matters most. With `--brief`, every word on the sh
 
 Every render also writes the views a designer checks by eye. Each has one question.
 
-![The event poster shown as final, with its grid, blurred, and in greyscale](docs/four-looks.png)
+![The privacy poster shown as final, with its grid, blurred, and in greyscale](docs/four-looks.png)
 
 | View | Question |
 |---|---|
@@ -76,7 +102,7 @@ Every render also writes the views a designer checks by eye. Each has one questi
 | Placeholder text, emoji as icons | fail |
 | Text that is not in the brief | fail |
 
-Contrast is measured against what is actually behind each piece of text in the render (photographs, shapes, giant letters), not against a declared background colour.
+Contrast is measured against what is actually behind each piece of text in the render (the ring, a band, a giant letter), not against a declared background colour.
 
 ## Install
 
@@ -109,29 +135,32 @@ This copies the agent to `~/.claude/agents/` and the skill to `~/.claude/skills/
 In Claude Code, ask for a poster. The agent is picked up from its description, or you can name it:
 
 ```text
-Use the poster-designer agent. A3 poster for our team town hall on 4 December, 3 pm, 14th floor.
-One message: bring one question. Use the optum-callcenter profile.
+Use the poster-designer agent. Floor-screen slide for this week's huddle topic:
+"Confirm the fix before you close." Three habits, no numbers.
 ```
 
-It will come back with the brief to confirm, then three concepts, then the finished files.
+It comes back with the brief to confirm, then three concepts, then the finished files.
+
+What it is made for:
+
+| Sheet | Format |
+|---|---|
+| Call-quality habit or huddle topic for the floor screens | `landscape` (16:9) |
+| Privacy, security and wellbeing reminders for corridors and break rooms | `a3` |
+| Town halls, team events and schedule changes for the team chat | `ig-portrait` (4:5) |
+| Recognition (with a supplied photograph and the person's consent) | `a3` or `ig-portrait` |
 
 The scripts also work on their own:
 
 ```bash
-python skills/poster-design/scripts/render.py examples/type-night/poster.html --format a3 --grid --pdf
+python skills/poster-design/scripts/render.py examples/lock-it/poster.html --format a3 --grid --pdf
 ```
 
 ```bash
-python skills/poster-design/scripts/check.py examples/type-night/poster.html --format a3 --brief examples/type-night/brief.json
+python skills/poster-design/scripts/check.py examples/lock-it/poster.html --format a3 --brief examples/lock-it/brief.json
 ```
 
 Formats: `a4` `a3` `a2` `tabloid` `letter` `ig-portrait` `ig-square` `story` `landscape` `og`, or any `WIDTHxHEIGHT`. One HTML file renders at any of them, because every size in the poster is a fraction of the sheet.
-
-## Brand profiles
-
-A profile is a small JSON file: colours by role, type roles with open-licence stand-ins, the brand's signature shape, tone, and rules that may never be broken. The floor-screen example above uses [`profiles/optum-callcenter.json`](skills/poster-design/profiles/optum-callcenter.json), made for internal customer-care posters.
-
-That profile is **unofficial**. It was built by looking at the company's public website, and it exists as a starting point for someone on that team. It does not include the logo, the agent will not redraw one, and the company's own brand guide and logo files take priority over everything in it. See [`profiles/README.md`](skills/poster-design/profiles/README.md) for how to write a profile from a real brand guide.
 
 ## What is in the repository
 
@@ -139,29 +168,33 @@ That profile is **unofficial**. It was built by looking at the company's public 
 agents/poster-designer.md            the agent
 skills/poster-design/
   SKILL.md                           definition of done, commands, measured rules
+  profiles/optum-callcenter.json     the house look: colours, type roles, shapes, tone, hard rules
   references/process.md              the seven steps
   references/craft.md                hierarchy, grid, type, colour, image, lineages
-  references/product-lighting.md     making a product look lit and placed, not pasted
+  references/product-lighting.md     making an object look lit and placed, not pasted
   references/anti-slop.md            the habits that make work look generated, and the fixes
   references/formats.md              sizes, viewing distance, print and screen export
-  profiles/                          brand profiles
-  templates/base.html                starting sheet
+  templates/base.html                starting sheet in the house look
   scripts/render.py                  HTML to PNG and PDF, plus the four looks
   scripts/check.py                   the checker
   scripts/sheet.py                   side-by-side sheets
-examples/                            three posters with source and brief, and one bad one as a test case
+examples/
+  lock-it/                           privacy reminder, A3
+  town-hall/                         town hall invitation, 4:5
+  listen-first/                      call habit, 16:9, plus slop.html as a failing test case
 docs/                                images used on this page
 ```
 
 ## Where the rules come from
 
 - **Process:** the studio poster process taught in Gareth David Studio's *Design Process Master Class: Design Posters Like a Pro* (brief, research and mood boards, type, grids, sketching, build, variations, presentation).
-- **Product lighting:** two Photoshop poster tutorials by Dharnyelpeter (two-tone ground, a chosen light source, clean cut-out edges, contact and cast shadows, light painted on the lit side, objects interleaved with shapes).
+- **Lighting and depth:** two Photoshop poster tutorials by Dharnyelpeter (two-tone ground, a chosen light source, clean cut-out edges, contact and cast shadows, objects interleaved with shapes).
 - **What good looks like:** side-by-side study of award-level typographic and festival posters against template and marketplace work.
+- **The house look:** the public Optum website, read for its colours, type roles, shapes and tone.
 - **Hierarchy, grids and restraint:** [Adobe on poster layout](https://www.adobe.com/express/learn/blog/poster-layout-design), [Creative Bloq on visual hierarchy](https://www.creativebloq.com/posters/4-rules-visual-hierarchy-poster-design-91516904), [Design Shack on poster anatomy](https://designshack.net/articles/graphics/anatomy-of-a-poster/), [Vistaprint on poster layout](https://www.vistaprint.com/hub/poster-layout), [Made Good on composition, type and colour](https://madegooddesigns.com/poster-design-guide/).
 - **Signs of generated design:** [UX Collective on de-slopifying designs](https://uxdesign.cc/how-to-de-slopify-your-designs-4c40c57c1dc9), [Mika Reyes on spotting AI-made posters](https://mikareyes.com/ai/how-to-spot-ai-made-graphic-design-and-posters).
 
-The three example posters use fictional events and products. Fonts are loaded from Google Fonts under their open licences.
+The copy on the example posters is sample text; the town hall date and room are placeholders. Fonts are loaded from Google Fonts under their open licences. Optum is a trademark of its owner and is named here only to describe the look the profile follows.
 
 ## Licence
 

@@ -1,6 +1,6 @@
 ---
 name: poster-design
-description: Use when designing or critiquing a poster or any single-sheet graphic (event poster, product ad, social post, floor-screen slide, notice, certificate cover). Gives a studio design process (brief, references, three concepts, grid, type, colour, build, measure), a render pipeline from HTML/CSS to PNG and PDF, an automated checker for hierarchy, contrast, margins, palette and invented text, product lighting rules, brand profiles, and a list of the habits that make work look generated.
+description: Use when designing or critiquing a poster or any single-sheet graphic for a customer care floor in the Optum look (huddle topic, call habit, privacy reminder, recognition, town hall, notice, floor-screen slide, team-chat post), or any other poster. Gives a studio design process (brief, references, three concepts, grid, type, colour, build, measure), a render pipeline from HTML/CSS to PNG and PDF, an automated checker for hierarchy, contrast, margins, palette and invented text, product lighting rules, brand profiles, and a list of the habits that make work look generated.
 ---
 
 # Poster design
@@ -73,4 +73,4 @@ After every render, open these and answer the question. A "no" means go back.
 | Text not in the brief | fails |
 
 ## Brand profiles
-A profile is a JSON file in `profiles/` with colour roles, type roles and stand-in fonts, signature shapes, tone, and hard rules. Map its colours onto `--ground`, `--ink`, `--accent` and use its type roles. A profile marked `"official": false` was built from public observation: treat it as a starting point, defer to the organisation's real brand guide and logo files, and say so in the rationale. See `profiles/README.md`.
+The default profile is `profiles/optum-callcenter.json`, and all three examples use it. A profile is a JSON file in `profiles/` with colour roles, type roles and stand-in fonts, signature shapes, tone, and hard rules. Map its colours onto `--ground`, `--ink`, `--accent` and use its type roles. A profile marked `"official": false` was built from public observation: treat it as a starting point, defer to the organisation's real brand guide and logo files, and say so in the rationale. See `profiles/README.md`.

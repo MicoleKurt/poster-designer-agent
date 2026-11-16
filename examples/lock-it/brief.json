@@ -1,0 +1,22 @@
+{
+  "project": "Privacy reminder for the floor (sample)",
+  "profile": "profiles/optum-callcenter.json",
+  "audience": "Customer care advocates leaving and returning to their desks",
+  "one_message": "Lock your screen and clear your desk every time you step away.",
+  "action": "Lock, shred, clear, before standing up",
+  "format": "a3",
+  "seen_from": "A corridor wall, about 3 metres, for 3 seconds",
+  "tone": "Warm, plain, respectful. A reminder between colleagues, not a warning.",
+  "direction": "A solid orange disc cropped by the corner with a charcoal padlock on it; plain flush-left headline; serif italic on the one word that is the risk",
+  "must_not": ["member or patient details", "screenshots of systems", "the company logo redrawn by hand", "threats or penalties"],
+  "copy": {
+    "kicker": "Privacy · Every desk, every time",
+    "headline": "Lock it before you leave it.",
+    "habits": [
+      "01", "Lock your screen.",
+      "02", "Shred your notes.",
+      "03", "Clear your desk."
+    ],
+    "why": "Ten seconds at your desk protects the people who trust us with their information."
+  }
+}
