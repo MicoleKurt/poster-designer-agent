@@ -26,6 +26,7 @@ from playwright.sync_api import sync_playwright
 
 sys.path.insert(0, str(pathlib.Path(__file__).parent))
 from render import parse_format  # noqa: E402
+from browser import launch  # noqa: E402
 
 COLLECT = r"""
 () => {
@@ -129,8 +130,11 @@ def main():
     src = pathlib.Path(args.html).resolve()
     w, h, _, _ = parse_format(args.format)
     with sync_playwright() as p:
-        b = p.chromium.launch()
+        b = launch(p)
         page = b.new_page(viewport={"width": w, "height": h})
+        missing = []
+        page.on("requestfailed", lambda r: missing.append(r.url) if r.resource_type in ("stylesheet", "font", "image") else None)
+        page.on("response", lambda r: missing.append(r.url) if r.status >= 400 and r.request.resource_type in ("stylesheet", "font", "image") else None)
         page.goto(src.as_uri())
         page.evaluate("document.fonts.ready")
         page.wait_for_load_state("networkidle")
@@ -148,6 +152,9 @@ def main():
 
     if not items:
         add("FAIL", "copy", "no text found on the poster")
+    if missing:
+        add("WARN", "assets", f"{len(set(missing))} font or image file(s) did not load, so sizes and typefaces below are measured on fallbacks: "
+            + "; ".join(u.split('?')[0][-60:] for u in sorted(set(missing))[:3]))
 
     # ---- type ----
     families = sorted({i["family"] for i in items})

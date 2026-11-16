@@ -1,0 +1,39 @@
+{
+  "project": "Team-building poster for a customer care (call centre) team, featuring a person. Date, time, venue, activity and organiser are NOT known yet: the layout keeps a labelled, empty gap for them.",
+  "profile": "profiles/optum-callcenter.json",
+  "audience": "Advocates and team leads on the customer care floor, walking past in a corridor or sitting in the break room; they know each other and the queue, not yet the event",
+  "one_message": "Team building is time off the phones, with the people you share the queue with.",
+  "action": "Note when and where it is, and come",
+  "format": "a3 (corridor and break room); ig-portrait for the team chat",
+  "seen_from": "2 m in a corridor for about 3 seconds; closer in the break room; a phone in the team chat",
+  "tone": "Warm, plain, a bit playful. An invitation, not a summons.",
+  "direction": "Two drawn colleagues, waist up, meet in a high five at the centre of the orange ring; the ring frames the hands. A labelled write-in strip at the foot holds the facts still to come.",
+  "must_not": [
+    "an invented date, time, venue, activity, organiser or name",
+    "sample or placeholder facts",
+    "generated photographs of people",
+    "performance numbers, targets or rankings",
+    "the company logo redrawn by hand",
+    "anything about members, patients or callers"
+  ],
+  "copy": {
+    "kicker": "Team building",
+    "headline": "Headsets off. Hands up.",
+    "support": "Time away from the queue, with the people who share it.",
+    "facts_labels": ["When", "Time", "Where"]
+  },
+  "copy_rank": {
+    "1_stop": "Headsets off. Hands up. (with the high five in the ring)",
+    "2_stay": "Time away from the queue, with the people who share it.",
+    "3_act": "When / Time / Where (labelled gaps, filled when the facts arrive)",
+    "4_who": "Team building (kicker). Organiser unknown; left off until supplied."
+  },
+  "open_items": [
+    "Date",
+    "Start and end time",
+    "Venue (floor, room, or off-site address)",
+    "The activity, if it should be named",
+    "Who is organising, if it should be credited",
+    "Optional: a cut-out photograph (waist up, one arm raised) of a team member who has agreed to appear, plus the official logo file if wanted"
+  ]
+}

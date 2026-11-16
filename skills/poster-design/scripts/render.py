@@ -22,6 +22,9 @@ import sys
 from PIL import Image, ImageFilter, ImageOps
 from playwright.sync_api import sync_playwright
 
+sys.path.insert(0, str(pathlib.Path(__file__).parent))
+from browser import launch  # noqa: E402
+
 # name: (css width, css height, device scale, physical size for PDF or None)
 FORMATS = {
     "a4": (794, 1123, 3.125, ("210mm", "297mm")),          # 2481 x 3508, 300 dpi
@@ -80,8 +83,12 @@ def main():
     stem = out / src.stem
 
     with sync_playwright() as p:
-        browser = p.chromium.launch()
+        browser = launch(p)
         page = browser.new_page(viewport={"width": w, "height": h}, device_scale_factor=scale)
+        # a font or image that fails to load changes the design silently, so it is recorded
+        missing = []
+        page.on("requestfailed", lambda r: missing.append(r.url) if r.resource_type in ("stylesheet", "font", "image") else None)
+        page.on("response", lambda r: missing.append(r.url) if r.status >= 400 and r.request.resource_type in ("stylesheet", "font", "image") else None)
         page.goto(src.as_uri())
         # web fonts and images must be in before the shot, or the layout is a lie
         page.evaluate("document.fonts.ready")
@@ -124,6 +131,11 @@ def main():
     ImageOps.grayscale(small).save(f"{stem}.grey.png")
 
     print(f"{src.name} -> {stem.name}.png  {im.width}x{im.height}px  ({args.format})")
+    if missing:
+        print("WARNING: these did not load, so the render is NOT the design (fallback fonts or missing images):")
+        for url in sorted(set(missing))[:6]:
+            print("  " + url[:110])
+        print("  Check the network (web fonts need fonts.googleapis.com and fonts.gstatic.com) and render again.")
     print("also: .thumb.png  .squint.png  .grey.png" + ("  .grid.png" if args.grid else "") + ("  .pdf" if args.pdf and physical else ""))
 
 

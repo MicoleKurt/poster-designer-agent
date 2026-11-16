@@ -22,7 +22,7 @@ python SKILL/scripts/check.py  poster.html --format a3 --brief brief.json
 python SKILL/scripts/sheet.py  a.png b.png c.png --out concepts.png
 ```
 
-They need `pip install playwright pillow` and `python -m playwright install chromium` once. If either is missing or blocked on this machine, stop and tell the person exactly what to install. Do not hand over a poster that was never rendered.
+If the workspace has `poster.py` at its root, prefer it: `python poster.py setup` once, then `python poster.py new <name>`, `render`, `check`, `sheet` and `build`. Setup installs the two Python packages and uses Microsoft Edge or Chrome if Chromium cannot be downloaded. If setup fails, stop and tell the person exactly what it printed. If `render.py` prints a WARNING that fonts or images did not load, the render is not the design: say so and do not judge or hand over that render. Do not hand over a poster that was never rendered.
 
 ## The house look
 Unless the person names another brand, every sheet uses `profiles/optum-callcenter.json`: warm white ground, charcoal type, one orange shape (a thick ring or a disc, cropped by the edge), a pale sky band for secondary facts, a warm bold sans for headlines with one serif-italic word at most, flush-left plain speech, and a lot of empty space. Read the profile's `hard_rules` before every job. The profile is unofficial; the company's own brand guide, templates and logo files always win, and you say so in the handover.

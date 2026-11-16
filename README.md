@@ -6,6 +6,62 @@ It writes each poster as HTML and CSS, renders it with a real browser to print-r
 
 ![Three posters made with the agent: a privacy reminder, a town hall invitation, and a call habit for the floor screens](docs/hero.png)
 
+## Three ways to run it
+
+Copy the folder (clone it, download the ZIP, or carry it on a USB stick) and pick the one that fits where you are.
+
+| You have | Do this | Needs |
+|---|---|---|
+| **Any Copilot or chat assistant** (Microsoft Copilot, Microsoft 365 Copilot, GitHub Copilot chat) | Double-click **`studio.html`** | A browser. Nothing to install. |
+| **GitHub Copilot in agent mode, or Claude Code** | Open the folder and ask the **Poster Designer** agent for a poster | Python, set up with one command |
+| **Just a terminal** | `python poster.py new team-day`, then `render` and `check` | Python, set up with one command |
+
+### 1. Any Copilot: Poster Studio
+
+`studio.html` is one file that works offline in Edge or Chrome. It does the parts a chat assistant cannot.
+
+![Poster Studio: a brief form, the pasted code, and the poster previewed and checked](docs/studio.png)
+
+1. **Fill in the brief.** Only what you type is allowed on the poster as fact. An empty date becomes a blank line to write on, never a made-up one.
+2. **Copy the prompt** and paste it into Copilot. It carries the whole look and the rules.
+3. **Paste Copilot's reply back.** The Studio finds the HTML in it and draws the poster at its real size.
+4. **Look and check.** Grid, squint, grey and thumbnail views, plus measured checks. Numbers or dates you did not give are a FAIL. One button copies the fixes to send back to Copilot.
+5. **Export** a PDF for print or a PNG for screens and chat.
+
+The prompt on its own is in [`copilot/PROMPT.md`](copilot/PROMPT.md).
+
+What a chat Copilot cannot do is run the full checker or look at its own work, so the Studio's checks and your own eyes do that. The Python checker is still the stricter one (it measures contrast against photographs too).
+
+### 2. An agent: GitHub Copilot or Claude Code
+
+On Windows, double-click **`setup.bat`**. Anywhere else:
+
+```bash
+python poster.py setup
+```
+
+```bash
+python poster.py test
+```
+
+`setup` installs two Python packages and finds a browser to render with. If the machine cannot download Chromium, it uses the Microsoft Edge or Chrome that is already installed. `test` renders and checks the three examples and confirms the checker still rejects the bad one; it ends with "All good".
+
+Then open the folder in VS Code (Copilot Chat, agent mode, choose **Poster Designer**) or in Claude Code, and ask for a poster. The agent files are already in the places each tool looks, so there is no install step.
+
+### 3. A terminal
+
+```bash
+python poster.py new team-day --format a3
+```
+
+```bash
+python poster.py render posters/team-day/poster.html --format a3 --grid --pdf
+```
+
+```bash
+python poster.py check posters/team-day/poster.html --format a3 --brief posters/team-day/brief.json
+```
+
 All three were made with the files in this repository. Sources and briefs are in [`examples/`](examples).
 
 > **Unofficial.** This project is not affiliated with or endorsed by Optum. The look comes from a profile built by studying the company's public website. It contains no logo, the agent will not redraw one, and the company's own brand guide, templates and logo files take priority over everything here. It is meant for internal team posters, not for anything presented as an official statement.
@@ -104,65 +160,33 @@ Every render also writes the views a designer checks by eye. Each has one questi
 
 Contrast is measured against what is actually behind each piece of text in the render (the ring, a band, a giant letter), not against a declared background colour.
 
-## Install
+## Installing the agent for other projects
 
-Needs Python 3.10+ and either [Claude Code](https://claude.com/claude-code) or GitHub Copilot in VS Code (agent mode).
+Inside this folder nothing needs installing beyond `python poster.py setup`. To use the agent while working in a different project, copy it to your personal folders:
 
-```bash
-pip install playwright pillow
-```
+| Tool | Windows | macOS, Linux, Git Bash |
+|---|---|---|
+| Claude Code | `powershell -ExecutionPolicy Bypass -File install.ps1` | `bash install.sh` |
+| GitHub Copilot | `powershell -ExecutionPolicy Bypass -File install.ps1 -Copilot` | `bash install.sh --copilot` |
 
-```bash
-python -m playwright install chromium
-```
+For Copilot, also copy `.github/agents/poster-designer.agent.md` into that project's `.github/agents/` folder.
 
-### Claude Code
+Where each tool finds things in this repository:
 
-Windows:
-
-```powershell
-powershell -ExecutionPolicy Bypass -File install.ps1
-```
-
-macOS, Linux, Git Bash:
-
-```bash
-bash install.sh
-```
-
-This copies the agent to `~/.claude/agents/` and the skill to `~/.claude/skills/poster-design/`.
-
-### GitHub Copilot
-
-**Simplest:** open this repository as the workspace in VS Code. Copilot reads the files that are already here:
-
-| File | What Copilot does with it |
+| File | Used by |
 |---|---|
-| `.github/agents/poster-designer.agent.md` | Adds **Poster Designer** to the agent list in Copilot Chat |
-| `.github/copilot-instructions.md` | Applies the poster rules to every chat in this workspace |
-| `AGENTS.md` | The same rules for Copilot CLI, the coding agent and other tools that read it |
-| `skills/poster-design/` | The skill the agent reads: process, rules, profile, template, scripts |
+| `.github/agents/poster-designer.agent.md` | GitHub Copilot: adds **Poster Designer** to the agent list |
+| `.github/copilot-instructions.md`, `AGENTS.md` | GitHub Copilot and other agents: the poster rules for this folder |
+| `.claude/agents/poster-designer.md` | Claude Code: the same agent |
+| `skills/poster-design/` | Both: process, rules, profile, template, scripts |
 
-**In your own project:** install the skill for your user, then copy the agent file across.
+What to expect in GitHub Copilot:
 
-```powershell
-powershell -ExecutionPolicy Bypass -File install.ps1 -Copilot
-```
+- **Agent mode is required** for the scripts, because they run in the terminal.
+- **Looking at the result depends on the model.** If it cannot open image files, the agent is told to say so and hand you the four images, not to pretend it looked.
+- **On a managed work machine,** installing Python packages may need approval. The Studio needs none.
 
-```bash
-bash install.sh --copilot
-```
-
-This puts the skill in `~/.copilot/skills/poster-design/`. Then copy `.github/agents/poster-designer.agent.md` into your project's `.github/agents/` folder.
-
-What to expect in Copilot:
-
-- **Agent mode is required.** The scripts run in the terminal, so Copilot has to be allowed to run commands. Plain chat and Microsoft 365 Copilot cannot run them.
-- **Looking at the result depends on the model.** The process checks four rendered images by eye. If the model in use cannot open image files, the agent is told to say so and hand you the four images and their questions instead of pretending it looked. The automated checker runs either way.
-- **Skill discovery varies by Copilot version.** The agent file does not rely on it: it finds the skill folder itself and reads `SKILL.md` directly.
-- **On a managed work machine,** installing Python packages and the Chromium engine may need approval.
-
-The Copilot files follow the locations in the VS Code documentation for [custom agents](https://code.visualstudio.com/docs/copilot/customization/custom-agents) and [agent skills](https://code.visualstudio.com/docs/copilot/customization/agent-skills). They have not yet been run inside Copilot; the scripts and rules they call are the ones tested above.
+The Copilot agent files follow the VS Code documentation for [custom agents](https://code.visualstudio.com/docs/copilot/customization/custom-agents) and [agent skills](https://code.visualstudio.com/docs/copilot/customization/agent-skills). They have not been run inside Copilot yet. The Studio, the scripts and the rules they call are tested.
 
 ## Use
 
@@ -184,24 +208,18 @@ What it is made for:
 | Town halls, team events and schedule changes for the team chat | `ig-portrait` (4:5) |
 | Recognition (with a supplied photograph and the person's consent) | `a3` or `ig-portrait` |
 
-The scripts also work on their own:
-
-```bash
-python skills/poster-design/scripts/render.py examples/lock-it/poster.html --format a3 --grid --pdf
-```
-
-```bash
-python skills/poster-design/scripts/check.py examples/lock-it/poster.html --format a3 --brief examples/lock-it/brief.json
-```
-
 Formats: `a4` `a3` `a2` `tabloid` `letter` `ig-portrait` `ig-square` `story` `landscape` `og`, or any `WIDTHxHEIGHT`. One HTML file renders at any of them, because every size in the poster is a fraction of the sheet.
 
 ## What is in the repository
 
 ```text
-agents/poster-designer.md            the agent, for Claude Code
+studio.html                          Poster Studio: brief, prompt, preview, checks, export. For any Copilot.
+copilot/PROMPT.md                    the prompt on its own
+poster.py                            one command: setup, test, new, render, check, sheet, build
+setup.bat, setup.sh                  setup and self-test in one step
+agents/poster-designer.md            the agent, for Claude Code (also in .claude/agents/)
 .github/agents/poster-designer.agent.md   the agent, for GitHub Copilot
-.github/copilot-instructions.md      poster rules for Copilot in this workspace
+.github/copilot-instructions.md      poster rules for Copilot in this folder
 AGENTS.md                            the same rules for other agents
 skills/poster-design/
   SKILL.md                           definition of done, commands, measured rules
@@ -215,10 +233,13 @@ skills/poster-design/
   scripts/render.py                  HTML to PNG and PDF, plus the four looks
   scripts/check.py                   the checker
   scripts/sheet.py                   side-by-side sheets
+  scripts/browser.py                 finds a browser: Chromium, then Edge, then Chrome
 examples/
   lock-it/                           privacy reminder, A3
   town-hall/                         town hall invitation, 4:5
   listen-first/                      call habit, 16:9, plus slop.html as a failing test case
+  hands-up/                          team building with drawn people, A3 (made by the agent itself)
+posters/                             your own posters, one folder each
 docs/                                images used on this page
 ```
 

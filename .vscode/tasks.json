@@ -1,0 +1,49 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Poster: 1 setup (run once)",
+      "type": "shell",
+      "command": "python poster.py setup",
+      "problemMatcher": []
+    },
+    {
+      "label": "Poster: 2 self-test",
+      "type": "shell",
+      "command": "python poster.py test",
+      "problemMatcher": []
+    },
+    {
+      "label": "Poster: render the open file",
+      "type": "shell",
+      "command": "python poster.py render \"${file}\" --format ${input:format} --grid --scale 1",
+      "problemMatcher": []
+    },
+    {
+      "label": "Poster: check the open file",
+      "type": "shell",
+      "command": "python poster.py check \"${file}\" --format ${input:format} --brief \"${fileDirname}/brief.json\"",
+      "problemMatcher": []
+    },
+    {
+      "label": "Poster: new poster",
+      "type": "shell",
+      "command": "python poster.py new ${input:name} --format ${input:format}",
+      "problemMatcher": []
+    }
+  ],
+  "inputs": [
+    {
+      "id": "format",
+      "type": "pickString",
+      "description": "Format",
+      "options": ["a3", "a4", "landscape", "ig-portrait", "ig-square", "story", "tabloid", "letter", "a2", "og"],
+      "default": "a3"
+    },
+    {
+      "id": "name",
+      "type": "promptString",
+      "description": "Folder name for the new poster (no spaces), for example team-day"
+    }
+  ]
+}

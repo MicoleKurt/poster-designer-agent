@@ -5,3 +5,5 @@ __pycache__/
 docs/_*_preview.jpg
 .DS_Store
 Thumbs.db
+posters/*/out/
+examples/_selftest/

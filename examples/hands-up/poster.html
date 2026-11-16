@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Team building</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<!-- Stand-ins for the brand's own typefaces (Enterprise Sans / Serif Italic) -->
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@500;700;800&family=Newsreader:ital,wght@1,500&display=swap" rel="stylesheet">
+<style>
+  /* Profile: profiles/optum-callcenter.json (unofficial).
+     Concept: "Headsets off. Hands up." is drawn, not just said. A colleague, waist up,
+     high-fives a teammate who comes in from the edge of the sheet; the hands meet on
+     the orange ring, so the one orange shape is where the eye lands.
+     The pale sky band at the foot is a write-in strip: When / Time / Where are real
+     labels with deliberate empty space under them until the facts arrive.
+
+     PHOTO SWAP: each person is its own box (.person.a, .person.b) inside .scene, whose
+     coordinates are the sheet's own u-units. To use a supplied cut-out photograph
+     (transparent PNG, waist up, one arm raised), replace the <svg> inside .person.a
+     with <img src="cutout.png" alt="">; the box's CSS already sizes and bottom-aligns
+     an img. Then move the box so the raised hand lands on the meeting point,
+     x 82u, y 38u in .scene coordinates (on the top of the ring). Ring, type and band do not move.
+     The .contact strokes sit just above that point and can stay or be deleted. */
+  :root {
+    --u: 1vmin;
+    --margin: calc(7 * var(--u)); --cols: 12; --gutter: calc(1.8 * var(--u));
+    --ground: #faf8f2; --ink: #3d3c38; --accent: #ff612b; --tint: #dff3f9; --link: #095f87;
+    --t-note: calc(2.2 * var(--u)); --t-body: calc(3.4 * var(--u)); --t-head: calc(14 * var(--u));
+    --band: calc(28 * var(--u));        /* height of the write-in strip */
+    --stage: calc(113 * var(--u));      /* height of the scene above the band */
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 100vw; height: 100vh; overflow: hidden; background: var(--ground); }
+  body { font-family: 'Figtree', sans-serif; color: var(--ink); -webkit-font-smoothing: antialiased; }
+  .poster { position: relative; width: 100vw; height: 100vh; overflow: hidden; padding: var(--margin);
+    display: grid; grid-template-columns: repeat(var(--cols), 1fr); column-gap: var(--gutter);
+    grid-template-rows: auto auto 1fr auto; }
+
+  /* ---- scene: one coordinate system in u, anchored on the band ---- */
+  .scene { position: absolute; left: 0; bottom: var(--band); width: calc(100 * var(--u)); height: var(--stage); }
+  .scene > * { position: absolute; }
+  .ring { width: calc(92 * var(--u)); aspect-ratio: 1; border-radius: 50%;
+    border: calc(13 * var(--u)) solid var(--accent); left: calc(36 * var(--u)); top: calc(34 * var(--u)); }
+  .person svg, .person img { display: block; width: 100%; height: 100%; object-fit: contain; object-position: bottom; }
+  .person.a { left: calc(40 * var(--u)); top: calc(30 * var(--u)); width: calc(50 * var(--u)); height: calc(83 * var(--u)); }
+  .person.b { left: calc(80 * var(--u)); top: calc(30 * var(--u)); width: calc(40 * var(--u)); height: calc(83 * var(--u)); }
+  .contact { left: 0; top: 0; width: 100%; height: 100%; }
+
+  .band { position: absolute; left: 0; right: 0; bottom: 0; height: var(--band); background: var(--tint); z-index: 1; }
+
+  /* ---- type ---- */
+  .kicker { grid-column: 1 / span 6; font-size: var(--t-note); font-weight: 700; letter-spacing: .12em; text-transform: uppercase; position: relative; z-index: 2; }
+  .head { grid-column: 1 / span 12; white-space: nowrap; margin-top: calc(4 * var(--u)); position: relative; z-index: 2;
+    font-size: var(--t-head); font-weight: 800; line-height: .92; letter-spacing: -.04em; }
+  .head em { font-family: 'Newsreader', serif; font-weight: 500; font-style: italic; letter-spacing: -.02em; }
+  .support { grid-column: 1 / span 4; align-self: end; margin-bottom: calc(13 * var(--u)); position: relative; z-index: 2;
+    font-size: var(--t-body); font-weight: 500; line-height: 1.32; }
+
+  .facts { grid-column: 1 / span 12; align-self: end; position: relative; z-index: 2; list-style: none;
+    display: grid; grid-template-columns: repeat(var(--cols), 1fr); column-gap: var(--gutter); }
+  .facts li { grid-column: span 4; border-top: calc(.4 * var(--u)) solid var(--ink); padding-top: calc(1.4 * var(--u));
+    height: calc(var(--band) - 14 * var(--u)); /* the gap: room for one line of facts, left empty on purpose */
+    font-size: var(--t-note); font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: var(--link); }
+
+  /* Shorter sheets (ig-portrait 4:5 for the team chat): a slimmer band, and the scene
+     scaled from its bottom-right corner so the hands stay clear of the headline. */
+  @media (min-aspect-ratio: 3/4) {
+    :root { --band: calc(24 * var(--u)); }
+    .scene { transform: scale(.86); transform-origin: 100% 100%; }
+  }
+</style>
+</head>
+<body>
+  <main class="poster">
+    <div class="band" data-decor></div>
+
+    <div class="scene" data-decor>
+      <div class="ring"></div>
+
+      <!-- Person A: the colleague we feature. Replace this svg with a cut-out photo later. -->
+      <div class="person a">
+        <svg viewBox="40 30 50 83" preserveAspectRatio="xMidYMax meet" fill="none" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M69.6 76 L75.2 61.2 L78.6 48" stroke="#3d3c38" stroke-width="5.6"/>   <!-- raised arm: shoulder, elbow, wrist -->
+          <rect x="75.8" y="37.6" width="6" height="9.4" rx="3" transform="rotate(10 78.8 42.3)" fill="#3d3c38"/>
+          <path d="M46.6 113 L46 80 C46 73.4 49.6 69.6 56 69.6 H64 C70.4 69.6 74 73.4 74 80 L73.4 113 Z" fill="#3d3c38"/>
+          <path d="M51.6 83 L52 113" stroke="#faf8f2" stroke-width="1.1"/>   <!-- the arm at rest, parted from the body -->
+          <circle cx="60" cy="58.4" r="7.2" fill="#3d3c38"/>
+          <!-- the headset, pushed down round the neck -->
+          <path d="M54.2 73.4 C54.8 80.6 65.2 80.6 65.8 73.4" stroke="#faf8f2" stroke-width="1.7"/>
+          <rect x="51.6" y="69.8" width="5" height="7.2" rx="2.5" fill="#faf8f2"/>
+          <rect x="63.4" y="69.8" width="5" height="7.2" rx="2.5" fill="#faf8f2"/>
+        </svg>
+      </div>
+
+      <!-- Person B: the teammate coming in from the edge -->
+      <div class="person b">
+        <svg viewBox="80 30 40 83" preserveAspectRatio="xMidYMax meet" fill="none" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M90.4 76 L87.4 61.2 L85.4 48" stroke="#3d3c38" stroke-width="5.6"/>
+          <rect x="82.2" y="37.6" width="6" height="9.4" rx="3" transform="rotate(-10 85.2 42.3)" fill="#3d3c38"/>
+          <path d="M87.6 113 L87 80 C87 73.4 90.6 69.6 97 69.6 H105 C111.4 69.6 115 73.4 115 80 L114.4 113 Z" fill="#3d3c38"/>
+          <circle cx="101" cy="58.4" r="7.2" fill="#3d3c38"/>
+        </svg>
+      </div>
+
+      <!-- the slap: three short strokes where the palms meet -->
+      <svg class="contact" viewBox="0 0 100 113" preserveAspectRatio="xMinYMin meet" fill="none" stroke="#3d3c38" stroke-width="1.1" stroke-linecap="round">
+        <path d="M82 33 V29.6 M77.4 34.4 L75.6 31.6 M86.6 34.4 L88.4 31.6"/>
+      </svg>
+    </div>
+
+    <p class="kicker">Team building</p>
+    <h1 class="head">Headsets off.<br><em>Hands</em> up.</h1>
+    <p class="support">Time away from the queue, with the people who share it.</p>
+
+    <ul class="facts">
+      <li>When</li>
+      <li>Time</li>
+      <li>Where</li>
+    </ul>
+  </main>
+</body>
+</html>
