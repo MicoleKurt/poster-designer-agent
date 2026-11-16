@@ -15,9 +15,11 @@ Nothing to download.
 **In a Copilot that can open links,** paste this and add your details:
 
 ```text
-Follow the instructions at https://raw.githubusercontent.com/MicoleKurt/poster-designer-agent/main/copilot/instructions.txt
-to design my poster. It is for: (what the poster is for). When: (date). Time: (time). Where: (place).
+Make my poster using https://micolekurt.github.io/poster-designer-agent/go.txt
+Team building. Friday 12 December, 3 pm, 14th floor.
 ```
+
+The first line never changes. The second line is your poster, in your own words.
 
 Copilot answers with one HTML file. Paste its reply into the Studio to check it and export a PDF or PNG.
 

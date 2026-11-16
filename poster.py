@@ -22,7 +22,11 @@ SKILL = ROOT / "skills" / "poster-design"
 SCRIPTS = SKILL / "scripts"
 EXAMPLES = [("lock-it", "a3"), ("town-hall", "ig-portrait"), ("listen-first", "landscape"), ("hands-up", "a3")]
 # the same agent, kept where each tool looks for it
-AGENT_COPIES = [(ROOT / "agents" / "poster-designer.md", ROOT / ".claude" / "agents" / "poster-designer.md")]
+AGENT_COPIES = [
+    (ROOT / "agents" / "poster-designer.md", ROOT / ".claude" / "agents" / "poster-designer.md"),
+    # the short link people paste into Copilot points at go.txt
+    (ROOT / "copilot" / "instructions.txt", ROOT / "go.txt"),
+]
 
 
 def py(*args, quiet=False):
