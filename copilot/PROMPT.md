@@ -33,14 +33,13 @@ RULES YOU MAY NOT BREAK
 4. At most 45 words on the whole sheet.
 
 THE LOOK (follow exactly)
-- Background warm white #FAF8F2. All text and drawings charcoal #3D3C38. Never pure black.
-- Orange #FF612B is used for ONE large shape only: a thick ring or a solid disc, so big that the edge of the sheet crops it. No other orange, and no orange text.
-- Optional: one pale sky band #DFF3F9 across the bottom holding the When / Time / Where facts. Small labels may use deep teal #095F87.
-- Fonts: Figtree (weights 500, 700, 800) for everything; Newsreader italic 500 for ONE word of the headline at most, in the same charcoal. Load both from Google Fonts with a <link> tag.
-- Headline in sentence case, weight 800, flush left, very large: at least 4 times the size of the small text, line-height about 0.92, letter-spacing -0.04em.
-- Flush left on a clear left margin. Do not centre everything. Leave at least a third of the sheet empty.
-- No gradients, no shadows, no glow, no rounded cards, no icons in a row.
-- Picture: People, drawn by you in inline SVG as simple solid charcoal figures with round ends (round head, plain torso, arms that attach at the shoulder), doing something that shows the message, and touching or overlapping the orange shape. Never realistic people, never a photo, never an emoji.
+- The theme is the Big O: one thick orange ring (#FF612B), so large that the edge of the sheet crops it, or one letter O of the headline drawn as that ring. It is the hero of the sheet. No other orange, and no orange text.
+- Three colours only: background warm white #FAF8F2, all text charcoal #3D3C38, the one orange. No blue, no tints, no gradients, no shadows, no glow.
+- Fonts: Figtree (weights 600, 800, 900) for everything; Newsreader italic 400 for ONE quiet sentence under the headline. Load both from Google Fonts with a <link> tag.
+- Three levels of type: the headline (weight 900, very large, line-height about 0.86, letter-spacing -0.035em); the date, time and place as plain bold lines at about 3.4 vmin; one small label. The headline is at least three times the facts.
+- Fit the headline to its width: one sentence per line, no line ending on a small joining word, no short word alone on a line.
+- Flush left, or built round the ring. Do not centre everything. Type either clears the ring by a visible gap or stands fully inside its hole.
+- No icons, no drawn people, no pictures, no pills or tags, no boxes with borders, no strip of labelled facts.
 
 HOW TO BUILD IT
 - One file. All CSS in one <style> tag. No JavaScript. No external images.
@@ -52,6 +51,6 @@ HOW TO BUILD IT
 - Check line breaks: no single short word alone on a line.
 
 YOUR REPLY
-First, three lines: three different ideas for this poster in one line each (one led by the words, one by the picture, one by the layout), then one line naming the idea you chose and why.
+First, three lines: three different ideas for this poster in one line each (three different things the ring can be or do), then one line naming the idea you chose and why.
 Then the complete HTML file in ONE code block, from <!doctype html> to </html>. Nothing after it.
 ````

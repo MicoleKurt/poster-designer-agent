@@ -4,10 +4,10 @@
   "audience": "Advocates and team leads on the customer care floor, walking past in a corridor or sitting in the break room; they know each other and the queue, not yet the event",
   "one_message": "Team building is time off the phones, with the people you share the queue with.",
   "action": "Note when and where it is, and come",
-  "format": "a3 (corridor and break room); ig-portrait for the team chat",
+  "format": "a3",
   "seen_from": "2 m in a corridor for about 3 seconds; closer in the break room; a phone in the team chat",
   "tone": "Warm, plain, a bit playful. An invitation, not a summons.",
-  "direction": "Two drawn colleagues, waist up, meet in a high five at the centre of the orange ring; the ring frames the hands. A labelled write-in strip at the foot holds the facts still to come.",
+  "direction": "One letter is the whole poster: a giant orange O leaves the sheet and the words stand in its counter",
   "must_not": [
     "an invented date, time, venue, activity, organiser or name",
     "sample or placeholder facts",
@@ -17,10 +17,14 @@
     "anything about members, patients or callers"
   ],
   "copy": {
-    "kicker": "Team building",
     "headline": "Headsets off. Hands up.",
-    "support": "Time away from the queue, with the people who share it.",
-    "facts_labels": ["When", "Time", "Where"]
+    "facts": [
+      "Team building",
+      "Time away from the queue, with the people who share it.",
+      "Friday 12 December",
+      "3 pm",
+      "14th floor"
+    ]
   },
   "copy_rank": {
     "1_stop": "Headsets off. Hands up. (with the high five in the ring)",

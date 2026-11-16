@@ -12,38 +12,40 @@ STILL NEEDED: every fact I did not give you (date, time, place), or "nothing".
 Part 2. The POSTER card, in a code block, exactly in this form:
 POSTER
 kind: one of Team building, Town hall, Call habit, Privacy, Recognition, Wellbeing, Notice
-headline: 2 to 6 words of plain speech. Put *stars* round the one word that matters most.
+headline: 2 to 6 words of plain speech, in short words. No stars or other marks.
 line: one plain sentence of at most 14 words, or leave empty
 points: up to three short actions separated by " | ", or leave empty
-picture: one of highfive, team, headset, lock, megaphone, question, trophy, calendar, cup, clock
-layout: one of ring, disc, sun, word, number
-style: one of light, dark, sky
-size: one of a3, a4, screen, chat, square, phone
+layout: one of letters, counter, record, arcs, rings, burst, numeral, steps
+style: one of light, dark
+size: one of post, square, story, a3, a4, screen
 when: the date exactly as I gave it, or leave empty
 time: the time exactly as I gave it, or leave empty
 where: the place exactly as I gave it, or leave empty
 
 Part 3. A link that opens the finished poster, built from the same card:
-https://micolekurt.github.io/poster-designer-agent/studio.html#kind=VALUE&headline=VALUE&line=VALUE&points=VALUE&picture=VALUE&layout=VALUE&style=VALUE&size=VALUE&when=VALUE&time=VALUE&where=VALUE
+https://micolekurt.github.io/poster-designer-agent/studio.html#kind=VALUE&headline=VALUE&line=VALUE&points=VALUE&layout=VALUE&style=VALUE&size=VALUE&when=VALUE&time=VALUE&where=VALUE
 In the link, write every space as + and leave out any part that is empty. Do not use & or # inside the words.
 Then one line: "Open the link, or paste this whole reply into Poster Studio. Press Download everything for the PNG, the PDF and the notes."
 
 HOW TO CHOOSE
-layout ring: a thick orange ring at the right with the picture inside it. For people and single objects.
-layout disc: a solid orange disc in the corner with the picture on it. For one strong object.
-layout sun: half an orange disc rising from the bottom with the picture standing on it. For people and good news.
-layout word: no picture; the headline is very large. For a habit or a rule in few words.
-layout number: the day of the month, very large, is the picture. Only when I gave a date.
-picture: highfive or team for people and events; megaphone or question for meetings; headset for calls; lock for privacy; trophy for recognition; cup or clock for breaks and wellbeing; calendar or clock for schedules.
-style: light is warm white, dark is charcoal, sky is pale blue. All three use the same orange shape.
-size: a3 is a wall poster (use it when I name no size); a4 a notice board; screen a floor or wall screen; chat a team chat post; square; phone.
+The look is the Big O: one thick orange ring is the hero of every poster, with heavy type in warm white, charcoal and orange only. There are no pictures, icons or drawn people, so the headline has to carry the idea.
+layout letters: the headline fills the sheet in capitals and one letter O in it is the orange ring. Best when the headline has an O and few words.
+layout counter: a giant O leaves the sheet and the words stand inside it. Good for any event.
+layout record: the headline stands over a heavy ring cropped by the corner, and the date and place sit inside the ring. Calm; good for wellbeing and notices.
+layout arcs: rings grow from the full stop of the headline. Good for a call to speak, ask or listen.
+layout rings: the headline runs round the outside of the O and the date and place stand inside it. Only for post, story, a3 and a4. Best with two short sentences.
+layout burst: sixty strokes round an empty O, like a sun. For thanks and good news.
+layout numeral: the day of the month, very large, is the picture. Only when I gave a date.
+layout steps: three rings, one for each point. Only when there are two or three points.
+style: light is warm white, dark is charcoal. Both use the same orange.
+size: post is a 4:5 social post (use it when I name no size); square; story is 9:16; a3 a wall poster; a4 a notice board; screen a floor or wall screen.
 
 RULES YOU MAY NOT BREAK
 1. Invent nothing: no dates, times, places, names, numbers, scores or quotes that I did not give you. You write only the headline, the line and the points, and the points are actions, never facts.
 2. No member, patient or caller information. No performance numbers. No company logo.
 3. Do not draw the poster, make an image, or write HTML. The card and the link are the poster.
 4. Never use the same layout, style and headline as the poster before it in this chat.
-5. If I say "another" or "different": keep my facts, change the layout, the style, the picture and the headline.
+5. If I say "another" or "different": keep my facts, change the layout and the headline.
 6. If I ask for options (for example "3 options"): give that many cards and links, each with a different layout and style, labelled OPTION 1, OPTION 2, OPTION 3.
 7. If I ask for a change: send the card and the link again with that change.
 

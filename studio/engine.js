@@ -1,339 +1,643 @@
 /* Poster engine: draws a finished poster from words and choices.
-   The layouts and pictures here are designed and checked by hand, so the result does not
-   depend on a chat assistant's drawing. An assistant (or a person) supplies only the words.
 
-   makePoster({ kind, headline, line, points[], picture, layout, format, when, time, where, tag })
-     -> one complete HTML file, in the house look.                                              */
+   The theme is the Big O: one thick orange ring is the hero of every sheet. Three colours only
+   (warm white, charcoal, orange), two typefaces, no icons, no drawn people, no label pills.
+   Every layout is built from a move found in real poster work; the notes are in designs/NOTES.md.
+   The type is measured in the browser and fitted to the sheet, so the sizes are decided here,
+   not left to a chat assistant. An assistant (or a person) supplies only the words.
+
+   makePoster({ kind, headline, line, points[], layout, style, format, when, time, where, tag })
+     -> { html, layout, style }   one complete HTML file                                        */
 (function () {
-  const INK = '#3d3c38', GROUND = '#faf8f2', ORANGE = '#ff612b'
-
-  /* ---------- pictures: solid charcoal, round ends ---------- */
-  const arm = (sx, sy, ex, ey, wx, wy) => {
-    const len = Math.hypot(wx - ex, wy - ey), dx = (wx - ex) / len, dy = (wy - ey) / len
-    const f = (v) => v.toFixed(1)
-    return `<path d="M${f(sx)} ${f(sy)} L${f(ex)} ${f(ey)} L${f(wx)} ${f(wy)}" stroke="${INK}" stroke-width="5.6" fill="none"/>`
-      + `<path d="M${f(wx + dx * 1.2)} ${f(wy + dy * 1.2)} L${f(wx + dx * 5.4)} ${f(wy + dy * 5.4)}" stroke="${INK}" stroke-width="6.9" fill="none"/>`
-  }
-  /* one standing figure: c = centre x, dy = how much shorter, arms = [elbow x, elbow y, wrist x, wrist y] from the centre */
-  const person = (c, dy, armL, armR) => {
-    const y = (v) => v + dy
-    let s = ''
-    if (armL) s += arm(c - 9.6, y(76), c + armL[0], y(armL[1]), c + armL[2], y(armL[3]))
-    if (armR) s += arm(c + 9.6, y(76), c + armR[0], y(armR[1]), c + armR[2], y(armR[3]))
-    s += `<path d="M${c - 13.4} 113 L${c - 14} ${y(80)} C${c - 14} ${y(73.4)} ${c - 10.4} ${y(69.6)} ${c - 4} ${y(69.6)} H${c + 4} C${c + 10.4} ${y(69.6)} ${c + 14} ${y(73.4)} ${c + 14} ${y(80)} L${c + 13.4} 113 Z" fill="${INK}"/>`
-    s += `<circle cx="${c}" cy="${y(58.4)}" r="7.2" fill="${INK}"/>`
-    return s
-  }
-  const headsetOn = (c, dy) => `<path d="M${c - 5.8} ${73.4 + dy} C${c - 5.2} ${80.6 + dy} ${c + 5.2} ${80.6 + dy} ${c + 5.8} ${73.4 + dy}" stroke="${GROUND}" stroke-width="1.7" fill="none"/><rect x="${c - 8.4}" y="${69.8 + dy}" width="5" height="7.2" rx="2.5" fill="${GROUND}"/><rect x="${c + 3.4}" y="${69.8 + dy}" width="5" height="7.2" rx="2.5" fill="${GROUND}"/>`
-  const sparks = (x, yy) => `<path d="M${x} ${yy} v-3.6 M${x - 4.6} ${yy + 1.4} l-1.8 -2.8 M${x + 4.6} ${yy + 1.4} l1.8 -2.8" stroke="${INK}" stroke-width="1.2" fill="none"/>`
-
-  const PICTURES = {
-    /* people stand on the band; the viewBox is in the scene's own units */
-    highfive: { stand: true, vb: '40 26 80 87', right: -20, w: 80, h: 87, name: 'High five',
-      svg: person(60, 0, null, [5.6, 61.2, 18.2, 47.6]) + headsetOn(60, 0) + `<path d="M51.6 83 L52 113" stroke="${GROUND}" stroke-width="1.1"/>`
-        + person(101, 0, [-13, 61.2, -15.4, 47.6], null) + sparks(82.3, 33.6) },
-    team: { stand: true, vb: '22 26 88 87', right: -2, w: 64, h: 63.3, name: 'Team of three',
-      svg: person(45, 6, [-15, 62, -17.6, 48], null) + person(87, 6, null, [15, 62, 17.6, 48])
-        + `<g stroke="${GROUND}" stroke-width="1.6" paint-order="stroke">` + person(66, 0, [-13.6, 61, -12.6, 46], [13.6, 61, 12.6, 46]) + `</g>`
-        + headsetOn(66, 0) + sparks(66, 31.6) },
-    headset: { vb: '0 0 200 200', name: 'Headset',
-      svg: `<path d="M38 118 V98 a62 62 0 0 1 124 0 v20" fill="none" stroke="${INK}" stroke-width="14"/><rect x="22" y="104" width="32" height="54" rx="15" fill="${INK}"/><rect x="146" y="104" width="32" height="54" rx="15" fill="${INK}"/><path d="M163 156 v8 a28 28 0 0 1 -28 28 h-20" fill="none" stroke="${INK}" stroke-width="10"/><rect x="92" y="183" width="26" height="15" rx="7.5" fill="${INK}"/>` },
-    lock: { vb: '-20 -4 240 248', name: 'Padlock',
-      svg: `<path d="M52 108 V78 a48 48 0 0 1 96 0 v30" fill="none" stroke="${INK}" stroke-width="22"/><rect x="18" y="104" width="164" height="128" rx="26" fill="${INK}"/><circle cx="100" cy="158" r="15" fill="${ORANGE}"/><rect x="92" y="160" width="16" height="38" rx="8" fill="${ORANGE}"/>` },
-    megaphone: { vb: '0 0 200 200', name: 'Megaphone',
-      svg: `<g transform="rotate(-14 100 100)"><rect x="54" y="112" width="22" height="56" rx="10" fill="${INK}"/><path d="M36 84 h34 l72 -38 v108 l-72 -38 h-34 z" fill="${INK}" stroke="${INK}" stroke-width="10" stroke-linejoin="round"/><rect x="140" y="34" width="15" height="132" rx="7.5" fill="${INK}"/><path d="M172 80 q13 20 0 40 M186 64 q24 36 0 72" fill="none" stroke="${INK}" stroke-width="8"/></g>` },
-    question: { vb: '0 0 200 200', name: 'Question mark',
-      svg: `<text x="104" y="176" text-anchor="middle" font-family="Newsreader, Georgia, serif" font-style="italic" font-weight="500" font-size="232" fill="${INK}">?</text>` },
-    trophy: { vb: '0 0 200 200', name: 'Trophy',
-      svg: `<path d="M62 50 h-15 c-4 27 7 41 22 45 M138 50 h15 c4 27 -7 41 -22 45" fill="none" stroke="${INK}" stroke-width="9"/><path d="M60 36 h80 v42 c0 29 -17 47 -40 47 s-40 -18 -40 -47 z" fill="${INK}"/><rect x="52" y="27" width="96" height="15" rx="7.5" fill="${INK}"/><rect x="91" y="120" width="18" height="30" fill="${INK}"/><rect x="66" y="146" width="68" height="20" rx="8" fill="${INK}"/><rect x="54" y="163" width="92" height="16" rx="7" fill="${INK}"/><path d="M100 57 L103.7 66.9 L114.3 67.4 L106 73.9 L108.8 84.1 L100 78.3 L91.2 84.1 L94 73.9 L85.7 67.4 L96.3 66.9 Z" fill="${GROUND}"/>` },
-    calendar: { vb: '0 0 200 200', name: 'Calendar',
-      svg: `<rect x="30" y="44" width="140" height="134" rx="20" fill="${INK}"/><rect x="60" y="24" width="16" height="40" rx="8" fill="${INK}" stroke="${GROUND}" stroke-width="4"/><rect x="124" y="24" width="16" height="40" rx="8" fill="${INK}" stroke="${GROUND}" stroke-width="4"/><rect x="45" y="86" width="110" height="78" rx="9" fill="${GROUND}"/><g fill="${INK}"><circle cx="68" cy="108" r="7.5"/><circle cx="100" cy="108" r="7.5"/><circle cx="132" cy="108" r="7.5"/><circle cx="68" cy="140" r="7.5"/><circle cx="100" cy="140" r="7.5"/></g><path d="M122 140 l7.5 7.5 l13 -15" fill="none" stroke="${INK}" stroke-width="6.5"/>` },
-    cup: { vb: '0 0 200 200', name: 'Cup',
-      svg: `<path d="M76 26 q-9 12 0 24 t0 24 M100 20 q-9 13 0 26 t0 26 M124 26 q-9 12 0 24 t0 24" fill="none" stroke="${INK}" stroke-width="7"/><path d="M146 106 h12 c20 0 20 46 0 46 h-14" fill="none" stroke="${INK}" stroke-width="11"/><path d="M48 92 h100 v46 c0 28 -19 42 -50 42 s-50 -14 -50 -42 z" fill="${INK}"/><rect x="36" y="182" width="124" height="11" rx="5.5" fill="${INK}"/>` },
-    clock: { vb: '0 0 200 200', name: 'Clock',
-      svg: `<circle cx="100" cy="104" r="84" fill="${INK}"/><circle cx="100" cy="104" r="64" fill="${GROUND}"/><path d="M100 104 V60 M100 104 L130 121" fill="none" stroke="${INK}" stroke-width="10"/><circle cx="100" cy="104" r="8" fill="${INK}"/><rect x="88" y="6" width="24" height="18" rx="6" fill="${INK}"/>` },
-  }
-
-  const KINDS = {
-    'Team building': { tag: 'Team building', pictures: ['highfive', 'team'], layouts: ['ring', 'split', 'sun', 'badge', 'arc', 'column', 'disc'] },
-    'Town hall': { tag: 'Town hall', pictures: ['megaphone', 'question', 'team'], layouts: ['ring', 'number', 'arc', 'split', 'column', 'disc', 'badge'] },
-    'Call habit': { tag: 'Every call', pictures: ['headset'], layouts: ['disc', 'steps', 'split', 'word', 'ring', 'column', 'arc'] },
-    Privacy: { tag: 'Privacy', pictures: ['lock'], layouts: ['disc', 'steps', 'badge', 'split', 'ring', 'arc', 'word'] },
-    Recognition: { tag: 'Recognition', pictures: ['trophy', 'highfive'], layouts: ['badge', 'sun', 'split', 'ring', 'arc', 'disc'] },
-    Wellbeing: { tag: 'Wellbeing', pictures: ['cup', 'clock'], layouts: ['ring', 'split', 'badge', 'arc', 'disc', 'sun', 'column'] },
-    Notice: { tag: 'Notice', pictures: ['calendar', 'clock', 'megaphone'], layouts: ['disc', 'number', 'column', 'split', 'arc', 'ring', 'steps'] },
-  }
-  /* each style gives every colour a job; the orange shape never changes */
+  'use strict'
+  const PAPER = '#faf8f2', INK = '#3d3c38', ORANGE = '#ff612b'
   const STYLES = {
-    light: { name: 'Light', ground: GROUND, ink: INK, tint: '#dff3f9', link: '#095f87', band: '#dff3f9', bandInk: INK, bandLink: '#095f87' },
-    dark: { name: 'Dark', ground: INK, ink: GROUND, tint: '#55534d', link: '#a9dcec', band: '#dff3f9', bandInk: INK, bandLink: '#095f87' },
-    sky: { name: 'Sky', ground: '#dff3f9', ink: INK, tint: GROUND, link: '#095f87', band: GROUND, bandInk: INK, bandLink: '#095f87' },
+    light: { name: 'Warm white', ground: PAPER, ink: INK },
+    dark: { name: 'Charcoal', ground: INK, ink: PAPER },
   }
-  const LAYOUTS = { ring: 'Ring right', disc: 'Corner disc', sun: 'Rising disc', word: 'Big word', number: 'Big number',
-    split: 'Split panel', column: 'Side column', badge: 'Centre badge', steps: 'Numbered steps', arc: 'Corner arc' }
+  const LAYOUTS = {
+    letters: 'The O in the headline', counter: 'Inside the O', record: 'Headline over the O', arcs: 'Rings from the full stop',
+    numeral: 'The date as the picture', rings: 'Words round the O', burst: 'Burst', steps: 'Three rings',
+  }
+  const KINDS = {
+    'Team building': { tag: 'Team building', layouts: ['counter', 'rings', 'letters', 'burst', 'record', 'arcs', 'numeral', 'steps'] },
+    'Town hall': { tag: 'Town hall', layouts: ['numeral', 'arcs', 'counter', 'letters', 'record', 'rings', 'burst', 'steps'] },
+    'Call habit': { tag: 'Every call', layouts: ['steps', 'letters', 'record', 'counter', 'arcs', 'burst', 'rings', 'numeral'] },
+    Privacy: { tag: 'Privacy', layouts: ['letters', 'steps', 'record', 'counter', 'arcs', 'burst', 'rings', 'numeral'] },
+    Recognition: { tag: 'Recognition', layouts: ['burst', 'counter', 'letters', 'record', 'rings', 'arcs', 'numeral', 'steps'] },
+    Wellbeing: { tag: 'Wellbeing', layouts: ['record', 'counter', 'burst', 'letters', 'arcs', 'rings', 'steps', 'numeral'] },
+    Notice: { tag: 'Notice', layouts: ['numeral', 'letters', 'record', 'counter', 'arcs', 'steps', 'burst', 'rings'] },
+  }
   const FORMATS = { a3: [1123, 1587], a4: [794, 1123], landscape: [1920, 1080], 'ig-portrait': [1080, 1350], 'ig-square': [1080, 1080], story: [1080, 1920] }
 
   const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+  const clamp = (v, a, b) => Math.max(a, Math.min(b, v))
+  const n2 = (v) => (Math.round(v * 1000) / 1000).toString()
+  const at = (x, y) => `left:calc(${n2(x)}*var(--u));top:calc(${n2(y)}*var(--u))`
+  const size = (fs) => `font-size:calc(${n2(fs)}*var(--u))`
 
-  /* headline into lines: sentences first, then by words to a width */
-  function breakLines(text, max) {
-    const out = []
-    for (const sentence of text.trim().split(/(?<=[.!?])\s+/)) {
-      let line = ''
-      for (const w of sentence.split(/\s+/)) {
-        if (line && (line + ' ' + w).replace(/\*/g, '').length > max) { out.push(line); line = w } else line = line ? line + ' ' + w : w
-      }
-      if (line) out.push(line)
+  /* ---------- measuring type (in em) ---------- */
+  let c2d = null
+  const cache = new Map()
+  function meas(text, weight, o) {
+    o = o || {}
+    const key = weight + (o.italic ? 'i' : '') + (o.serif ? 's' : '') + '|' + text
+    let m = cache.get(key)
+    if (!m) {
+      if (!c2d) c2d = document.createElement('canvas').getContext('2d')
+      c2d.font = (o.italic ? 'italic ' : '') + weight + ' 200px ' + (o.serif ? "Newsreader, Georgia, serif" : "Figtree, 'Segoe UI', Arial, sans-serif")
+      const t = c2d.measureText(text)
+      m = { w: t.width / 200, asc: t.actualBoundingBoxAscent / 200, desc: t.actualBoundingBoxDescent / 200,
+        left: -t.actualBoundingBoxLeft / 200, right: t.actualBoundingBoxRight / 200,
+        fa: (t.fontBoundingBoxAscent || 190) / 200, fd: (t.fontBoundingBoxDescent || 50) / 200 }
+      cache.set(key, m)
     }
-    // never leave one short word alone on the last line
-    if (out.length > 1 && out[out.length - 1].replace(/\*/g, '').length <= 3) { const last = out.pop(); out[out.length - 1] += ' ' + last }
+    return o.ls ? Object.assign({}, m, { w: m.w + o.ls * text.length }) : m
+  }
+  /* where the baseline sits in a line box of height lh (em), from the top of the box */
+  const baseOf = (lh, weight, o) => { const f = meas('H', weight, o); return (lh - (f.fa + f.fd)) / 2 + f.fa }
+  function ready() {
+    if (!document.fonts || !document.fonts.load) return Promise.resolve()
+    const need = ['900 40px Figtree', '800 40px Figtree', '700 40px Figtree', '600 40px Figtree', 'italic 400 40px Newsreader']
+    return Promise.all(need.map((f) => document.fonts.load(f).catch(() => {}))).then(() => { cache.clear() })
+  }
+
+  /* ---------- breaking text ---------- */
+  function wrapPlain(text, maxW, fs, weight, o, upper) {
+    const out = []
+    let line = ''
+    for (const w of String(text).trim().split(/\s+/)) {
+      const t = line ? line + ' ' + w : w
+      if (line && meas(upper ? t.toUpperCase() : t, weight, o).w * fs > maxW) { out.push(line); line = w } else line = t
+    }
+    if (line) out.push(line)
     return out
   }
-  const emph = (line) => esc(line).replace(/\*([^*]+)\*/g, '<em>$1</em>')
+  /* the same number of lines as a plain wrap, but as even as they can be: no short last line */
+  function wrap(text, maxW, fs, weight, o, upper) {
+    let out = wrapPlain(text, maxW, fs, weight, o, upper)
+    if (out.length < 2) return out
+    let lo = maxW * 0.4, hi = maxW
+    for (let i = 0; i < 12; i++) {
+      const mid = (lo + hi) / 2
+      const t = wrapPlain(text, mid, fs, weight, o, upper)
+      if (t.length <= out.length && t.every((l) => meas(upper ? l.toUpperCase() : l, weight, o).w * fs <= maxW)) { out = t; hi = mid } else lo = mid
+    }
+    return out
+  }
+  /* every way of setting the words on up to maxLines lines, in order */
+  function partitions(words, maxLines) {
+    const n = words.length, out = []
+    if (n > 10) {
+      const seen = new Set()
+      for (let chars = 5; chars <= 34; chars++) {
+        const lines = []
+        let cur = ''
+        for (const w of words) { if (cur && (cur + ' ' + w).length > chars) { lines.push(cur); cur = w } else cur = cur ? cur + ' ' + w : w }
+        lines.push(cur)
+        const k = lines.join('|')
+        if (lines.length <= maxLines && !seen.has(k)) { seen.add(k); out.push(lines) }
+      }
+      if (!out.length) out.push([words.join(' ')])
+      return out
+    }
+    for (let mask = 0; mask < (1 << (n - 1)); mask++) {
+      const lines = []
+      let cur = [words[0]]
+      for (let i = 1; i < n; i++) { if (mask & (1 << (i - 1))) { lines.push(cur.join(' ')); cur = [words[i]] } else cur.push(words[i]) }
+      lines.push(cur.join(' '))
+      if (lines.length <= maxLines) out.push(lines)
+    }
+    return out
+  }
+  const WEAK = /^(a|an|the|to|of|in|on|at|for|with|and|or|your|our|my|from|by)$/i
+  function breakPenalty(lines) {
+    let p = 1
+    for (let i = 0; i < lines.length - 1; i++) if (WEAK.test(lines[i].split(' ').pop().replace(/[^\w]/g, ''))) p *= 0.86   // a line never ends on a joining word
+    for (const l of lines) if (/[.!?]\s+\S/.test(l)) p *= 0.84                                                              // one sentence per line
+    if (lines.length > 1 && lines[lines.length - 1].replace(/[^\w]/g, '').length <= 2) p *= 0.86                            // no stranded particle
+    if (lines.length > 1 && lines.every((l) => /[.!?]$/.test(l))) p *= 1.14                                                  // each line a whole sentence
+    for (let i = 0; i < lines.length - 1; i++) {                                                                             // a two-word sentence is never split
+      const a = lines[i].split(' '), b = lines[i + 1].split(' ')
+      if (!/[.!?]$/.test(lines[i]) && a.length === 1 && /[.!?]$/.test(b[0]) && (i === 0 || /[.!?]$/.test(lines[i - 1]))) p *= 0.9
+    }
+    return p
+  }
+  /* the largest setting of the headline that fits a box */
+  function fitHead(head, o) {
+    const words = (o.upper ? head.toUpperCase() : head).split(/\s+/).filter(Boolean)
+    let best = null
+    for (const lines of partitions(words, o.maxLines || 4)) {
+      const ws = lines.map((l) => meas(l, o.weight, { ls: o.ls }).w)
+      const wmax = Math.max.apply(null, ws), wmin = Math.min.apply(null, ws)
+      const fs = Math.min(o.cap, o.maxW / wmax, o.maxH / (lines.length * o.lh))
+      const score = fs * breakPenalty(lines) * (0.84 + 0.16 * wmin / wmax)
+      if (!best || score > best.score) best = { lines, ws, fs, score }
+    }
+    best.h = best.lines.length * o.lh * best.fs
+    best.w = Math.max.apply(null, best.ws) * best.fs
+    return best
+  }
+  const headHtml = (h, lh, style, extra) => `<h1 class="head" style="${style};${size(h.fs)};line-height:${lh}">${h.lines.map((l, i) => `<span class="l">${esc(l)}${extra && i === h.lines.length - 1 ? extra : ''}</span>`).join('')}</h1>`
 
+  /* ---------- the smaller text: facts in bold, the line in serif italic, points, the label ---------- */
+  const TIER = {
+    fact: { cls: 'fact', w: 800, fs: 3.4, lh: 1.2, o: { ls: -0.012 } },
+    say: { cls: 'say', w: 400, fs: 3, lh: 1.18, o: { serif: true, italic: true } },
+    point: { cls: 'pt', w: 600, fs: 2.7, lh: 1.26, o: {} },
+    kick: { cls: 'kick', w: 700, fs: 1.55, lh: 1.2, o: { ls: 0.14 }, upper: true },
+  }
+  function stack(c, maxW, k, order, o) {
+    o = o || {}
+    const groups = []
+    for (const key of order) {
+      const t = TIER[(o.as && o.as[key]) || key]
+      const fs = t.fs * (key === 'kick' ? 1 : k) * ((o.scale && o.scale[key]) || 1)
+      const lay = (text) => (key === 'fact' && o.oneLine) ? [text] : wrap(text, maxW, fs, t.w, t.o, t.upper)
+      if (key === 'fact' && c.facts.length) groups.push({ t, fs, lines: [].concat.apply([], c.facts.map(lay)), gap: 2.2 })
+      if (key === 'say' && c.say) groups.push({ t, fs, lines: lay(c.say), gap: 2.2 })
+      if (key === 'point') c.points.forEach((p, i) => groups.push({ t, fs, lines: lay(p), gap: i ? 0.9 : 2.2 }))
+      if (key === 'kick' && c.tag) groups.push({ t, fs, lines: [c.tag], gap: 2.4 })
+    }
+    let y = 0, w = 0
+    const rows = [], html = []
+    groups.forEach((g, gi) => {
+      const gap = gi ? g.gap * Math.max(1, k * 0.85) : 0
+      y += gap
+      html.push(`<p class="${g.t.cls}" style="${size(g.fs)}${gi ? `;margin-top:calc(${n2(gap)}*var(--u))` : ''}">${g.lines.map((l) => `<span class="l">${esc(l)}</span>`).join('')}</p>`)
+      for (const l of g.lines) {
+        const lw = meas(g.t.upper ? l.toUpperCase() : l, g.t.w, g.t.o).w * g.fs
+        rows.push({ y, h: g.fs * g.t.lh, w: lw })
+        w = Math.max(w, lw)
+        y += g.fs * g.t.lh
+      }
+    })
+    return { html: html.join(''), w, h: y, rows }
+  }
+  const block = (b, x, y, cls) => b.h ? `<div class="info${cls ? ' ' + cls : ''}" style="${at(x, y)}">${b.html}</div>` : ''
+
+  /* where a stack of rows fits inside a circle and the sheet margins: flush left, or centred on the circle */
+  function tuck(c, rows, total, circ, rad, centred) {
+    const lo = Math.max(circ.cy - rad, c.m), hi = Math.min(circ.cy + rad, c.H - c.m)
+    const want = (lo + hi) / 2 - total / 2
+    let best = null
+    for (let yT = lo; yT + total <= hi + 1e-6; yT += 0.5) {
+      let L = -1e9, R = 1e9, ok = true
+      for (const r of rows) {
+        const ya = yT + r.y, yb = ya + r.h
+        const dy = Math.max(Math.abs(ya - circ.cy), Math.abs(yb - circ.cy))
+        if (dy >= rad) { ok = false; break }
+        const hw = Math.sqrt(rad * rad - dy * dy)
+        if (centred) { if (r.w / 2 > Math.min(hw, c.W - c.m - circ.cx, circ.cx - c.m)) { ok = false; break } }
+        else { L = Math.max(L, circ.cx - hw, c.m); R = Math.min(R, Math.min(circ.cx + hw, c.W - c.m) - r.w) }
+      }
+      if (!ok || (!centred && L > R)) continue
+      const d = Math.abs(yT - want)
+      if (!best || d < best.d) best = { y: yT, x: centred ? circ.cx : L + (R - L) * 0.4, d }
+    }
+    return best
+  }
+  /* the largest scale at which a stack fits a circle */
+  function tuckStack(c, circ, rad, order, maxW, kMin, kMax, centred, o) {
+    let lo = kMin, hi = kMax, got = null
+    for (let i = 0; i < 9; i++) {
+      const k = (lo + hi) / 2
+      const b = stack(c, maxW, k, order, o)
+      const p = b.h ? tuck(c, b.rows, b.h, circ, rad, centred) : null
+      if (p) { got = { b, p, k }; lo = k } else hi = k
+    }
+    if (!got) { const b = stack(c, maxW, kMin, order, o); const p = b.h ? tuck(c, b.rows, b.h, circ, rad, centred) : null; if (p) got = { b, p, k: kMin } }
+    return got
+  }
+  const ringDiv = (cx, cy, R, band, extra) => `<div class="ring" data-decor style="${at(cx - R, cy - R)};width:calc(${n2(2 * R)}*var(--u));height:calc(${n2(2 * R)}*var(--u));border-width:calc(${n2(band)}*var(--u))${extra || ''}"></div>`
+
+  /* ================= layouts ================= */
+
+  /* 1. The headline is the sheet: capitals fitted line by line to the full width, and one O is the orange ring */
+  function letters(c) {
+    const ls = -0.01, g = 2.2, top = 2.8
+    const cap = meas('H', 900).asc
+    const hasFoot = c.facts.length || c.say || c.points.length || c.tag
+    const colW = (c.W - 2 * c.m - 5) / 2
+    const footA = (k) => { let b = null; for (let i = 0; i < 6; i++) { b = stack(c, colW, k, c.facts.length ? ['fact'] : ['point'], { as: { point: 'fact' }, oneLine: true }); if (b.w <= colW) break; k *= 0.92 } return b }
+    const A = footA(c.land ? 1.1 : 1)
+    const B = stack(c, colW, 1, c.facts.length ? ['kick', 'say', 'point'] : ['kick', 'say'])
+    const fh = Math.max(A.h, B.h)
+    const room = (hasFoot ? c.H - c.m - fh - 4.5 : c.H - top) - top
+    const words = c.head.toUpperCase().split(/\s+/).filter(Boolean)
+    let best = null
+    for (const lines of partitions(words, 7)) {
+      const fss = lines.map((l) => c.W / (meas(l, 900, { ls }).w - 0.1))
+      const total = fss.reduce((s, f) => s + f * cap, 0) + g * (lines.length - 1)
+      const big = Math.max.apply(null, fss), small = Math.min.apply(null, fss)
+      const score = (total <= room ? total / room : (room / total) * 0.55) * breakPenalty(lines) * (big / small > 3.4 ? 0.72 : 1) * (big > 64 ? 0.7 : 1)
+      if (!best || score > best.score) best = { lines, fss, total, score }
+    }
+    const k = best.total > room ? room / best.total : 1
+    const spare = room - best.total * k
+    if (spare > 10 && hasFoot) {
+      const kf = clamp(1 + spare / 55, 1, 1.7)
+      const A2 = footA((c.land ? 1.1 : 1) * kf)
+      const B2 = stack(c, colW, kf, c.facts.length ? ['kick', 'say', 'point'] : ['kick', 'say'])
+      if (Math.max(A2.h, B2.h) - fh < spare - 6) { A.html = A2.html; A.h = A2.h; B.html = B2.html; B.h = B2.h }
+    }
+    const base = baseOf(1, 900)
+    /* the mark: the first O of the largest line that has one; if there is no O, the last full stop */
+    let mark = null
+    best.lines.forEach((l, i) => { const j = l.indexOf('O'); if (j >= 0 && (!mark || best.fss[i] > best.fss[mark.i] + 0.01)) mark = { i, j, ch: 'O' } })
+    if (!mark) { const i = best.lines.length - 1, j = best.lines[i].lastIndexOf('.'); if (j >= 0) mark = { i, j, ch: '.' } }
+    const src = c.head.split(/\s+/).filter(Boolean)
+    let used = 0, y = top
+    const spans = best.lines.map((l, i) => {
+      const fs = best.fss[i] * k
+      const count = l.split(' ').length
+      const text = src.slice(used, used + count).join(' ')
+      used += count
+      let over = ''
+      if (mark && mark.i === i) {
+        const G = meas(mark.ch, 900)
+        const ox = meas(l.slice(0, mark.j) + mark.ch, 900, { ls }).w - meas(mark.ch, 900, { ls }).w
+        const d = G.asc + G.desc, inkW = G.right - G.left
+        const cx = ox + (G.left + G.right) / 2
+        over = `<i class="cover" data-decor style="left:${n2(ox + G.left - 0.006)}em;top:${n2(base - G.asc - 0.006)}em;width:${n2(inkW + 0.012)}em;height:${n2(d + 0.012)}em"></i>`
+          + (mark.ch === 'O'
+            ? `<i class="o" data-decor style="left:${n2(cx - d / 2)}em;top:${n2(base - G.asc)}em;width:${n2(d)}em;height:${n2(d)}em"></i>`
+            : `<i class="o dot" data-decor style="left:${n2(cx - inkW / 2)}em;top:${n2(base - G.asc)}em;width:${n2(inkW)}em;height:${n2(inkW)}em"></i>`)
+      }
+      const s = `<span class="ln" style="${at(-0.05 * fs, y - (base - cap) * fs)};${size(fs)}">${esc(text)}${over}</span>`
+      y += cap * fs + g
+      return s
+    })
+    const css = `.caps{left:0;top:0;font-weight:900;text-transform:uppercase;letter-spacing:${ls}em}
+.ln{position:absolute;display:block;white-space:nowrap;line-height:1}
+.cover{position:absolute;background:var(--paper)}
+.o{position:absolute;box-sizing:border-box;border-radius:50%;border:.19em solid var(--orange)}
+.o.dot{border:0;background:var(--orange)}`
+    const body = `<h1 class="caps" data-bleed>${spans.join('')}</h1>${block(A, c.m, c.H - c.m - A.h)}${block(B, A.h ? c.m + colW + 5 : c.m, c.H - c.m - B.h)}`
+    return { css, body }
+  }
+
+  /* 2. One letter is the whole poster: a giant O leaves the sheet, and the words stand in its counter */
+  function counter(c) {
+    const g = c.land ? { r: 43, R: 80, cx: c.W - 56, cy: 54 }
+      : c.H > 160 ? { r: 56, R: 100, cx: 62, cy: c.H - 48 }
+        : c.H > 130 ? { r: 50, R: 90, cx: 61, cy: c.H - 40.3 }
+          : c.H > 105 ? { r: 50, R: 95, cx: 61, cy: c.H - 40.3 }
+            : { r: 45, R: 88, cx: 57, cy: 57 }
+    const rad = g.r - 3.4
+    const kickIn = Math.hypot(g.cx - c.m, g.cy - c.m) < g.R + 4
+    const kickW = c.tag ? meas(c.tag.toUpperCase(), 700, { ls: 0.14 }).w * 1.55 : 0
+    const info = stack(c, Math.min(g.r * 1.3, 46), 1, ['fact', 'say', 'point'])
+    const lh = 0.86
+    function rowsFor(ws, hs) {
+      const rows = []
+      let y = 0
+      if (kickIn && c.tag) { rows.push({ y, h: 1.9, w: kickW }); y += 1.9 + 2.6 }
+      const headY = y
+      ws.forEach((w) => { rows.push({ y: y + 0.07 * hs, h: 0.75 * hs, w: w * hs }); y += lh * hs })
+      let infoY = y
+      if (info.h) { y += 2.4; infoY = y; info.rows.forEach((r) => rows.push({ y: y + r.y, h: r.h, w: r.w })); y += info.h }
+      return { rows, total: y, headY, infoY }
+    }
+    let best = null
+    for (const lines of partitions(c.head.split(/\s+/).filter(Boolean), 5)) {
+      const ws = lines.map((l) => meas(l, 900, { ls: -0.035 }).w)
+      let lo = 4, hi = 30, got = null
+      for (let i = 0; i < 11; i++) {
+        const hs = (lo + hi) / 2
+        const R = rowsFor(ws, hs)
+        const p = tuck(c, R.rows, R.total, g, rad, false)
+        if (p) { got = { hs, p, R }; lo = hs } else hi = hs
+      }
+      if (!got) continue
+      const score = got.hs * breakPenalty(lines) * (0.84 + 0.16 * Math.min.apply(null, ws) / Math.max.apply(null, ws))
+      if (!best || score > best.score) best = Object.assign({ lines, score }, got)
+    }
+    if (!best) return record(c)
+    const x = best.p.x, y0 = best.p.y
+    const css = `.ring{border-radius:50%;border-style:solid;border-color:var(--orange)}`
+    const body = ringDiv(g.cx, g.cy, g.R, g.R - g.r)
+      + (c.tag ? `<p class="kick" style="${kickIn ? at(x, y0) : at(c.m, c.m)};${size(1.55)}">${esc(c.tag)}</p>` : '')
+      + headHtml({ lines: best.lines, fs: best.hs }, lh, at(x - 0.045 * best.hs, y0 + best.R.headY))
+      + block(info, x, y0 + best.R.infoY)
+    return { css, body }
+  }
+
+  /* 3. A heavy ring cropped by two edges; the headline stands over it and the facts sit in its counter */
+  function record(c) {
+    const m = c.m, lh = 0.86
+    const kickH = c.tag ? 4.8 : 0
+    let hz, maxW, R, cx, cy
+    if (c.land) { R = 60; cx = c.W - 40; cy = 58; maxW = cx - R - 4 - m; hz = c.H - 2 * m } else { hz = clamp(0.36 * c.H, 30, 64); maxW = c.W - 2 * m }
+    const sayB = stack(c, Math.min(maxW, 62), (c.land ? 1.1 : 1) * (c.facts.length || c.points.length ? 1 : 1.35), ['say'])
+    const sayH = sayB.h ? sayB.h + 2.4 : 0
+    const head = fitHead(c.head, { maxW, maxH: (c.land ? 0.66 * c.H : hz) - kickH - sayH, lh, weight: 900, ls: -0.035, cap: 26, maxLines: 4 })
+    const headTop = m + kickH
+    const textBottom = headTop + head.h + sayH
+    if (!c.land) { R = Math.min((c.H - textBottom - 3.5) / 1.5, 0.72 * c.W); cx = c.W - 0.55 * R; cy = c.H - 0.5 * R }
+    const band = 0.42 * R, r = R - band
+    let inside = tuckStack(c, { cx, cy }, r - 3, ['fact', 'point'], 1e6, 0.7, 1.7, false, { oneLine: true })
+    if (!inside || inside.k < 1) { const alt = tuckStack(c, { cx, cy }, r - 3, ['fact', 'point'], r * 1.35, 0.7, 1.7, false, { oneLine: true }); if (alt && (!inside || alt.k > inside.k)) inside = alt }
+    const css = `.ring{border-radius:50%;border-style:solid;border-color:var(--orange)}`
+    const body = ringDiv(cx, cy, R, band)
+      + (c.tag ? `<p class="kick" style="${at(m, m)};${size(1.55)}">${esc(c.tag)}</p>` : '')
+      + headHtml(head, lh, at(m - 0.045 * head.fs, headTop - (baseOf(lh, 900) - meas('H', 900).asc) * head.fs * 0.5))
+      + block(sayB, m, headTop + head.h + 2.4)
+      + (inside ? block(inside.b, inside.p.x, inside.p.y) : '')
+    return { css, body }
+  }
+
+  /* 4. Rings grow from the full stop of the headline and open round the words */
+  function arcs(c) {
+    const m = c.m, lh = 0.9
+    const maxW = c.land ? 0.36 * c.W : 0.6 * c.W
+    const text = c.head.replace(/[.!]\s*$/, '')
+    const head = fitHead(text, { maxW: maxW - 0.5, maxH: c.land ? 0.5 * c.H : 0.34 * c.H, lh, weight: 800, ls: -0.035, cap: 13.5, maxLines: 4 })
+    const fs = head.fs
+    const info = stack(c, maxW, 1, ['say', 'fact', 'kick'])
+    const total = head.h + (info.h ? 2.8 + info.h : 0)
+    const base = baseOf(lh, 800)
+    const lastTop = (head.lines.length - 1) * lh * fs
+    const sr = 0.15 * fs                                               // the stop: a disc on the baseline
+    const top = clamp((c.land ? 0.5 : 0.52) * c.H - (lastTop + base * fs - sr), m, c.H - m - total)
+    const sx = m + head.ws[head.ws.length - 1] * fs + 0.06 * fs + sr, sy = top + lastTop + base * fs - sr
+    /* what the rings must stay clear of: every line of type */
+    const rects = head.lines.map((l, i) => ({ x1: m - 2, x2: m + head.ws[i] * fs, y1: top + i * lh * fs + 0.04 * fs, y2: top + (i + 1) * lh * fs - 0.02 * fs }))
+    rects[rects.length - 1].x2 = sx - sr - 0.02 * fs
+    if (info.h) info.rows.forEach((r) => rects.push({ x1: m - 2, x2: m + r.w, y1: top + head.h + 2.8 + r.y, y2: top + head.h + 2.8 + r.y + r.h }))
+    const dist = (px, py, q) => Math.hypot(Math.max(q.x1 - px, 0, px - q.x2), Math.max(q.y1 - py, 0, py - q.y2))
+    const far = Math.max(Math.hypot(sx, sy), Math.hypot(c.W - sx, sy), Math.hypot(sx, c.H - sy), Math.hypot(c.W - sx, c.H - sy))
+    const paths = []
+    for (let k = 0, rho = 3.4 * sr; rho * 0.8 < far && k < 9; k++, rho *= 2) {
+      const sw = 0.4 * rho, clear = sw / 2 + 1.3
+      const free = []
+      for (let a = 0; a < 720; a++) {
+        const t = (a / 2) * Math.PI / 180
+        const px = sx + rho * Math.cos(t), py = sy + rho * Math.sin(t)
+        free.push(rects.every((q) => dist(px, py, q) >= clear))
+      }
+      if (free.every(Boolean)) { paths.push(`<circle cx="${n2(sx)}" cy="${n2(sy)}" r="${n2(rho)}" stroke-width="${n2(sw)}"/>`); continue }
+      const start = free.findIndex((f, i) => f && !free[(i + 719) % 720])
+      if (start < 0) continue
+      let longest = null
+      for (let i = 0; i < 720;) {
+        const a = (start + i) % 720
+        if (!free[a]) { i++; continue }
+        let len = 0
+        while (len < 720 && free[(a + len) % 720]) len++
+        if (!longest || len > longest.len) longest = { a, len }
+        i += len
+      }
+      if (longest && longest.len > 40) {
+        const t1 = (longest.a / 2) * Math.PI / 180, t2 = ((longest.a + longest.len - 1) / 2) * Math.PI / 180
+        paths.push(`<path d="M${n2(sx + rho * Math.cos(t1))} ${n2(sy + rho * Math.sin(t1))}A${n2(rho)} ${n2(rho)} 0 ${longest.len > 360 ? 1 : 0} 1 ${n2(sx + rho * Math.cos(t2))} ${n2(sy + rho * Math.sin(t2))}" stroke-width="${n2(sw)}"/>`)
+      }
+    }
+    const css = `.art *{fill:none;stroke:var(--orange);stroke-linecap:butt}
+.stop{display:inline-block;vertical-align:baseline;width:.3em;height:.3em;margin-left:.06em;border-radius:50%;background:var(--orange)}`
+    const body = `<svg class="art" data-decor aria-hidden="true" viewBox="0 0 ${n2(c.W)} ${n2(c.H)}" preserveAspectRatio="none">${paths.join('')}</svg>`
+      + headHtml(head, lh, at(m - 0.04 * fs, top) + ';font-weight:800', '<i class="stop" data-decor></i>')
+      + block(info, m, top + head.h + 2.8)
+    return { css, body }
+  }
+
+  /* 5. The date is the picture: a numeral as big as the sheet allows, with the ring passing behind it */
+  function numeral(c) {
+    const m = c.m, num = c.number
+    const G = meas(num, 900, { ls: -0.045 })
+    const inkW = G.right - G.left + (num.length - 1) * -0.045, asc = G.asc
+    const base = baseOf(1, 900)
+    let fs, inkLeft, R, cx, cy, zoneW, zoneH
+    if (c.land) {
+      fs = Math.min((0.9 * c.H) / asc, (0.52 * c.W) / inkW)
+      inkLeft = c.W - (num.length > 1 ? -2 : m) - inkW * fs
+      R = 0.3 * c.H; cx = inkLeft + 0.06 * fs; cy = c.H - m - asc * fs + 0.1 * fs
+      zoneW = cx - R - 4 - m; zoneH = c.H - 2 * m
+    } else {
+      const share = c.H < 105 ? 0.46 : c.H < 130 ? 0.5 : 0.54
+      fs = num.length > 1 ? Math.min((c.W - m + 3) / inkW, (share * c.H) / asc) : Math.min((0.8 * c.W) / inkW, (share * c.H) / asc)
+      inkLeft = m - 0.6
+      R = 0.25 * c.W; cx = c.W - 0.17 * c.W; cy = c.H - m - asc * fs + 0.02 * fs
+      zoneW = cx - R - 3.5 - m; zoneH = c.H - m - asc * fs - 3.5 - m
+    }
+    const numTop = c.H - m - asc * fs
+    const kickH = c.tag ? 4.8 : 0
+    const lh = 0.9
+    let info, head
+    for (const k of [1, 0.9, 0.8]) {
+      info = stack(c, zoneW, k, ['fact', 'say'])
+      head = fitHead(c.head, { maxW: zoneW, maxH: Math.max(6, zoneH - kickH - (info.h ? info.h + 2.6 : 0)), lh, weight: 800, ls: -0.03, cap: c.land ? 13 : 11.5, maxLines: 4 })
+      if (head.fs >= 7.5) break
+    }
+    const css = `.ring{border-radius:50%;border-style:solid;border-color:var(--orange)}
+.num{font-weight:900;line-height:1;letter-spacing:-.045em;white-space:nowrap}`
+    const body = ringDiv(cx, cy, R, 0.36 * R)
+      + `<p class="num" data-bleed style="${at(inkLeft - G.left * fs, c.H - m - base * fs)};${size(fs)}">${esc(num)}</p>`
+      + (c.tag ? `<p class="kick" style="${at(m, m)};${size(1.55)}">${esc(c.tag)}</p>` : '')
+      + headHtml(head, lh, at(m - 0.04 * head.fs, m + kickH) + ';font-weight:800;letter-spacing:-.03em')
+      + block(info, m, m + kickH + head.h + 2.6)
+    return { css, body, numTop }
+  }
+
+  /* 6. Words set round the O: the headline runs on rings of type outside it, the facts stand in its counter */
+  function rings(c) {
+    if (c.land || c.H < 1.2 * c.W) return null
+    const k = c.H > 160 ? 1.18 : 1
+    const R = 55 * k, r = 37.5 * k, cx = c.W / 2
+    let phrases = c.head.split(/(?<=[.!?])\s+/).filter(Boolean)
+    if (phrases.length !== 2) {
+      phrases = [c.head]
+      const words = c.head.split(/\s+/).filter(Boolean)
+      if (words.length >= 4) {
+        let best = null
+        for (let i = 1; i < words.length; i++) {
+          const two = [words.slice(0, i).join(' '), words.slice(i).join(' ')]
+          const wa = meas(two[0].toUpperCase(), 900).w, wb = meas(two[1].toUpperCase(), 900).w
+          const score = breakPenalty(two) * Math.min(wa, wb) / Math.max(wa, wb)
+          if (!best || score > best.score) best = { two, score }
+        }
+        phrases = best.two
+      }
+    }
+    const order = phrases.slice().reverse()                       // the first sentence runs on the outer ring
+    const sets = []
+    let inner = R + 2.7
+    for (let i = 0; i < order.length; i++) {
+      const w = meas(order[i].toUpperCase(), 900).w + 0.42
+      const target = (order.length === 1 ? 12.5 : i === 0 ? 12.4 : 10.5) * k
+      let N = Math.max(2, Math.round((2 * Math.PI * inner) / (w * target))), fs = 0
+      for (; N < 14; N++) {
+        fs = (2 * Math.PI * inner) / (N * w)
+        const half = ((w - 0.42) * fs) / 2 / inner
+        if (half < Math.PI / 2 && (inner + 0.74 * fs) * Math.sin(half) <= c.W / 2 - c.m - 0.5) break
+      }
+      if (N >= 14 || fs < 4.2) return null
+      sets.push({ text: order[i], rho: inner, fs, N })
+      inner = inner + 0.72 * fs + 2.6
+    }
+    const topOut = sets[sets.length - 1].rho + 0.74 * sets[sets.length - 1].fs
+    const cy = Math.max(c.m + topOut + 0.6, c.H - 50 * k)
+    const defs = [], texts = []
+    sets.forEach((s, si) => {
+      const q = n2(s.rho)
+      defs.push(`<path id="tr${si}" d="M0,-${q} A${q},${q} 0 1 1 0,${q} A${q},${q} 0 1 1 0,-${q} A${q},${q} 0 1 1 0,${q} A${q},${q} 0 1 1 0,-${q}"/>`)
+      for (let j = 0; j < s.N; j++) {
+        const off = 50 + ((j <= s.N / 2 ? j : j - s.N) * 50) / s.N
+        texts.push(`<text style="${size(s.fs)}"${j ? ' aria-hidden="true" data-bleed' : ''}><textPath href="#tr${si}" startOffset="${n2(off)}%">${esc(s.text)}</textPath></text>`)
+      }
+    })
+    const circ = { cx, cy }
+    const inside = tuckStack(c, circ, r - 4, c.facts.length ? ['kick', 'fact', 'say'] : ['kick', 'say', 'point'], r * 1.5, 0.75, c.facts.length ? 1.9 : 1.5, true, { oneLine: true, scale: { say: c.facts.length ? 0.7 : 1.25 } })
+    const css = `.disc{border-radius:50%;background:var(--orange)}
+.hole{border-radius:50%;background:var(--paper)}
+.type{left:0;top:0;width:100vw;height:100vh;overflow:visible;--n:tan(atan2(var(--u),1px))}
+.type path{transform:translate(calc(${n2(cx)}*var(--u)),calc(${n2(cy)}*var(--u))) scale(var(--n))}
+.type text{font-family:'Figtree','Segoe UI',Arial,sans-serif;font-weight:900;text-transform:uppercase;text-anchor:middle;fill:var(--ink)}
+.info.mid{transform:translateX(-50%);text-align:center}`
+    const circle = (rad, cls) => `<div class="${cls}" data-decor style="${at(cx - rad, cy - rad)};width:calc(${n2(2 * rad)}*var(--u));height:calc(${n2(2 * rad)}*var(--u))"></div>`
+    const body = circle(R, 'disc') + circle(r, 'hole')
+      + `<svg class="type" xmlns="http://www.w3.org/2000/svg"><defs>${defs.join('')}</defs>${texts.join('')}</svg>`
+      + (inside ? block(inside.b, inside.p.x, inside.p.y, 'mid') : '')
+    return { css, body }
+  }
+
+  /* 7. Sixty strokes round an empty O, each longer than the last; the longest leave the sheet */
+  function burst(c) {
+    const m = c.m
+    let ri = c.land ? 24 : c.H < 105 ? 20 : 25
+    const cx = c.land ? c.W - 50 : 0.62 * c.W
+    let cy = c.land ? 52 : c.H < 105 ? 0.33 * c.H : c.H < 130 ? 0.365 * c.H : c.H > 160 ? 0.36 * c.H : 0.4 * c.H
+    const lh = 0.86
+    let head, body
+    const kick = c.tag ? `<p class="kick" style="${at(m, m)};${size(1.55)}">${esc(c.tag)}</p>` : ''
+    if (c.land) {
+      const maxW = cx - ri - 9 - m
+      const info = stack(c, maxW, 1.1, ['say', 'fact'])
+      head = fitHead(c.head, { maxW, maxH: c.H - 2 * m - 4.8 - (info.h ? info.h + 5 : 0), lh, weight: 900, ls: -0.035, cap: 22, maxLines: 4 })
+      body = kick + headHtml(head, lh, at(m - 0.045 * head.fs, m + 4.8)) + block(info, m, c.H - m - info.h)
+    } else {
+      const colW = (c.W - 2 * m - 5) / 2
+      const A = stack(c, colW, 1, c.facts.length ? ['fact'] : ['say'])
+      const B = stack(c, colW, 1, c.facts.length ? ['say', 'point'] : ['point'])
+      const fh = Math.max(A.h, B.h)
+      const need = c.H - m - (fh ? fh + 4 : 0) - 19                    // the headline keeps room for two good lines
+      for (; ri > 12 && cy + ri + 11.5 > need; ri -= 1) cy = Math.max(ri + 8, cy - 1.2)
+      const zoneTop = cy + ri + 11.5
+      head = fitHead(c.head, { maxW: c.W - 2 * m, maxH: c.H - m - zoneTop - (fh ? fh + 4 : 0), lh, weight: 900, ls: -0.035, cap: 24, maxLines: 3 })
+      const headTop = c.H - m - (fh ? fh + 4 : 0) - head.h
+      body = kick + headHtml(head, lh, at(m - 0.045 * head.fs, headTop)) + block(A, m, c.H - m - A.h) + block(B, m + colW + 5, c.H - m - B.h)
+    }
+    const q = Math.pow(95 / 1.6, 1 / 59), sw = 1.6 * Math.max(0.7, ri / 25)
+    const lines = []
+    for (let k = 0; k < 60; k++) {
+      const a = ((-120 - 6 * k) * Math.PI) / 180, L = 1.6 * Math.pow(q, k)
+      lines.push(`<line x1="${n2(cx + ri * Math.cos(a))}" y1="${n2(cy + ri * Math.sin(a))}" x2="${n2(cx + (ri + L) * Math.cos(a))}" y2="${n2(cy + (ri + L) * Math.sin(a))}"/>`)
+    }
+    const css = `.art line{stroke:var(--orange);stroke-width:${n2(sw)};stroke-linecap:butt}`
+    return { css, body: `<svg class="art" data-decor aria-hidden="true" viewBox="0 0 ${n2(c.W)} ${n2(c.H)}" preserveAspectRatio="none">${lines.join('')}</svg>` + body }
+  }
+
+  /* 8. Three rings, each smaller than the last, hung from one axis: one ring for each thing to do */
+  function steps(c) {
+    const m = c.m, lh = 0.86, n = Math.min(3, c.points.length)
+    if (n < 2) return null
+    const ratios = [1, 0.62, 0.38].slice(0, n), sum = ratios.reduce((a, b) => a + b, 0)
+    const kick = c.tag ? `<p class="kick" style="${at(m, m)};${size(1.55)}">${esc(c.tag)}</p>` : ''
+    const kickH = c.tag ? 4.8 : 0
+    let head, zt, zb, ax, xt, tw, body = kick
+    if (c.land) {
+      const maxW = 0.43 * c.W - m
+      const info = stack(c, maxW, 1.05, ['say', 'fact'])
+      head = fitHead(c.head, { maxW, maxH: c.H - 2 * m - kickH - (info.h ? info.h + 5 : 0), lh, weight: 900, ls: -0.035, cap: 20, maxLines: 4 })
+      body += headHtml(head, lh, at(m - 0.045 * head.fs, m + kickH)) + block(info, m, c.H - m - info.h)
+      zt = m; zb = c.H - m
+      const d1 = (zb - zt - 3 * (n - 1)) / sum
+      ax = 0.47 * c.W + d1; xt = ax + 4.5; tw = c.W - m - xt
+    } else {
+      const sayB = stack(c, c.W - 2 * m, 1, ['say'])
+      const facts = stack(c, c.W - 2 * m, 1, ['fact'])
+      head = fitHead(c.head, { maxW: c.W - 2 * m, maxH: 0.24 * c.H, lh, weight: 900, ls: -0.035, cap: 20, maxLines: 3 })
+      body += headHtml(head, lh, at(m - 0.045 * head.fs, m + kickH)) + block(sayB, m, m + kickH + head.h + 2.2) + block(facts, m, c.H - m - facts.h)
+      zt = m + kickH + head.h + (sayB.h ? sayB.h + 2.2 : 0) + 4.5
+      zb = c.H - m - (facts.h ? facts.h + 4.5 : 0)
+      const d1 = Math.min((zb - zt - 3 * (n - 1)) / sum, 0.64 * c.W)
+      ax = clamp(0.72 * d1, 26, 0.46 * c.W); xt = ax + 4.5; tw = c.W - m - xt
+    }
+    const d1 = Math.min((zb - zt - 3 * (n - 1)) / sum, c.land ? 1e9 : 0.64 * c.W)
+    const used = d1 * sum + 3 * (n - 1)
+    let y = zt + (c.land ? (zb - zt - used) / 2 : 0)
+    for (let i = 0; i < n; i++) {
+      const d = d1 * ratios[i]
+      const fs = clamp(d1 * ratios[Math.min(i, 1)] * 0.17, 3, 7.4)
+      const ls = wrap(c.points[i], tw, fs, 800, { ls: -0.02 })
+      const th = ls.length * fs * 1.08
+      body += ringDiv(ax - d / 2, y + d / 2, d / 2, 0.24 * d)
+        + `<p class="step" style="${at(xt, y + d / 2 - th / 2)};${size(fs)}">${ls.map((l) => `<span class="l">${esc(l)}</span>`).join('')}</p>`
+      y += d + 3
+    }
+    const css = `.ring{border-radius:50%;border-style:solid;border-color:var(--orange)}
+.step{font-weight:800;line-height:1.08;letter-spacing:-.02em}`
+    return { css, body }
+  }
+
+  const DRAW = { letters, counter, record, arcs, numeral, rings, burst, steps }
+
+  /* ================= the sheet ================= */
   function makePoster(d) {
     const kind = KINDS[d.kind] ? d.kind : 'Notice'
     const K = KINDS[kind]
-    const [pw, ph] = FORMATS[d.format] || FORMATS.a3
-    const short = Math.min(pw, ph), W = (pw / short) * 100, H = (ph / short) * 100   // sheet in u
-    const land = pw > ph * 1.1
-    let layout = LAYOUTS[d.layout] ? d.layout : K.layouts[0]
-    let picKey = d.picture === 'none' ? null : (PICTURES[d.picture] ? d.picture : K.pictures[0])
-    const number = ((d.when || '').match(/\d{1,2}/) || [])[0]
-    const points = (d.points || []).map((x) => String(x).trim()).filter(Boolean).slice(0, 3)
-    if (layout === 'number' && !number) layout = K.layouts[0] === 'number' ? 'ring' : K.layouts[0]
-    if (layout === 'steps' && points.length < 2) layout = 'word'
-    if (land) layout = { column: 'ring', badge: 'ring', steps: 'word', arc: 'disc' }[layout] || layout   // wide screens have their own versions
-    if (layout === 'word' || layout === 'number' || layout === 'steps') picKey = null
-    const pic = picKey ? PICTURES[picKey] : null
+    const fmt = FORMATS[d.format] || FORMATS.a3
+    const short = Math.min(fmt[0], fmt[1])
+    const T = STYLES[d.style] || STYLES.light
     const styleKey = STYLES[d.style] ? d.style : 'light'
-    const T = STYLES[styleKey]
-    /* pictures are drawn in charcoal with warm-white details; on a dark sheet the two swap */
-    const paint = (svg) => styleKey === 'dark' ? svg.split(INK).join('@@').split(GROUND).join(INK).split('@@').join(GROUND) : styleKey === 'sky' ? svg.split(GROUND).join(T.ground) : svg
-
-    /* ---- headline ---- */
-    let head = (d.headline || '').trim() || K.tag
-    if (!/\*/.test(head) && d.emphasis !== 'none') {       // one word in the serif italic: the last one
-      head = head.replace(/(\S+)\s*$/, '*$1*')
+    const head = String(d.headline || '').replace(/\*/g, '').replace(/\s+/g, ' ').trim() || K.tag
+    const clean = (v) => String(v || '').replace(/\s+/g, ' ').trim()
+    const c = {
+      W: (fmt[0] / short) * 100, H: (fmt[1] / short) * 100, m: 7, land: fmt[0] > fmt[1] * 1.1,
+      head, say: clean(d.line), tag: clean(d.tag || K.tag),
+      facts: [d.when, d.time, d.where].map(clean).filter(Boolean),
+      points: (d.points || []).map(clean).filter(Boolean).slice(0, 3),
+      number: (clean(d.when).match(/\d{1,2}/) || [''])[0],
     }
-    const band = (land || layout === 'column') ? 0 : H < 115 ? 21 : H < 135 ? 24 : 27
-    const PH = Math.max(30, Math.min(70, H - band - 64))                 // split: height of the orange panel
-    /* per layout: width for the headline, height it may take, largest size, characters per line */
-    const M = land
-      ? { w: layout === 'word' ? 120 : layout === 'split' ? 88 : 100, room: layout === 'word' ? 52 : 44, cap: layout === 'word' ? 19 : 15, max: 16 }
-      : ({
-        ring: { w: 86, room: 31, cap: 15.5, max: 13 }, disc: { w: 86, room: 31, cap: 15.5, max: 13 }, number: { w: 86, room: 31, cap: 15.5, max: 13 },
-        sun: { w: 86, room: 33, cap: 15.5, max: 13 }, word: { w: 90, room: H - band - 62, cap: 25, max: 11 },
-        split: { w: 86, room: H - band - PH - 34, cap: 13.5, max: 15 }, column: { w: 50, room: 46, cap: 11.5, max: 10 },
-        badge: { w: 86, room: 24, cap: 12.5, max: 16 }, steps: { w: 86, room: 35, cap: 14.5, max: 13 }, arc: { w: 86, room: 34, cap: 15.5, max: 13 },
-      })[layout]
-    const lines = breakLines(head, M.max)
-    const longest = Math.max(...lines.map((l) => l.replace(/\*/g, '').length))
-    const hs = Math.max(6, Math.min(M.cap, M.w / (0.5 * longest), M.room / (lines.length * 0.92)))
-
-    /* ---- scene ---- */
-    let sc = land ? 1 : Math.max(0.58, Math.min(1.3, (H - band - 40) / 73))
-    if (layout === 'column') sc = Math.min(sc, points.length ? 0.8 : 1)
-    if (d.style === 'dark' && !land) sc *= 0.9                           // white type on orange is hard to read, so the shape steps back
-    const k = Math.max(0.5, Math.min(1.05, (H - band - 46) / 92))         // badge: the size of the centred ring
-    const standBox = pic && pic.stand
-      ? `<span class="hole"><svg class="pic stand" viewBox="${pic.vb}" preserveAspectRatio="xMidYMax meet" style="--pr:${pic.right};--pw:${pic.w};--pp:${pic.h}" stroke-linecap="round" stroke-linejoin="round">${paint(pic.svg)}</svg></span>` : ''
-    const objBox = pic && !pic.stand
-      ? `<svg class="pic obj" viewBox="${pic.vb}" preserveAspectRatio="xMidYMid meet" stroke-linecap="round" stroke-linejoin="round">${paint(pic.svg)}</svg>` : ''
-    const numBox = layout === 'number' ? `<div class="num" data-bleed aria-hidden="true">${esc(number)}</div>` : ''
-    const scene = `<div class="scene" data-decor style="--sc:${sc.toFixed(3)};--k:${k.toFixed(3)};--ph:${PH.toFixed(1)}"><span class="sky"></span><span class="halo"></span><span class="shape"></span>${standBox}${objBox}</div>${numBox}`
-
-    /* ---- words ---- */
-    const facts = [['When', d.when], ['Time', d.time], ['Where', d.where]]
-    const tag = (d.tag || K.tag).trim()
+    const can = (l) => (l !== 'numeral' || c.number) && (l !== 'steps' || c.points.length > 1) && (l !== 'rings' || (!c.land && c.H >= 1.2 * c.W))
+    const order = (LAYOUTS[d.layout] ? [d.layout] : []).concat(K.layouts)
+    let layout = null, res = null
+    for (const l of order) {
+      if (!can(l)) continue
+      res = DRAW[l](c)
+      if (res) { layout = l; break }
+    }
+    if (!res) { layout = 'record'; res = record(c) }
     const html = `<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>${esc(head.replace(/\*/g, ''))}</title>
-<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@500;700;800&family=Newsreader:ital,wght@1,500&display=swap" rel="stylesheet">
+<title>${esc(head)}</title>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300..900&family=Newsreader:ital,opsz,wght@1,6..72,300..700&display=swap" rel="stylesheet">
 <style>
-:root{--u:1vmin;--margin:calc(7*var(--u));--cols:12;--ground:${T.ground};--ink:${T.ink};--accent:${ORANGE};--tint:${T.tint};--link:${T.link};--bandbg:${T.band};--bandink:${T.bandInk};--bandlink:${T.bandLink};--band:calc(${band}*var(--u));--hs:calc(${hs.toFixed(2)}*var(--u))}
+:root{--u:1vmin;--margin:calc(7*var(--u));--cols:12;--paper:${T.ground};--ink:${T.ink};--orange:${ORANGE}}
 *{box-sizing:border-box;margin:0;padding:0}
-html,body{width:100vw;height:100vh;overflow:hidden;background:var(--ground)}
-body{font-family:'Figtree','Segoe UI',Arial,sans-serif;color:var(--ink);-webkit-font-smoothing:antialiased}
-.poster{position:relative;width:100vw;height:100vh;overflow:hidden}
-.band{position:absolute;left:0;right:0;bottom:0;height:var(--band);background:var(--bandbg);z-index:2}
-/* the scene: one coordinate system in u, standing on the band, anchored bottom right */
-.scene{position:absolute;right:0;bottom:var(--band);width:calc(100*var(--u));height:calc(120*var(--u));transform:scale(var(--sc));transform-origin:100% 100%;z-index:1}
-.scene>*{position:absolute}
-.shape{border-radius:50%}
-.halo{border-radius:50%;border:calc(.3*var(--u)) solid var(--ink);opacity:.55}
-.sky{border-radius:50%;background:var(--tint);display:none}
-.pic{position:absolute;display:block;overflow:visible}
-.hole{display:contents}
-.pic.stand{bottom:0;right:calc(var(--pr)*var(--u));width:calc(var(--pw)*var(--u));height:calc(var(--pp)*var(--u))}
-.num{position:absolute;z-index:1;font-weight:800;letter-spacing:-.06em;line-height:.8;color:var(--ink)}
-/* words */
-.text{position:absolute;z-index:3;left:var(--margin);right:var(--margin);top:var(--margin);bottom:calc(var(--band) + 5*var(--u));display:flex;flex-direction:column;align-items:flex-start}
-.tag{font-size:calc(1.9*var(--u));font-weight:700;letter-spacing:.13em;text-transform:uppercase;border:calc(.34*var(--u)) solid var(--ink);border-radius:calc(9*var(--u));padding:calc(.95*var(--u)) calc(2.3*var(--u)) calc(.85*var(--u))}
-.head{margin-top:calc(4.2*var(--u));font-size:var(--hs);font-weight:800;line-height:.92;letter-spacing:-.04em;white-space:nowrap}
-.head em{font-family:'Newsreader',Georgia,serif;font-weight:500;font-style:italic;letter-spacing:-.02em}
-.support{font-size:calc(3.2*var(--u));font-weight:500;line-height:1.3;max-width:calc(var(--sw)*var(--u))}
-.points{list-style:none;counter-reset:n;max-width:calc(var(--sw)*var(--u));width:100%}
-.points li{counter-increment:n;display:grid;grid-template-columns:calc(5.4*var(--u)) 1fr;align-items:baseline;border-top:calc(.36*var(--u)) solid var(--ink);padding:calc(1.35*var(--u)) 0;font-size:calc(2.75*var(--u));font-weight:700;line-height:1.15}
-.points li:last-child{border-bottom:calc(.36*var(--u)) solid var(--ink)}
-.points li::before{content:"0" counter(n);font-size:calc(1.8*var(--u));font-weight:800;letter-spacing:.1em;color:var(--link)}
-.low{margin-top:auto;display:flex;flex-direction:column;gap:calc(2.6*var(--u));width:100%}
-.facts{--fi:var(--bandink);--fl:var(--bandlink);position:absolute;z-index:3;left:var(--margin);right:var(--margin);bottom:calc(4.6*var(--u));list-style:none;display:grid;grid-template-columns:1.25fr .9fr 1.25fr;column-gap:calc(3*var(--u))}
-.facts li{color:var(--fi);border-top:calc(.4*var(--u)) solid var(--fi);padding-top:calc(1.3*var(--u));min-height:calc(var(--band) - 11.5*var(--u));font-size:calc(3.1*var(--u));font-weight:700;line-height:1.12}
-.facts b{display:block;font-size:calc(1.85*var(--u));font-weight:800;letter-spacing:.11em;text-transform:uppercase;color:var(--fl);margin-bottom:calc(.7*var(--u))}
-${LAYOUT_CSS[layout]}
-${land ? LAND_CSS[layout] || LAND_CSS.ring : ''}
+html,body{width:100vw;height:100vh;overflow:hidden;background:var(--paper)}
+.poster{position:relative;width:100vw;height:100vh;overflow:hidden;background:var(--paper);color:var(--ink);font-family:'Figtree','Segoe UI',Arial,sans-serif;-webkit-font-smoothing:antialiased}
+.poster>*{position:absolute}
+.l{display:block;white-space:nowrap}
+.head{font-weight:900;letter-spacing:-.035em;white-space:nowrap}
+.fact{font-weight:800;line-height:1.2;letter-spacing:-.012em}
+.say{font-family:'Newsreader',Georgia,serif;font-style:italic;font-weight:400;line-height:1.18}
+.pt{font-weight:600;line-height:1.26}
+.kick{font-weight:700;line-height:1.2;letter-spacing:.14em;text-transform:uppercase;white-space:nowrap}
+.art{left:0;top:0;width:100vw;height:100vh;display:block}
+${res.css}
 </style>
 </head>
 <body>
-<main class="poster L-${layout}${land ? ' land' : ''}${pic && pic.stand ? ' stand' : ''}">
-${band || layout === 'column' ? '<div class="band" data-decor></div>' : ''}
-${scene}
-<div class="text" style="--ph:${PH.toFixed(1)};--k:${k.toFixed(3)}">
-<p class="tag">${esc(tag)}</p>
-<h1 class="head">${lines.map(emph).join('<br>')}</h1>
-<div class="low">
-${d.line ? `<p class="support">${esc(d.line.trim())}</p>` : ''}
-${points.length ? `<ol class="points">${points.map((x) => `<li>${esc(x)}</li>`).join('')}</ol>` : ''}
-</div>
-</div>
-<ul class="facts">${facts.map(([k, v]) => `<li><b>${k}</b>${v && v.trim() ? esc(v.trim()) : ''}</li>`).join('')}</ul>
+<main class="poster L-${layout}">
+${res.body}
 </main>
 </body>
 </html>`
-    return { html, layout, picture: picKey, style: styleKey, lines }
+    return { html, layout, style: styleKey, picture: null }
   }
 
-  /* ---------- layouts (portrait and square) ---------- */
-  const LAYOUT_CSS = {
-    /* a thick ring cropped by the right edge; people stand in it, objects sit in it */
-    ring: `
-.shape{width:calc(92*var(--u));height:calc(92*var(--u));border:calc(13*var(--u)) solid var(--accent);right:calc(-28*var(--u));bottom:calc(-13*var(--u))}
-.halo{width:calc(102*var(--u));height:calc(102*var(--u));right:calc(-33*var(--u));bottom:calc(-18*var(--u))}
-.pic.obj{width:calc(42*var(--u));height:calc(42*var(--u));right:calc(5*var(--u));bottom:calc(12*var(--u))}
-.text{--sw:25}`,
-    /* a solid disc cropped by the corner, the picture on it */
-    disc: `
-.shape{width:calc(96*var(--u));height:calc(96*var(--u));background:var(--accent);right:calc(-34*var(--u));bottom:calc(-26*var(--u))}
-.halo{width:calc(106*var(--u));height:calc(106*var(--u));right:calc(-39*var(--u));bottom:calc(-31*var(--u))}
-.pic.obj{width:calc(40*var(--u));height:calc(40*var(--u));right:calc(7*var(--u));bottom:calc(11*var(--u))}
-.text{--sw:27}`,
-    /* half a disc rising from the band like a sun, the picture standing on it */
-    sun: `
-.shape{width:calc(116*var(--u));height:calc(116*var(--u));background:var(--accent);right:calc(-16*var(--u));bottom:calc(-70*var(--u))}
-.halo{width:calc(126*var(--u));height:calc(126*var(--u));right:calc(-21*var(--u));bottom:calc(-75*var(--u))}
-.sky{display:block;width:calc(20*var(--u));height:calc(20*var(--u));right:calc(8*var(--u));bottom:calc(66*var(--u))}
-.pic.stand{right:calc(4*var(--u)) !important;height:calc(70*var(--u));width:calc(64*var(--u))}
-.pic.obj{width:calc(38*var(--u));height:calc(38*var(--u));right:calc(16*var(--u));bottom:calc(27*var(--u))}
-.low{margin-top:calc(3.4*var(--u))}
-.text{--sw:36}`,
-    /* no picture: the headline is the picture, with the ring behind its end */
-    word: `
-.shape{width:calc(76*var(--u));height:calc(76*var(--u));border:calc(12*var(--u)) solid var(--accent);right:calc(-34*var(--u));bottom:calc(-24*var(--u))}
-.halo{width:calc(86*var(--u));height:calc(86*var(--u));right:calc(-39*var(--u));bottom:calc(-29*var(--u))}
-.text{--sw:38}`,
-    /* the date as the picture */
-    number: `
-.shape{width:calc(88*var(--u));height:calc(88*var(--u));background:var(--accent);right:calc(-24*var(--u));bottom:calc(-12*var(--u))}
-.halo{width:calc(98*var(--u));height:calc(98*var(--u));right:calc(-29*var(--u));bottom:calc(-17*var(--u))}
-.num{right:calc(2*var(--u));bottom:calc(var(--band) + 1*var(--u));font-size:calc(66*var(--u))}
-.text{--sw:27}`,
-    /* the top of the sheet is one orange panel with the picture on it; the words sit below */
-    split: `
-.scene{left:0;right:0;top:0;bottom:auto;width:auto;height:calc(var(--ph)*var(--u));transform:none;overflow:hidden;background:var(--accent);border-radius:0 0 0 calc(18*var(--u))}
-.shape{display:none}
-.halo{width:calc(84*var(--u));height:calc(84*var(--u));right:calc(-30*var(--u));top:calc(-44*var(--u));border-color:var(--ground);opacity:.7}
-.pic.stand{right:auto !important;left:50%;transform:translateX(-50%);bottom:0;height:90%;width:auto;aspect-ratio:80/87}
-.pic.obj{left:50%;top:50%;transform:translate(-50%,-50%);height:64%;width:auto;aspect-ratio:1}
-.text{top:calc(var(--ph)*var(--u) + 5*var(--u));--sw:62}
-.low{margin-top:calc(3*var(--u))}`,
-    /* a full-height column on the left holds the label and the facts; the ring sits bottom right */
-    column: `
-.band{top:0;bottom:0;right:auto;width:calc(34*var(--u));height:auto}
-.scene{bottom:0}
-.shape{width:calc(92*var(--u));height:calc(92*var(--u));border:calc(13*var(--u)) solid var(--accent);right:calc(-28*var(--u));bottom:calc(-13*var(--u))}
-.halo{width:calc(102*var(--u));height:calc(102*var(--u));right:calc(-33*var(--u));bottom:calc(-18*var(--u))}
-.pic.obj{width:calc(42*var(--u));height:calc(42*var(--u));right:calc(5*var(--u));bottom:calc(12*var(--u))}
-.text{left:calc(41*var(--u));bottom:var(--margin);--sw:34}
-.tag{position:absolute;left:calc(-34*var(--u));top:0;color:var(--bandink);border-color:var(--bandink)}
-.head{margin-top:0}
-.low{margin-top:calc(3.4*var(--u))}
-.facts{right:auto;width:calc(21*var(--u));bottom:var(--margin);grid-template-columns:1fr;row-gap:calc(3.2*var(--u))}
-.facts li{min-height:calc(8.6*var(--u));font-size:calc(2.9*var(--u))}`,
-    /* the whole ring, centred, with the picture inside it; everything else centred under it */
-    badge: `
-.scene{left:0;right:0;top:calc(15*var(--u));bottom:auto;width:auto;height:calc(72*var(--u)*var(--k));transform:none}
-.shape{left:50%;top:0;width:calc(68*var(--u)*var(--k));height:calc(68*var(--u)*var(--k));margin-left:calc(-34*var(--u)*var(--k));border:calc(10.5*var(--u)*var(--k)) solid var(--accent)}
-.halo{left:50%;top:calc(-5*var(--u)*var(--k));width:calc(78*var(--u)*var(--k));height:calc(78*var(--u)*var(--k));margin-left:calc(-39*var(--u)*var(--k))}
-.hole{display:block;position:absolute;left:50%;top:calc(10.5*var(--u)*var(--k));width:calc(47*var(--u)*var(--k));height:calc(47*var(--u)*var(--k));margin-left:calc(-23.5*var(--u)*var(--k));border-radius:50%;overflow:hidden}
-.hole .pic.stand{right:auto !important;left:50%;transform:translateX(-50%);bottom:calc(-2*var(--u)*var(--k));height:calc(45*var(--u)*var(--k));width:calc(41.4*var(--u)*var(--k))}
-.pic.obj{left:50%;top:calc(17*var(--u)*var(--k));width:calc(34*var(--u)*var(--k));height:calc(34*var(--u)*var(--k));margin-left:calc(-17*var(--u)*var(--k))}
-.text{align-items:center;text-align:center;--sw:70}
-.head{margin-top:calc(83*var(--u)*var(--k))}
-.low{margin-top:calc(3*var(--u));align-items:center}
-.points{text-align:left}`,
-    /* no picture: three numbered steps are the poster, with the ring in the top corner */
-    steps: `
-.scene{top:0;bottom:auto;height:calc(60*var(--u));transform:none}
-.shape{width:calc(58*var(--u));height:calc(58*var(--u));border:calc(9.5*var(--u)) solid var(--accent);right:calc(-20*var(--u));top:calc(-28*var(--u))}
-.halo{width:calc(68*var(--u));height:calc(68*var(--u));right:calc(-25*var(--u));top:calc(-33*var(--u))}
-.head{margin-top:calc(21*var(--u))}
-.text{--sw:86}
-.support{max-width:calc(60*var(--u))}
-.points{max-width:none}
-.points li{grid-template-columns:calc(14*var(--u)) 1fr;align-items:center;font-size:calc(3.6*var(--u));padding:calc(2.2*var(--u)) 0;line-height:1.1}
-.points li::before{font-size:calc(8.6*var(--u));letter-spacing:-.05em;color:var(--ink);line-height:1}`,
-    /* a disc in the top corner holds the picture; the headline sits at the foot */
-    arc: `
-.scene{top:0;bottom:auto;transform-origin:100% 0}
-.shape{width:calc(96*var(--u));height:calc(96*var(--u));background:var(--accent);right:calc(-30*var(--u));top:calc(-34*var(--u))}
-.halo{width:calc(106*var(--u));height:calc(106*var(--u));right:calc(-35*var(--u));top:calc(-39*var(--u))}
-.hole{display:block;position:absolute;right:calc(-30*var(--u));top:calc(-34*var(--u));width:calc(96*var(--u));height:calc(96*var(--u));border-radius:50%;overflow:hidden}
-.hole .pic.stand{right:auto !important;left:calc(8*var(--u));bottom:calc(-3*var(--u));height:calc(58*var(--u));width:calc(53*var(--u))}
-.pic.obj{right:calc(9*var(--u));top:calc(9*var(--u));width:calc(38*var(--u));height:calc(38*var(--u))}
-.tag{margin-bottom:auto}
-.head{margin-top:0}
-.low{margin-top:calc(3*var(--u))}
-.text{--sw:60}`,
-  }
-
-  /* ---------- wide screens (16:9): the ring fills the right, no band, facts along the foot ---------- */
-  const wide = (shape, obj, extra) => `
-.scene{bottom:0;width:calc(100*var(--u));height:calc(100*var(--u));transform:none}
-${shape}
-.pic.obj{${obj}}
-.pic.stand{right:calc(6*var(--u)) !important;bottom:0;height:calc(70*var(--u));width:calc(64*var(--u))}
-.text{bottom:calc(27*var(--u));right:calc(86*var(--u));--sw:66}
-.low{margin-top:calc(3.6*var(--u))}
-.facts{--fi:var(--ink);--fl:var(--link);right:auto;width:calc(98*var(--u));bottom:var(--margin)}
-.facts li{min-height:calc(11*var(--u))}
-${extra || ''}`
-  const LAND_CSS = {
-    split: `
-.scene{left:auto;right:0;top:0;bottom:0;width:42vw;height:auto;transform:none;overflow:hidden;background:var(--accent);border-radius:calc(18*var(--u)) 0 0 calc(18*var(--u))}
-.shape{display:none}
-.halo{width:calc(84*var(--u));height:calc(84*var(--u));right:calc(-30*var(--u));top:calc(-44*var(--u));border-color:var(--ground);opacity:.7}
-.pic.stand{right:auto !important;left:50%;transform:translateX(-50%);bottom:0;height:78%;width:auto;aspect-ratio:80/87}
-.pic.obj{left:50%;top:50%;transform:translate(-50%,-50%);height:50%;width:auto;aspect-ratio:1}
-.text{top:var(--margin);bottom:calc(27*var(--u));right:calc(42vw + 6*var(--u));--sw:66}
-.low{margin-top:calc(3.6*var(--u))}
-.facts{--fi:var(--ink);--fl:var(--link);right:auto;width:calc(92*var(--u));bottom:var(--margin)}
-.facts li{min-height:calc(11*var(--u))}`,
-    ring: wide(`.shape{width:calc(112*var(--u));height:calc(112*var(--u));border:calc(15*var(--u)) solid var(--accent);right:calc(-36*var(--u));bottom:calc(-4*var(--u))}
-.halo{width:calc(132*var(--u));height:calc(132*var(--u));right:calc(-46*var(--u));bottom:calc(-14*var(--u))}`, 'width:calc(44*var(--u));height:calc(44*var(--u));right:calc(8*var(--u));bottom:calc(30*var(--u))'),
-    disc: wide(`.shape{width:calc(108*var(--u));height:calc(108*var(--u));background:var(--accent);right:calc(-34*var(--u));bottom:calc(-30*var(--u))}
-.halo{width:calc(128*var(--u));height:calc(128*var(--u));right:calc(-44*var(--u));bottom:calc(-40*var(--u))}`, 'width:calc(44*var(--u));height:calc(44*var(--u));right:calc(10*var(--u));bottom:calc(14*var(--u))'),
-    sun: wide(`.shape{width:calc(104*var(--u));height:calc(104*var(--u));background:var(--accent);right:calc(-10*var(--u));bottom:calc(-58*var(--u))}
-.halo{width:calc(124*var(--u));height:calc(124*var(--u));right:calc(-20*var(--u));bottom:calc(-68*var(--u))}
-.sky{width:calc(20*var(--u));height:calc(20*var(--u));right:calc(8*var(--u));bottom:calc(66*var(--u))}`, 'width:calc(40*var(--u));height:calc(40*var(--u));right:calc(22*var(--u));bottom:calc(34*var(--u))'),
-    word: wide(`.shape{width:calc(96*var(--u));height:calc(96*var(--u));border:calc(14*var(--u)) solid var(--accent);right:calc(-30*var(--u));bottom:calc(6*var(--u))}
-.halo{width:calc(116*var(--u));height:calc(116*var(--u));right:calc(-40*var(--u));bottom:calc(-4*var(--u))}
-.sky{display:none}`, '', '.text{right:calc(40*var(--u))}'),
-    number: wide(`.shape{width:calc(100*var(--u));height:calc(100*var(--u));background:var(--accent);right:calc(-26*var(--u));bottom:calc(-22*var(--u))}
-.halo{width:calc(120*var(--u));height:calc(120*var(--u));right:calc(-36*var(--u));bottom:calc(-32*var(--u))}`, '', '.num{right:calc(4*var(--u));bottom:calc(2*var(--u));font-size:calc(70*var(--u))}'),
-  }
-
-  window.PosterEngine = { makePoster, PICTURES, KINDS, LAYOUTS, STYLES, FORMATS }
+  window.PosterEngine = { makePoster, ready, can: null, KINDS, LAYOUTS, STYLES, FORMATS }
 })()

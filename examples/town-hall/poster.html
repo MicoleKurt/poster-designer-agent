@@ -2,56 +2,28 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Town hall</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<!-- Stand-ins for the brand's own typefaces -->
-<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@500;700;800&family=Newsreader:ital,wght@1,500&display=swap" rel="stylesheet">
+<title>Bring one question.</title>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300..900&family=Newsreader:ital,opsz,wght@1,6..72,300..700&display=swap" rel="stylesheet">
 <style>
-  /* Profile: profiles/optum-callcenter.json (unofficial).
-     Concept: the question mark is the picture. One giant serif-italic "?" stands
-     inside the orange ring, because the ask is a question, not attendance.
-     The pale sky band holds the facts needed to turn up, and nothing else.
-     Made for the team chat: read on a phone in under 2 seconds. */
-  :root {
-    --u: 1vmin; --margin: calc(7 * var(--u)); --cols: 12; --gutter: calc(1.8 * var(--u));
-    --ground: #faf8f2; --ink: #3d3c38; --accent: #ff612b; --tint: #dff3f9; --link: #095f87;
-    --t-note: calc(2.3 * var(--u)); --t-body: calc(3.4 * var(--u)); --t-head: calc(14.5 * var(--u));
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  html, body { width: 100vw; height: 100vh; overflow: hidden; background: var(--ground); }
-  body { font-family: 'Figtree', sans-serif; color: var(--ink); -webkit-font-smoothing: antialiased; }
-  .poster { position: relative; width: 100vw; height: 100vh; overflow: hidden; padding: var(--margin);
-    display: grid; grid-template-columns: repeat(var(--cols), 1fr); column-gap: var(--gutter); grid-template-rows: auto 1fr auto; }
-
-  .band { position: absolute; left: 0; right: 0; bottom: 0; height: calc(31 * var(--u)); background: var(--tint); }
-  .ring { position: absolute; width: calc(84 * var(--u)); aspect-ratio: 1; border-radius: 50%;
-    border: calc(12.5 * var(--u)) solid var(--accent); right: calc(-27 * var(--u)); top: calc(15 * var(--u)); }
-  .mark { position: absolute; right: calc(4.5 * var(--u)); top: calc(19 * var(--u));
-    font-family: 'Newsreader', serif; font-style: italic; font-weight: 500; font-size: calc(74 * var(--u)); line-height: 1; color: var(--ink); }
-
-  .kicker { grid-column: 1 / span 8; font-size: var(--t-note); font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
-  .head { grid-column: 1 / span 8; align-self: start; margin-top: calc(9 * var(--u)); position: relative; z-index: 2;
-    font-size: var(--t-head); font-weight: 800; line-height: .92; letter-spacing: -.04em; }
-  .facts { grid-column: 1 / span 12; align-self: end; position: relative; z-index: 2; list-style: none;
-    display: grid; grid-template-columns: 1.25fr 1fr 1.35fr; column-gap: calc(3 * var(--u)); }
-  .facts li { border-top: calc(.4 * var(--u)) solid var(--ink); padding-top: calc(1.5 * var(--u)); font-size: var(--t-body); font-weight: 700; line-height: 1.15; }
-  .facts b { display: block; font-size: var(--t-note); font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: var(--link); margin-bottom: calc(.7 * var(--u)); }
+:root{--u:1vmin;--margin:calc(7*var(--u));--cols:12;--paper:#faf8f2;--ink:#3d3c38;--orange:#ff612b}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:100vw;height:100vh;overflow:hidden;background:var(--paper)}
+.poster{position:relative;width:100vw;height:100vh;overflow:hidden;background:var(--paper);color:var(--ink);font-family:'Figtree','Segoe UI',Arial,sans-serif;-webkit-font-smoothing:antialiased}
+.poster>*{position:absolute}
+.l{display:block;white-space:nowrap}
+.head{font-weight:900;letter-spacing:-.035em;white-space:nowrap}
+.fact{font-weight:800;line-height:1.2;letter-spacing:-.012em}
+.say{font-family:'Newsreader',Georgia,serif;font-style:italic;font-weight:400;line-height:1.18}
+.pt{font-weight:600;line-height:1.26}
+.kick{font-weight:700;line-height:1.2;letter-spacing:.14em;text-transform:uppercase;white-space:nowrap}
+.art{left:0;top:0;width:100vw;height:100vh;display:block}
+.art *{fill:none;stroke:var(--orange);stroke-linecap:butt}
+.stop{display:inline-block;vertical-align:baseline;width:.3em;height:.3em;margin-left:.06em;border-radius:50%;background:var(--orange)}
 </style>
 </head>
 <body>
-  <main class="poster">
-    <div class="band" data-decor></div>
-    <div class="ring" data-decor></div>
-    <div class="mark" data-bleed aria-hidden="true">?</div>
-
-    <p class="kicker">Team town hall</p>
-    <h1 class="head">Bring<br>one<br>question.</h1>
-
-    <ul class="facts">
-      <li><b>When</b>Thursday 4 December</li>
-      <li><b>Time</b>3:00 pm</li>
-      <li><b>Where</b>14th floor, Training Room B</li>
-    </ul>
-  </main>
+<main class="poster L-arcs">
+<svg class="art" data-decor aria-hidden="true" viewBox="0 0 100 125" preserveAspectRatio="none"><path d="M63.152 58.53A6.885 6.885 0 1 1 57.098 70.807" stroke-width="2.754"/><path d="M66.508 52.47A13.77 13.77 0 0 1 56.428 78.058" stroke-width="5.508"/><path d="M56.489 37.799A27.54 27.54 0 1 1 44.416 87.138" stroke-width="11.016"/><path d="M16.521 32.237A55.08 55.08 0 1 1 22.883 104.954" stroke-width="22.032"/><circle cx="60.797" cy="65" r="110.16" stroke-width="44.064"/></svg><h1 class="head" style="left:calc(6.46*var(--u));top:calc(44.075*var(--u));font-weight:800;font-size:calc(13.5*var(--u));line-height:0.9"><span class="l">Bring one</span><span class="l">question<i class="stop" data-decor></i></span></h1><div class="info" style="left:calc(7*var(--u));top:calc(71.175*var(--u))"><p class="say" style="font-size:calc(3*var(--u))"><span class="l">Ask anything. We answer in the room.</span></p><p class="fact" style="font-size:calc(3.4*var(--u));margin-top:calc(2.2*var(--u))"><span class="l">Thursday 4 December</span><span class="l">3 pm</span><span class="l">Training Room B</span></p><p class="kick" style="font-size:calc(1.55*var(--u));margin-top:calc(2.4*var(--u))"><span class="l">Town hall</span></p></div>
+</main>
 </body>
 </html>

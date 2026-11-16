@@ -2,63 +2,31 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Lock it</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<!-- Stand-ins for the brand's own typefaces -->
-<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@500;700;800&family=Newsreader:ital,wght@1,500&display=swap" rel="stylesheet">
+<title>Lock it before you leave it.</title>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300..900&family=Newsreader:ital,opsz,wght@1,6..72,300..700&display=swap" rel="stylesheet">
 <style>
-  /* Profile: profiles/optum-callcenter.json (unofficial).
-     Concept: the padlock IS the poster. One solid orange disc, cropped by the
-     corner, with a charcoal lock drawn on it: the only orange on the sheet, so
-     it reads as the signal. The headline is plain speech, flush left, and the
-     serif italic marks the one word that is the risk: "leave".
-     Lineage: corporate humanist. Made for a corridor: read in 3 seconds from 3 metres. */
-  :root {
-    --u: 1vmin; --margin: calc(7 * var(--u)); --cols: 12; --gutter: calc(1.8 * var(--u));
-    --ground: #faf8f2; --ink: #3d3c38; --accent: #ff612b; --tint: #dff3f9; --link: #095f87;
-    --t-note: calc(2 * var(--u)); --t-body: calc(3.1 * var(--u)); --t-head: calc(15.5 * var(--u));
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  html, body { width: 100vw; height: 100vh; overflow: hidden; background: var(--ground); }
-  body { font-family: 'Figtree', sans-serif; color: var(--ink); -webkit-font-smoothing: antialiased; }
-  .poster { position: relative; width: 100vw; height: 100vh; overflow: hidden; padding: var(--margin);
-    display: grid; grid-template-columns: repeat(var(--cols), 1fr); column-gap: var(--gutter); grid-template-rows: auto auto 1fr auto; }
-
-  .disc { position: absolute; width: calc(92 * var(--u)); aspect-ratio: 1; border-radius: 50%; background: var(--accent);
-    right: calc(-35 * var(--u)); bottom: calc(-24 * var(--u)); }
-  .lock { position: absolute; right: calc(8 * var(--u)); bottom: calc(13 * var(--u)); width: calc(36 * var(--u)); }
-
-  .kicker { grid-column: 1 / span 8; font-size: var(--t-note); font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
-  .head { grid-column: 1 / span 11; margin-top: calc(6 * var(--u)); position: relative; z-index: 2;
-    font-size: var(--t-head); font-weight: 800; line-height: .92; letter-spacing: -.04em; }
-  .head em { font-family: 'Newsreader', serif; font-weight: 500; font-style: italic; letter-spacing: -.025em; }
-  .habits { grid-column: 1 / span 4; align-self: end; list-style: none; position: relative; z-index: 2; }
-  .habits li { display: grid; grid-template-columns: calc(6 * var(--u)) 1fr; align-items: baseline;
-    border-top: calc(.4 * var(--u)) solid var(--ink); padding: calc(1.7 * var(--u)) 0; font-size: var(--t-body); font-weight: 700; line-height: 1.15; }
-  .habits li:last-child { border-bottom: calc(.4 * var(--u)) solid var(--ink); }
-  .habits b { font-size: var(--t-note); font-weight: 800; letter-spacing: .1em; color: var(--link); }
-  .why { grid-column: 1 / span 4; margin-top: calc(2.6 * var(--u)); font-size: var(--t-note); font-weight: 500; line-height: 1.45; position: relative; z-index: 2; }
+:root{--u:1vmin;--margin:calc(7*var(--u));--cols:12;--paper:#faf8f2;--ink:#3d3c38;--orange:#ff612b}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:100vw;height:100vh;overflow:hidden;background:var(--paper)}
+.poster{position:relative;width:100vw;height:100vh;overflow:hidden;background:var(--paper);color:var(--ink);font-family:'Figtree','Segoe UI',Arial,sans-serif;-webkit-font-smoothing:antialiased}
+.poster>*{position:absolute}
+.l{display:block;white-space:nowrap}
+.head{font-weight:900;letter-spacing:-.035em;white-space:nowrap}
+.fact{font-weight:800;line-height:1.2;letter-spacing:-.012em}
+.say{font-family:'Newsreader',Georgia,serif;font-style:italic;font-weight:400;line-height:1.18}
+.pt{font-weight:600;line-height:1.26}
+.kick{font-weight:700;line-height:1.2;letter-spacing:.14em;text-transform:uppercase;white-space:nowrap}
+.art{left:0;top:0;width:100vw;height:100vh;display:block}
+.caps{left:0;top:0;font-weight:900;text-transform:uppercase;letter-spacing:-0.01em}
+.ln{position:absolute;display:block;white-space:nowrap;line-height:1}
+.cover{position:absolute;background:var(--paper)}
+.o{position:absolute;box-sizing:border-box;border-radius:50%;border:.19em solid var(--orange)}
+.o.dot{border:0;background:var(--orange)}
 </style>
 </head>
 <body>
-  <main class="poster">
-    <div class="disc" data-decor></div>
-    <svg class="lock" data-decor viewBox="0 0 200 240" aria-hidden="true">
-      <path d="M52 108 V78 a48 48 0 0 1 96 0 v30" fill="none" stroke="#3d3c38" stroke-width="22" stroke-linecap="round"/>
-      <rect x="18" y="104" width="164" height="128" rx="26" fill="#3d3c38"/>
-      <circle cx="100" cy="158" r="15" fill="#ff612b"/>
-      <rect x="92" y="160" width="16" height="38" rx="8" fill="#ff612b"/>
-    </svg>
-
-    <p class="kicker">Privacy · Every desk, every time</p>
-    <h1 class="head">Lock it<br>before you<br><em>leave</em> it.</h1>
-
-    <ul class="habits">
-      <li><b>01</b>Lock your screen.</li>
-      <li><b>02</b>Shred your notes.</li>
-      <li><b>03</b>Clear your desk.</li>
-    </ul>
-    <p class="why">Ten seconds at your desk protects the people who trust us with their information.</p>
-  </main>
+<main class="poster L-letters">
+<h1 class="caps" data-bleed><span class="ln" style="left:calc(-1.889*var(--u));top:calc(-2.678*var(--u));font-size:calc(37.779*var(--u))">Lock</span><span class="ln" style="left:calc(-1.048*var(--u));top:calc(28.593*var(--u));font-size:calc(20.969*var(--u))">it before</span><span class="ln" style="left:calc(-2.435*var(--u));top:calc(41.554*var(--u));font-size:calc(48.709*var(--u))">you<i class="cover" data-decor style="left:0.69em;top:0.129em;width:0.767em;height:0.742em"></i><i class="o" data-decor style="left:0.708em;top:0.135em;width:0.73em;height:0.73em"></i></span><span class="ln" style="left:calc(-1.147*var(--u));top:calc(81.83*var(--u));font-size:calc(22.941*var(--u))">leave it.</span></h1><div class="info" style="left:calc(7*var(--u));top:calc(116.931*var(--u))"><p class="fact" style="font-size:calc(4.293*var(--u))"><span class="l">Lock your screen.</span></p><p class="fact" style="font-size:calc(4.293*var(--u));margin-top:calc(0.966*var(--u))"><span class="l">Shred your notes.</span></p><p class="fact" style="font-size:calc(4.293*var(--u));margin-top:calc(0.966*var(--u))"><span class="l">Clear your desk.</span></p></div><div class="info" style="left:calc(52.5*var(--u));top:calc(132.458*var(--u))"><p class="kick" style="font-size:calc(1.55*var(--u))"><span class="l">Privacy</span></p></div>
+</main>
 </body>
 </html>

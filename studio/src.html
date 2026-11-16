@@ -63,23 +63,23 @@
 <header>
   <p class="k">Poster Studio · works on its own, or with any Copilot</p>
   <h1>Type it. See it. <em>Print</em> it.</h1>
-  <p class="lead">Nothing to install and no internet needed. Type the words and the Studio draws the poster in the house look, checks it, and gives you a PNG and a PDF. Copilot can write the words for you.</p>
+  <p class="lead">Nothing to install and no internet needed. Type the words and the Studio sets them round the Big O: one orange ring, heavy type, three colours. It checks the poster and gives you a PNG and a PDF. Copilot can write the words for you.</p>
 </header>
 
 <main>
   <section aria-labelledby="s1">
     <h2 id="s1"><b>01</b>Make the poster</h2>
-    <p class="hint">Type the words and press Make. The Studio draws the poster. Only what you type goes on it as fact: leave When, Time or Where empty and the poster gets a blank line to write on, not a made-up date.</p>
+    <p class="hint">Type the words and press Make. The Studio draws the poster. Only what you type goes on it: leave When, Time or Where empty and the poster simply carries on without it. Nothing is made up.</p>
     <div class="grid">
       <div><label for="kind">Kind of poster</label>
         <select id="kind"><option>Team building</option><option>Town hall</option><option>Call habit</option><option>Privacy</option><option>Recognition</option><option>Wellbeing</option><option>Notice</option></select></div>
       <div><label for="format">Where it will be seen</label>
         <select id="format">
-          <option value="a3">Wall poster, A3 portrait</option><option value="landscape">Floor or wall screen, 16:9</option>
-          <option value="ig-portrait">Team chat post, 4:5</option><option value="a4">Notice board, A4 portrait</option>
-          <option value="ig-square">Square post, 1:1</option><option value="story">Phone screen, 9:16</option>
+          <option value="ig-portrait">Social post, 4:5</option><option value="ig-square">Square post, 1:1</option>
+          <option value="story">Story or phone screen, 9:16</option><option value="a3">Wall poster, A3 portrait</option>
+          <option value="a4">Notice board, A4 portrait</option><option value="landscape">Floor or wall screen, 16:9</option>
         </select></div>
-      <div class="wide"><label for="headline">Headline <span>2 to 6 words. Put *stars* round the one word that matters, or leave it and the last word is used.</span></label>
+      <div class="wide"><label for="headline">Headline <span>2 to 6 words of plain speech. Short words set largest.</span></label>
         <input id="headline"></div>
       <div class="wide"><label for="message">One line under it <span>optional: one plain sentence</span></label>
         <input id="message"></div>
@@ -89,11 +89,9 @@
       <div class="wide"><label for="extra">Points <span>optional: up to three short actions, one per line</span></label>
         <textarea id="extra" style="min-height:84px"></textarea></div>
       <div><label for="layout">Layout</label>
-        <select id="layout"><option value="">Chosen for you</option><option value="ring">Ring right</option><option value="disc">Corner disc</option><option value="sun">Rising disc</option><option value="split">Split panel</option><option value="badge">Centre badge</option><option value="arc">Corner arc</option><option value="column">Side column</option><option value="steps">Numbered steps (needs points)</option><option value="word">Big word, no picture</option><option value="number">Big number (needs a date)</option></select></div>
+        <select id="layout"><option value="">Chosen for you</option><option value="letters">The O in the headline</option><option value="counter">Inside the O</option><option value="record">Headline over the O</option><option value="arcs">Rings from the full stop</option><option value="rings">Words round the O (tall sizes)</option><option value="burst">Burst</option><option value="numeral">The date as the picture (needs a date)</option><option value="steps">Three rings (needs 2 or 3 points)</option></select></div>
       <div><label for="style">Colour</label>
-        <select id="style"><option value="light">Light: warm white</option><option value="dark">Dark: charcoal</option><option value="sky">Sky: pale blue</option></select></div>
-      <div><label for="picture">Picture</label>
-        <select id="picture"><option value="">Chosen for you</option><option value="highfive">High five</option><option value="team">Team of three</option><option value="headset">Headset</option><option value="lock">Padlock</option><option value="megaphone">Megaphone</option><option value="question">Question mark</option><option value="trophy">Trophy</option><option value="calendar">Calendar</option><option value="cup">Cup</option><option value="clock">Clock</option></select></div>
+        <select id="style"><option value="light">Warm white</option><option value="dark">Charcoal</option></select></div>
     </div>
     <div class="row">
       <button id="make">Make the poster</button>
@@ -186,72 +184,70 @@ const FORMATS = {
   a3: { w: 1123, h: 1587, page: ['297mm', '420mm'], seen: 'a wall, about 3 metres away, for 3 seconds' },
   a4: { w: 794, h: 1123, page: ['210mm', '297mm'], seen: 'a notice board, at arm\'s length' },
   landscape: { w: 1920, h: 1080, page: ['338.7mm', '190.5mm'], seen: 'a wall screen, 4 to 8 metres away, for 3 seconds' },
-  'ig-portrait': { w: 1080, h: 1350, page: ['203.2mm', '254mm'], seen: 'a phone, for under 2 seconds' },
-  'ig-square': { w: 1080, h: 1080, page: ['203.2mm', '203.2mm'], seen: 'a phone, for under 2 seconds' },
+  'ig-portrait': { w: 1080, h: 1350, page: ['203.2mm', '254mm'], seen: 'a phone, in a feed, for under 2 seconds' },
+  'ig-square': { w: 1080, h: 1080, page: ['203.2mm', '203.2mm'], seen: 'a phone, in a feed, for under 2 seconds' },
   story: { w: 1080, h: 1920, page: ['190.5mm', '338.7mm'], seen: 'a phone held upright' },
 }
 const lines = (s) => s.split(/\n/).map((x) => x.trim()).filter(Boolean)
 const E = window.PosterEngine
-const SIZE = { a3: 'a3', a4: 'a4', screen: 'landscape', landscape: 'landscape', chat: 'ig-portrait', 'ig-portrait': 'ig-portrait', square: 'ig-square', 'ig-square': 'ig-square', phone: 'story', story: 'story' }
+const SIZE = { post: 'ig-portrait', social: 'ig-portrait', chat: 'ig-portrait', 'ig-portrait': 'ig-portrait', square: 'ig-square', 'ig-square': 'ig-square', story: 'story', phone: 'story', a3: 'a3', a4: 'a4', screen: 'landscape', landscape: 'landscape' }
 const WHY = {
-  ring: 'Ring right: the ring frames the picture and leaves the left side clear for the headline.',
-  disc: 'Corner disc: one strong object on one strong shape, read from across a room.',
-  sun: 'Rising disc: the disc lifts the picture, which suits people and good news.',
-  word: 'Big word: no picture, because the instruction itself is the message.',
-  number: 'Big number: the date is the thing to remember, so it is the picture.',
-  split: 'Split panel: the picture gets the top of the sheet to itself, and the words read cleanly underneath.',
-  column: 'Side column: the facts stand in their own column, so they are found at a glance.',
-  badge: 'Centre badge: the whole ring, centred, for an occasion worth marking.',
-  steps: 'Numbered steps: the three actions are the poster, in the order they are done.',
-  arc: 'Corner arc: the picture sits high, and the headline lands at eye level.',
+  letters: 'The O in the headline: the words are the whole sheet, set in capitals from edge to edge, and one letter O is the orange ring.',
+  counter: 'Inside the O: one letter is the whole poster. A giant O leaves the sheet and the words stand in the space inside it.',
+  record: 'Headline over the O: a heavy ring cropped by two edges, the headline above it, the facts in the space inside it.',
+  arcs: 'Rings from the full stop: the full stop is the centre, and rings grow from it and open round the words.',
+  numeral: 'The date as the picture: the day of the month as big as the sheet allows, with the ring passing behind it.',
+  rings: 'Words round the O: the headline runs on rings of type outside the O, and the facts stand inside it.',
+  burst: 'Burst: sixty strokes round an empty O, each longer than the last, until the longest leave the sheet.',
+  steps: 'Three rings: one ring for each thing to do, each smaller than the last, hung from one line.',
 }
 
 /* ---------- 1. the form and the engine ---------- */
 function formData() {
   return { kind: $('kind').value, format: $('format').value, headline: $('headline').value, line: $('message').value,
     points: lines($('extra').value), when: $('when').value, time: $('time').value, where: $('where').value,
-    picture: $('picture').value, layout: $('layout').value, style: $('style').value }
+    layout: $('layout').value, style: $('style').value }
 }
 /* a card from Copilot or from a link, made safe and put into the form */
 function cardToData(c) {
   const kind = Object.keys(E.KINDS).find((k) => k.toLowerCase() === String(c.kind || '').trim().toLowerCase()) || 'Notice'
   const pick = (v, table) => (table[String(v || '').trim().toLowerCase()] !== undefined ? String(v).trim().toLowerCase() : '')
-  return { kind, format: SIZE[String(c.size || c.format || '').trim().toLowerCase()] || 'a3', headline: (c.headline || '').trim(), line: (c.line || '').trim(),
+  return { kind, format: SIZE[String(c.size || c.format || '').trim().toLowerCase()] || 'ig-portrait', headline: (c.headline || '').trim(), line: (c.line || '').trim(),
     points: String(c.points || '').split('|').map((x) => x.trim()).filter(Boolean).slice(0, 3),
     when: (c.when || '').trim(), time: (c.time || '').trim(), where: (c.where || '').trim(),
-    picture: pick(c.picture, E.PICTURES), layout: pick(c.layout, E.LAYOUTS), style: pick(c.style || c.colour || c.color, E.STYLES) || 'light' }
+    layout: pick(c.layout, E.LAYOUTS), style: pick(c.style || c.colour || c.color, E.STYLES) || 'light' }
 }
 function setForm(d) {
   $('kind').value = d.kind; $('format').value = d.format; $('headline').value = d.headline; $('message').value = d.line
   $('extra').value = d.points.join('\n'); $('when').value = d.when; $('time').value = d.time; $('where').value = d.where
-  $('picture').value = d.picture; $('layout').value = d.layout; $('style').value = d.style || 'light'
+  $('layout').value = d.layout || ''; $('style').value = d.style || 'light'
 }
 function designNotes(d, res) {
   const f = FORMATS[d.format]
   return ['AUDIENCE: A customer care team, seeing it on ' + f.seen + '.',
     'LAYOUT: ' + WHY[res.layout],
-    'PICTURE: ' + (res.picture ? E.PICTURES[res.picture].name + ', drawn in solid charcoal so it reads at a distance.' : 'None. The headline carries it.'),
+    'LOOK: The Big O. One orange ring is the hero; warm white, charcoal and orange only; two typefaces; no icons or drawn people.',
     'WORDS: Typed by a person in Poster Studio. Nothing on the poster was invented.',
     'STILL NEEDED: ' + (['when', 'time', 'where'].filter((k) => !d[k].trim()).join(', ') || 'nothing') + '.'].join('\n')
 }
-let look = 0
-function makeFromForm(shuffle) {
+let look = 0, lastLayout = ''
+async function makeFromForm(shuffle) {
+  await E.ready()
   const d = formData()
   if (!d.headline.trim()) { $('made').textContent = 'Type a headline first.'; $('headline').focus(); return }
-  if (shuffle) {      // the next combination of layout and picture that suits this kind
+  if (shuffle) {      // the next layout that suits this kind and these words, and the other colour every third press
     look++
-    const K = E.KINDS[d.kind]
-    const layouts = ['ring', 'split', 'sun', 'badge', 'arc', 'disc', 'column', 'steps', 'word', 'number'].filter((l) => (l !== 'number' || /\d/.test(d.when)) && (l !== 'steps' || d.points.length > 1))
-    const at = Math.max(0, layouts.indexOf(d.layout || K.layouts[0]))
+    const layouts = E.KINDS[d.kind].layouts.filter((l) => E.makePoster({ ...d, layout: l }).layout === l)
+    const at = layouts.indexOf(lastLayout)
     d.layout = layouts[(at + 1) % layouts.length]
-    d.picture = K.pictures[look % K.pictures.length]
-    d.style = ['light', 'dark', 'sky'][look % 3]
-    $('layout').value = d.layout; $('picture').value = d.picture; $('style').value = d.style
+    d.style = look % 3 === 2 ? 'dark' : 'light'
+    $('layout').value = d.layout; $('style').value = d.style
   }
   const res = E.makePoster(d)
+  lastLayout = res.layout
   origin = 'form'; cards = []; options = [res.html]
   $('options').hidden = true; $('options').innerHTML = ''
-  $('made').textContent = E.LAYOUTS[res.layout] + (res.picture ? ', ' + E.PICTURES[res.picture].name.toLowerCase() : '') + ', ' + E.STYLES[res.style].name.toLowerCase() + '.'
+  $('made').textContent = E.LAYOUTS[res.layout] + ', ' + E.STYLES[res.style].name.toLowerCase() + '.'
   return run(res.html, designNotes(d, res))
 }
 $('make').onclick = () => makeFromForm(false)
@@ -260,7 +256,7 @@ $('another').onclick = () => makeFromForm(true)
 /* words that may be on the poster: what was typed, plus the Studio's own labels */
 function allowedText() {
   return [$('headline').value, $('message').value, $('when').value, $('time').value, $('where').value, $('extra').value,
-    'When Time Where', ...Object.values(E.KINDS).map((k) => k.tag)].join(' | ').replace(/\*/g, '')
+    ...Object.values(E.KINDS).map((k) => k.tag)].join(' | ').replace(/\*/g, '')
 }
 
 async function copyText(text, sayEl, said) {
@@ -276,7 +272,7 @@ function parseCards(raw) {
   for (const block of raw.split(/^[ \t`]*POSTER[ \t]*$/im).slice(1)) {
     const c = {}
     for (const line of block.split('\n')) {
-      const m = line.match(/^\s*[-*]?\s*(kind|headline|line|points|picture|layout|style|colour|color|size|when|time|where)\s*:\s*(.*)$/i)
+      const m = line.match(/^\s*[-*]?\s*(kind|headline|line|points|layout|style|colour|color|size|when|time|where)\s*:\s*(.*)$/i)
       if (m) c[m[1].toLowerCase()] = m[2].trim().replace(/^["“]|["”]$/g, '')
       else if (/^\s*```/.test(line) && Object.keys(c).length) break
     }
@@ -390,7 +386,7 @@ function colourUnder(doc, x, y, skip) {
     if (el === skip || el.classList.contains('__studio')) continue
     const cs = win.getComputedStyle(el)
     if (el instanceof win.SVGElement) {          // a drawn shape: its own paint is what is behind the words
-      if (el.tagName.toLowerCase() === 'svg') continue
+      if (/^(svg|text|textpath|tspan)$/i.test(el.tagName)) continue
       const fill = rgb(cs.fill), stroke = rgb(cs.stroke)
       if (fill && fill.a > 0.5) return fill
       if (stroke && stroke.a > 0.5) return stroke
@@ -438,7 +434,7 @@ function check() {
     const r = range.getBoundingClientRect()
     if (r.width < 1 || r.height < 1) continue
     items.push({ text, el, x: r.left, y: r.top, w: r.width, h: r.height, size: parseFloat(cs.fontSize),
-      family: cs.fontFamily.split(',')[0].replace(/["']/g, '').trim(), color: rgb(cs.color), align: cs.textAlign,
+      family: cs.fontFamily.split(',')[0].replace(/["']/g, '').trim(), color: rgb(el instanceof win.SVGElement ? cs.fill : cs.color), align: cs.textAlign, onPath: el instanceof win.SVGElement,
       bleed: !!el.closest('[data-bleed]'), shadow: cs.textShadow !== 'none' })
   }
   const out = []
@@ -478,7 +474,7 @@ function check() {
   for (const i of items) {
     if (i.bleed || !i.color) continue
     let worst = 99
-    for (const fx of [0.15, 0.5, 0.85]) for (const fy of [0.3, 0.7]) {
+    for (const fx of i.onPath ? [0.5] : [0.15, 0.5, 0.85]) for (const fy of i.onPath ? [0.04] : [0.3, 0.7]) {
       const bg = colourUnder(doc, i.x + i.w * fx, i.y + i.h * fy, null)
       worst = Math.min(worst, ratio(i.color, bg))
     }
@@ -492,7 +488,7 @@ function check() {
   items.forEach((i) => { const h = i.color && hueBucket(i.color); if (h !== null && h !== undefined) hues.add(h) })
   const css = [...doc.querySelectorAll('style:not(#__fonts)')].map((s) => s.textContent).join('\n') + [...doc.querySelectorAll('[style]')].map((e) => e.getAttribute('style')).join('\n')
   for (const mm of css.matchAll(/#([0-9a-f]{6})\b/gi)) { const v = parseInt(mm[1], 16); const h = hueBucket({ r: v >> 16, g: (v >> 8) & 255, b: v & 255 }); if (h !== null) hues.add(h) }
-  if (hues.size > 4) add('WARN', 'colour', hues.size + ' different hues. Keep to the orange, the pale sky and the teal.')
+  if (hues.size > 2) add('WARN', 'colour', hues.size + ' different hues. The look is warm white, charcoal and one orange.')
   else add('PASS', 'colour', hues.size + ' hue famil' + (hues.size === 1 ? 'y' : 'ies') + ' plus neutrals')
   if (/gradient\(/i.test(css)) add('WARN', 'colour', 'There is a gradient. The look uses flat colour only.')
   if (/backdrop-filter|box-shadow/i.test(css)) add('WARN', 'colour', 'There are shadows or frosted panels. The look has none.')
@@ -560,7 +556,8 @@ function choose(i) {
   if (cards[i]) setForm(cards[i])          // the form shows what is on the poster, and can be edited and made again
   return run(options[i], extractNotes($('html').value) || (cards[i] ? designNotes(cards[i], E.makePoster(cards[i])) : ''))
 }
-function start(raw) {
+async function start(raw) {
+  await E.ready()
   cards = parseCards(raw)
   options = cards.length ? cards.map((c) => E.makePoster(c).html) : extractAll(raw)
   origin = cards.length ? 'copilot' : 'html'
@@ -676,19 +673,19 @@ $('print').onclick = () => {
 
 /* ---------- an example, and posters opened from a link ---------- */
 $('example').onclick = () => {
-  setForm({ kind: 'Team building', format: 'a3', headline: 'Headsets off. *Hands* up.', line: 'Time away from the queue, with the people who share it.',
-    points: [], when: 'Friday 12 December', time: '3 pm', where: '14th floor', picture: 'highfive', layout: 'ring', style: 'light' })
+  setForm({ kind: 'Team building', format: 'ig-portrait', headline: 'Headsets off. Hands up.', line: 'Time away from the queue, with the people who share it.',
+    points: [], when: 'Friday 12 December', time: '3 pm', where: '14th floor', layout: 'counter', style: 'light' })
   makeFromForm(false)
 }
 /* studio.html#kind=Team+building&headline=...  The part after # never leaves this computer. */
 if (location.hash.length > 1) {
   const q = new URLSearchParams(location.hash.slice(1)), c = {}
   for (const [k, v] of q) c[k.toLowerCase()] = v
-  if (c.headline) {
+  if (c.headline) E.ready().then(() => {
     const d = cardToData(c)
     setForm(d); origin = 'copilot'; cards = [d]; options = [E.makePoster(d).html]
     run(options[0], designNotes(d, E.makePoster(d)))
-  }
+  })
 }
 </script>
 </body>

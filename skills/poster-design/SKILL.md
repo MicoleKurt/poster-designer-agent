@@ -25,6 +25,7 @@ All paths are relative to the folder this file is in. The same folder works as a
 | [references/process.md](./references/process.md) | The seven steps, with what to produce at each |
 | [references/craft.md](./references/craft.md) | Hierarchy, grids, type, colour, image, and the design lineages to draw on |
 | [references/product-lighting.md](./references/product-lighting.md) | Making an object look lit and placed, not pasted |
+| [references/big-o.md](./references/big-o.md) | The house theme: the rules of the Big O and eight ways it becomes a poster. Read this first for any Optum-look sheet |
 | [references/anti-slop.md](./references/anti-slop.md) | The habits that make work look generated, and what to do instead |
 | [references/formats.md](./references/formats.md) | Sizes, bleed, safe margins, viewing distance, export |
 | [profiles/optum-callcenter.json](./profiles/optum-callcenter.json) | The house look: colours, type roles, shapes, tone, hard rules |

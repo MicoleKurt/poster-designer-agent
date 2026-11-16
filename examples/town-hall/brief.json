@@ -7,16 +7,20 @@
   "format": "ig-portrait",
   "seen_from": "A phone, for under 2 seconds",
   "tone": "Warm, plain, respectful. An invitation, not a summons.",
-  "direction": "A giant serif-italic question mark standing in the orange ring; a pale sky band at the foot for the three facts",
-  "must_not": ["performance numbers", "names of leaders unless supplied", "the company logo redrawn by hand"],
+  "direction": "The full stop of the headline is the centre: orange rings double in size from it and open round the words; date, time and room in bold under the line",
+  "must_not": [
+    "performance numbers",
+    "names of leaders unless supplied",
+    "the company logo redrawn by hand"
+  ],
   "copy": {
-    "kicker": "Team town hall",
     "headline": "Bring one question.",
-    "mark": "?",
     "facts": [
-      "When", "Thursday 4 December",
-      "Time", "3:00 pm",
-      "Where", "14th floor, Training Room B"
+      "Town hall",
+      "Ask anything. We answer in the room.",
+      "Thursday 4 December",
+      "3 pm",
+      "Training Room B"
     ]
   }
 }

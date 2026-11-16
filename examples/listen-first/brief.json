@@ -7,15 +7,19 @@
   "format": "landscape",
   "seen_from": "A wall screen, 4 to 8 metres away, for about 3 seconds",
   "tone": "Warm, plain, respectful. Never scolding.",
-  "direction": "Warm white ground, charcoal type, one orange ring cropped by the screen; a serif italic for the one word that matters",
-  "must_not": ["member or patient details", "real performance numbers", "the company logo redrawn by hand"],
+  "direction": "Three orange rings, each smaller than the last, hung from one line, one for each thing to do; a charcoal sheet for a floor screen",
+  "must_not": [
+    "member or patient details",
+    "real performance numbers",
+    "the company logo redrawn by hand"
+  ],
   "copy": {
-    "kicker": "Every call · Team huddle",
     "headline": "Listen first. Then solve.",
-    "habits": [
-      "01", "Let the caller finish.",
-      "02", "Say back what you heard.",
-      "03", "Confirm the fix before you close."
+    "facts": [
+      "Every call",
+      "Let the caller finish.",
+      "Say back what you heard.",
+      "Confirm the fix before you close."
     ]
   }
 }
