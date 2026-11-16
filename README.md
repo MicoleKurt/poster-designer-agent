@@ -6,6 +6,23 @@ It writes each poster as HTML and CSS, renders it with a real browser to print-r
 
 ![Three posters made with the agent: a privacy reminder, a town hall invitation, and a call habit for the floor screens](docs/hero.png)
 
+## Use it from a link
+
+Nothing to download.
+
+**Poster Studio online:** <https://micolekurt.github.io/poster-designer-agent/studio.html>
+
+**In a Copilot that can open links,** paste this and add your details:
+
+```text
+Follow the instructions at https://raw.githubusercontent.com/MicoleKurt/poster-designer-agent/main/copilot/instructions.txt
+to design my poster. It is for: (what the poster is for). When: (date). Time: (time). Where: (place).
+```
+
+Copilot answers with one HTML file. Paste its reply into the Studio to check it and export a PDF or PNG.
+
+A chat Copilot can read the instructions from the link, but it cannot run this repository's scripts. Some Copilots, especially on managed work accounts, are not allowed to open outside links; if yours says it cannot, use the Studio's **Copy the prompt for Copilot** button and paste the prompt itself.
+
 ## Three ways to run it
 
 Copy the folder (clone it, download the ZIP, or carry it on a USB stick) and pick the one that fits where you are.
