@@ -1,0 +1,695 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Poster Studio</title>
+<!--
+  Poster Studio: the whole poster process in one file, for any Copilot or chat assistant.
+  Nothing to install. Open this file in Edge or Chrome (double-click it).
+    1. Fill in the brief.            2. Copy the prompt into Copilot.
+    3. Paste the HTML it returns.    4. Read the checks, look, export PDF or PNG.
+  It needs no internet: the two typefaces and the code that makes the PNG, PDF and ZIP are inside this file.
+-->
+<style id="fontfaces">/*FONTFACES*/</style>
+<style>
+  :root { --ground: #faf8f2; --paper: #fff; --ink: #3d3c38; --accent: #ff612b; --tint: #dff3f9; --link: #095f87; --line: #d9d5c8; --bad: #b3261e; --warn: #8a5a00; --good: #1f6b3a; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Figtree', 'Segoe UI', Arial, sans-serif; font-weight: 500; color: var(--ink); background: var(--ground); line-height: 1.45; font-size: 16px; }
+  header { position: relative; overflow: hidden; padding: 44px max(24px, calc((100vw - 1120px) / 2)) 36px; }
+  header::after { content: ''; position: absolute; width: 420px; height: 420px; border-radius: 50%; border: 62px solid var(--accent); right: -150px; top: -190px; }
+  header p.k { font-size: 13px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; }
+  h1 { font-size: clamp(40px, 6vw, 72px); font-weight: 800; letter-spacing: -.04em; line-height: .95; margin: 14px 0 12px; max-width: 12ch; position: relative; z-index: 1; }
+  h1 em { font-family: 'Newsreader', Georgia, serif; font-weight: 500; }
+  header p.lead { max-width: 56ch; font-size: 18px; position: relative; z-index: 1; }
+  main { padding: 0 max(24px, calc((100vw - 1120px) / 2)) 80px; }
+  section { border-top: 3px solid var(--ink); padding: 26px 0 34px; }
+  h2 { font-size: 26px; font-weight: 800; letter-spacing: -.02em; margin-bottom: 4px; display: flex; gap: 14px; align-items: baseline; }
+  h2 b { font-size: 13px; letter-spacing: .12em; color: var(--link); }
+  section > p.hint { max-width: 70ch; margin-bottom: 18px; }
+  .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px 20px; }
+  .wide { grid-column: 1 / -1; }
+  label { display: block; font-size: 13px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; margin-bottom: 6px; }
+  label span { font-weight: 500; letter-spacing: 0; text-transform: none; color: #6b6960; }
+  input, select, textarea { width: 100%; font: inherit; color: var(--ink); background: var(--paper); border: 1.5px solid var(--line); border-radius: 10px; padding: 11px 13px; }
+  textarea { min-height: 96px; resize: vertical; }
+  textarea.code { font-family: Consolas, 'Courier New', monospace; font-size: 13px; min-height: 180px; }
+  input:focus, select:focus, textarea:focus, button:focus-visible { outline: 3px solid var(--link); outline-offset: 2px; }
+  .row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-top: 16px; }
+  button { font: inherit; font-weight: 700; cursor: pointer; border-radius: 999px; padding: 11px 22px; border: 1.5px solid var(--ink); background: var(--ink); color: #fff; }
+  button.quiet { background: transparent; color: var(--ink); }
+  button[aria-pressed="true"] { background: var(--link); border-color: var(--link); color: #fff; }
+  button:disabled { opacity: .45; cursor: not-allowed; }
+  .said { font-size: 14px; color: var(--link); font-weight: 700; }
+  .stage { background: #2a2927; border-radius: 14px; padding: 22px; min-height: 180px; display: flex; justify-content: center; align-items: flex-start; overflow: hidden; margin-top: 16px; }
+  .frame { transform-origin: top center; background: #fff; box-shadow: 0 10px 40px rgba(0,0,0,.5); }
+  iframe { display: block; border: 0; background: #fff; }
+  .empty { color: #cfcabb; padding: 50px 0; }
+  ul.results { list-style: none; margin-top: 14px; border-top: 1.5px solid var(--line); }
+  ul.results li { display: grid; grid-template-columns: 62px 86px 1fr; gap: 10px; padding: 9px 0; border-bottom: 1.5px solid var(--line); font-size: 15px; }
+  ul.results b { font-size: 12px; letter-spacing: .1em; }
+  .FAIL b { color: var(--bad); } .WARN b { color: var(--warn); } .PASS b { color: var(--good); }
+  ul.results i { font-style: normal; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: #6b6960; }
+  .sum { font-weight: 800; font-size: 18px; margin-top: 14px; }
+  pre.notes { white-space: pre-wrap; font: inherit; background: var(--paper); border: 1.5px solid var(--line); border-radius: 10px; padding: 16px 18px; max-width: 80ch; }
+  .looks { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; margin-top: 14px; font-size: 14px; }
+  .looks div { background: var(--tint); border-radius: 10px; padding: 12px 14px; }
+  .looks strong { display: block; font-weight: 800; }
+  footer { padding: 0 max(24px, calc((100vw - 1120px) / 2)) 48px; font-size: 13px; color: #6b6960; max-width: 1400px; }
+  @media (max-width: 760px) { .grid, .looks { grid-template-columns: 1fr; } header::after { opacity: .35; } ul.results li { grid-template-columns: 54px 1fr; } ul.results i { display: none; } }
+</style>
+</head>
+<body>
+<header>
+  <p class="k">Poster Studio · works with any Copilot</p>
+  <h1>Brief it. Paste it. <em>Check</em> it.</h1>
+  <p class="lead">Nothing to install. Fill in the brief, copy the prompt into Copilot and paste back its reply. You get the poster as PNG and PDF, the research behind it, and the checks.</p>
+</header>
+
+<main>
+  <section aria-labelledby="s1">
+    <h2 id="s1"><b>01</b>The brief</h2>
+    <p class="hint">Only what you type here is allowed on the poster as fact. Leave a line empty and the poster gets a blank space to write in, not a made-up date.</p>
+    <div class="grid">
+      <div><label for="kind">Kind of poster</label>
+        <select id="kind">
+          <option>Team building or team event</option><option>Town hall or meeting</option><option>Call habit or huddle topic</option>
+          <option>Privacy or security reminder</option><option>Recognition</option><option>Wellbeing reminder</option><option>Schedule or system notice</option>
+        </select></div>
+      <div><label for="format">Where it will be seen</label>
+        <select id="format">
+          <option value="a3">Wall poster, A3 portrait</option><option value="landscape">Floor or wall screen, 16:9</option>
+          <option value="ig-portrait">Team chat post, 4:5</option><option value="a4">Notice board, A4 portrait</option>
+          <option value="ig-square">Square post, 1:1</option><option value="story">Phone screen, 9:16</option>
+        </select></div>
+      <div class="wide"><label for="message">The one message <span>what should people remember?</span></label>
+        <input id="message" placeholder=""></div>
+      <div><label for="headline">Headline <span>optional: leave empty and Copilot writes one</span></label>
+        <input id="headline"></div>
+      <div><label for="picture">Picture <span>what should be drawn?</span></label>
+        <select id="picture">
+          <option value="people">People, drawn as simple figures</option><option value="object">One object, drawn simply</option><option value="type">No picture: the words are the picture</option>
+        </select></div>
+      <div><label for="count">How many to choose from</label>
+        <select id="count"><option value="1">One poster</option><option value="3">Three different options</option></select></div>
+      <div><label for="when">When <span>date</span></label><input id="when"></div>
+      <div><label for="time">Time</label><input id="time"></div>
+      <div><label for="where">Where</label><input id="where"></div>
+      <div class="wide"><label for="extra">Other words that must appear <span>one per line: a contact, a deadline, three habits</span></label>
+        <textarea id="extra"></textarea></div>
+    </div>
+    <div class="row">
+      <button id="copy">Copy the prompt for Copilot</button>
+      <button id="show" class="quiet">Show the prompt</button>
+      <span id="copied" class="said" role="status"></span>
+    </div>
+    <textarea id="prompt" class="code" readonly hidden style="margin-top:14px; min-height:260px"></textarea>
+  </section>
+
+  <section aria-labelledby="s2">
+    <h2 id="s2"><b>02</b>Paste what Copilot wrote</h2>
+    <p class="hint">Paste the whole reply. The studio finds the HTML in it. If Copilot made a picture and not code, tell it: "Write the HTML file, not an image."</p>
+    <textarea id="html" class="code" spellcheck="false"></textarea>
+    <div class="row">
+      <button id="run">Preview and check</button>
+      <button id="example" class="quiet">Try with an example</button>
+    </div>
+    <div class="row" id="options" role="group" aria-label="Options" hidden></div>
+  </section>
+
+  <section aria-labelledby="sr">
+    <h2 id="sr"><b>03</b>Research</h2>
+    <p class="hint">What Copilot worked out before designing: who the poster is for, what works, the three ideas, the one it chose, and what it still needs from you. It is saved with the poster.</p>
+    <pre id="notes" class="notes">The research appears here.</pre>
+  </section>
+
+  <section aria-labelledby="s3">
+    <h2 id="s3"><b>04</b>Look</h2>
+    <p class="hint">Four views, one question each. A "no" means go back to Copilot with what is wrong.</p>
+    <div class="row" role="group" aria-label="View">
+      <button class="quiet view" data-view="final" aria-pressed="true">Final</button>
+      <button class="quiet view" data-view="grid" aria-pressed="false">Grid</button>
+      <button class="quiet view" data-view="squint" aria-pressed="false">Squint</button>
+      <button class="quiet view" data-view="grey" aria-pressed="false">Grey</button>
+      <button class="quiet view" data-view="thumb" aria-pressed="false">Thumbnail</button>
+    </div>
+    <div class="stage" id="stage"><p class="empty">The poster appears here.</p></div>
+    <div class="looks">
+      <div><strong>Grid</strong>Does every edge sit on a column, and all text inside the dashed margin?</div>
+      <div><strong>Squint</strong>Blurred, is there exactly one thing your eye lands on?</div>
+      <div><strong>Grey</strong>Without colour, is the order of importance still clear?</div>
+      <div><strong>Thumbnail</strong>This small, can you still tell what it is about?</div>
+    </div>
+  </section>
+
+  <section aria-labelledby="s4">
+    <h2 id="s4"><b>05</b>Checks</h2>
+    <p class="hint">Measured on the poster as it is drawn. Fix every FAIL. For a WARN, fix it or know why it stays.</p>
+    <p class="sum" id="sum">Nothing checked yet.</p>
+    <ul class="results" id="results"></ul>
+    <div class="row">
+      <button id="fix" class="quiet" disabled>Copy the fixes to send back to Copilot</button>
+      <span id="fixed" class="said" role="status"></span>
+    </div>
+  </section>
+
+  <section aria-labelledby="s5">
+    <h2 id="s5"><b>06</b>Download</h2>
+    <p class="hint">One click each. "Everything" is a ZIP with the PNG, the PDF, the HTML file and the research notes with the check results. The files are made in your browser. No internet is needed.</p>
+    <div class="row">
+      <button id="all" disabled>Download everything</button>
+      <button id="png" class="quiet" disabled>PNG</button>
+      <button id="pdf" class="quiet" disabled>PDF</button>
+      <button id="notesfile" class="quiet" disabled>Research notes</button>
+      <button id="save" class="quiet" disabled>HTML file</button>
+      <button id="print" class="quiet" disabled>Print</button>
+    </div>
+    <p id="exported" class="said" role="status" style="margin-top:12px"></p>
+  </section>
+</main>
+
+<footer>
+  <p>The look follows an unofficial profile made from the public Optum website. It contains no logo, and the company's own brand guide and logo files take priority. Never put member, patient or caller information on a poster. These quick checks cover type, layout, colour and invented words; the full checker in the repository (check.py) also measures contrast against photographs.</p>
+</footer>
+
+<script id="vendor">/*VENDOR*/</script>
+<script>
+const $ = (id) => document.getElementById(id)
+/* the two typefaces travel inside this file, so posters look right with no internet */
+const FONT_CSS = $('fontfaces').textContent.includes('@font-face') ? $('fontfaces').textContent : ''
+const withFonts = (html) => !FONT_CSS ? html : /<head[^>]*>/i.test(html)
+  ? html.replace(/<head[^>]*>/i, (m) => m + '<style id="__fonts">' + FONT_CSS + '</style>')
+  : '<style id="__fonts">' + FONT_CSS + '</style>' + html
+const FORMATS = {
+  a3: { w: 1123, h: 1587, page: ['297mm', '420mm'], seen: 'a wall, about 3 metres away, for 3 seconds' },
+  a4: { w: 794, h: 1123, page: ['210mm', '297mm'], seen: 'a notice board, at arm\'s length' },
+  landscape: { w: 1920, h: 1080, page: ['338.7mm', '190.5mm'], seen: 'a wall screen, 4 to 8 metres away, for 3 seconds' },
+  'ig-portrait': { w: 1080, h: 1350, page: ['203.2mm', '254mm'], seen: 'a phone, for under 2 seconds' },
+  'ig-square': { w: 1080, h: 1080, page: ['203.2mm', '203.2mm'], seen: 'a phone, for under 2 seconds' },
+  story: { w: 1080, h: 1920, page: ['190.5mm', '338.7mm'], seen: 'a phone held upright' },
+}
+const lines = (s) => s.split(/\n/).map((x) => x.trim()).filter(Boolean)
+
+/* ---------- 1. the prompt ---------- */
+function buildPrompt() {
+  const f = FORMATS[$('format').value]
+  const facts = []
+  const gaps = []
+  for (const [id, label] of [['when', 'When'], ['time', 'Time'], ['where', 'Where']]) {
+    const v = $(id).value.trim()
+    if (v) facts.push(`${label}: ${v}`); else gaps.push(label)
+  }
+  const extra = lines($('extra').value)
+  const pic = {
+    people: 'People, drawn by you in inline SVG as simple solid charcoal figures with round ends (round head, plain torso, arms that attach at the shoulder), doing something that shows the message, and touching or overlapping the orange shape. Never realistic people, never a photo, never an emoji.',
+    object: 'One object that stands for the message, drawn by you in inline SVG as a simple solid charcoal shape with round ends, sitting on or inside the orange shape. Never clip art, never an emoji.',
+    type: 'No picture. The headline is the picture: make it very large and let the orange shape sit behind or beside it.',
+  }[$('picture').value]
+
+  return `You are a senior graphic designer who writes code. Design one poster as a single HTML file. Do NOT make an image. Write HTML and CSS only.
+
+THE BRIEF
+Kind: ${$('kind').value}
+For: a customer care (call centre) team
+Seen on: ${f.seen}
+Sheet: ${f.w} x ${f.h} CSS pixels (${$('format').selectedOptions[0].text})
+The one message: ${$('message').value.trim() || '(write one from the kind of poster, plainly)'}
+Headline: ${$('headline').value.trim() || '(write it: 2 to 6 words, plain speech, no slogan, no exclamation mark)'}
+Facts that may appear, exactly as written:
+${facts.length ? facts.map((x) => '- ' + x).join('\n') : '- (none given)'}${extra.length ? '\n' + extra.map((x) => '- ' + x).join('\n') : ''}
+${gaps.length ? `NOT given: ${gaps.join(', ')}. For each, show only its label above a ruled line with empty space to write in. Do not invent a value.` : ''}
+
+RULES YOU MAY NOT BREAK
+1. Invent nothing: no dates, times, places, names, numbers, scores, quotes or logos beyond the facts above. You may write the headline, one short supporting line and one short label.
+2. No member, patient or caller information. No performance numbers. No company logo.
+3. No emoji, no clip art, no stock or generated photos, no placeholder text.
+4. At most 45 words on the whole sheet.
+
+THE LOOK (follow exactly)
+- Background warm white #FAF8F2. All text and drawings charcoal #3D3C38. Never pure black.
+- Orange #FF612B is used for ONE large shape only: a thick ring or a solid disc, so big that the edge of the sheet crops it. No other orange, and no orange text.
+- Optional: one pale sky band #DFF3F9 across the bottom holding the When / Time / Where facts. Small labels may use deep teal #095F87.
+- Fonts: font-family: 'Figtree', 'Segoe UI', Arial, sans-serif for everything (weights 500, 700, 800); font-family: 'Newsreader', Georgia, serif in italic for ONE word of the headline at most, in the same charcoal. Also add the Google Fonts <link> tag for Figtree and Newsreader: it is used when there is internet and ignored when there is not, so the poster works either way.
+- Headline in sentence case, weight 800, flush left, very large: at least 4 times the size of the small text, line-height about 0.92, letter-spacing -0.04em.
+- Flush left on a clear left margin. Do not centre everything. Leave at least a third of the sheet empty.
+- No gradients, no shadows, no glow, no rounded cards, no icons in a row.
+- Picture: ${pic}
+
+LAYOUTS (all of them keep the look above)
+A. Ring right: a thick ring cropped by the right edge, the picture inside it, the headline on the left.
+B. Corner disc: a solid disc cropped by the bottom-right corner, the picture on it, the headline top left.
+C. Rising disc: half a disc rising from the bottom edge like a sun, the picture standing on it, the headline above.
+D. Big word: no picture. The headline fills the top two thirds in very large type, with the ring behind its last word, cropped by an edge.
+E. Big number: only if a date or number was given. That number, very large in charcoal, is the picture, with the ring behind it.
+Pick the layout that fits the message. Never use the same layout as the poster before it in this chat.
+If I say "another" or "different": keep my facts, change the layout and the picture.
+If I ask for options (for example "3 options"): make that many complete posters, each with a different layout and a different headline, each in its own code block, with a line before each such as "OPTION 1: A, Ring right".
+
+${$('count').value === '3' ? 'MAKE 3 OPTIONS for this request: three complete posters, three different layouts, three different headlines.\n\n' : ''}HOW TO BUILD IT
+- One file. All CSS in one <style> tag. No JavaScript. No external images.
+- html and body: margin 0, width 100vw, height 100vh, overflow hidden.
+- Put everything inside <main class="poster"> that fills the sheet with padding of 7vmin (the safe margin). No text may come closer to the edge than that.
+- Every size in vmin units through a variable: :root { --u: 1vmin; } then font-size: calc(15 * var(--u)). No px sizes.
+- At most 4 different text sizes.
+- Add the attribute data-decor to shapes and drawings that hold no words. Text must never sit on top of the orange shape unless it is the headline.
+- Check line breaks: no single short word alone on a line.
+
+YOUR REPLY
+Always three parts, in this order:
+Part 1. RESEARCH, as short plain text (about 130 words in all), under these five headings:
+AUDIENCE: who sees it, where, from how far away, and for how long.
+WHAT WORKS: three things good posters of this kind do. Design observations only: no statistics, no studies, no sources.
+THREE IDEAS: one led by the words, one by the picture, one by the layout. One line each.
+CHOSEN: which idea you built, and why the other two lost.
+STILL NEEDED: every fact I did not give you (date, time, place, a photo, a logo), or "nothing".
+Part 2. The complete HTML file in ONE code block, from <!doctype html> to </html>. For options, one code block per option.
+Part 3. One line: "Paste this whole reply into Poster Studio (studio.html) to get the PNG, the PDF and the research notes."`
+}
+
+function allowedText() {
+  return [$('message').value, $('headline').value, $('when').value, $('time').value, $('where').value, $('extra').value, 'When Time Where'].join(' | ')
+}
+
+async function copyText(text, sayEl, said) {
+  try { await navigator.clipboard.writeText(text); sayEl.textContent = said }
+  catch { sayEl.textContent = 'Could not copy automatically. Select the text and copy it.' }
+  setTimeout(() => { sayEl.textContent = '' }, 4000)
+}
+$('copy').onclick = () => { const p = buildPrompt(); $('prompt').value = p; $('prompt').hidden = false; copyText(p, $('copied'), 'Copied. Paste it into Copilot.') }
+$('show').onclick = () => { $('prompt').value = buildPrompt(); $('prompt').hidden = !$('prompt').hidden }
+
+/* ---------- 2. find the HTML in the reply ---------- */
+function extractHtml(raw) {
+  let s = raw
+  const fence = s.match(/```(?:html)?\s*([\s\S]*?)```/i)
+  if (fence && /<html|<!doctype/i.test(fence[1])) s = fence[1]
+  const start = s.search(/<!doctype html|<html/i)
+  const end = s.toLowerCase().lastIndexOf('</html>')
+  if (start === -1) return null
+  return (end > start ? s.slice(start, end + 7) : s.slice(start)).trim()
+}
+/* every poster in the reply: one per code block */
+function extractAll(raw) {
+  const out = []
+  for (const m of raw.matchAll(/```(?:html)?\s*([\s\S]*?)```/gi)) { const h = extractHtml(m[1]); if (h) out.push(h) }
+  if (!out.length) for (const part of raw.split(/(?=<!doctype html)/i)) { const h = extractHtml(part); if (h) out.push(h) }
+  return out
+}
+/* everything Copilot wrote before the code is its research */
+function extractNotes(raw) {
+  const cut = raw.search(/```|<!doctype html|<html/i)
+  return (cut === -1 ? '' : raw.slice(0, cut)).replace(/\*\*/g, '').trim()
+}
+
+/* ---------- 3. preview ---------- */
+let current = null   // { html, fmt, iframe }
+let view = 'final'
+
+function fit() {
+  if (!current) return
+  const { fmt } = current
+  const frame = $('stage').querySelector('.frame')
+  const avail = $('stage').clientWidth - 44
+  let k = Math.min(avail / fmt.w, (window.innerHeight * 0.82) / fmt.h, 1)
+  if (view === 'thumb') k = 170 / fmt.w
+  frame.style.transform = `scale(${k})`
+  frame.style.width = fmt.w + 'px'
+  frame.style.height = fmt.h + 'px'
+  $('stage').style.height = Math.ceil(fmt.h * k) + 44 + 'px'
+}
+
+function applyView() {
+  if (!current) return
+  const { iframe } = current
+  iframe.style.filter = view === 'squint' ? 'blur(22px)' : view === 'grey' ? 'grayscale(1)' : 'none'
+  const doc = iframe.contentDocument
+  doc.querySelectorAll('.__studio').forEach((n) => n.remove())
+  if (view === 'grid') {
+    const cs = doc.defaultView.getComputedStyle(doc.documentElement)
+    const cols = parseInt(cs.getPropertyValue('--cols')) || 12
+    const g = doc.createElement('div'); g.className = '__studio'
+    g.style.cssText = 'position:fixed;inset:0;z-index:99999;pointer-events:none;padding:7vmin;display:grid;column-gap:1.8vmin;grid-template-columns:repeat(' + cols + ',1fr)'
+    for (let i = 0; i < cols; i++) { const c = doc.createElement('i'); c.style.cssText = 'background:rgba(255,0,90,.13);outline:1px solid rgba(255,0,90,.4)'; g.appendChild(c) }
+    const m = doc.createElement('div'); m.className = '__studio'
+    m.style.cssText = 'position:fixed;inset:7vmin;z-index:99999;pointer-events:none;outline:3px dashed rgba(0,150,255,.9)'
+    doc.body.append(g, m)
+  }
+  fit()
+}
+document.querySelectorAll('.view').forEach((b) => { b.onclick = () => {
+  view = b.dataset.view
+  document.querySelectorAll('.view').forEach((x) => x.setAttribute('aria-pressed', String(x === b)))
+  applyView()
+} })
+window.addEventListener('resize', fit)
+
+function render(html) {
+  return new Promise((resolve) => {
+    const fmt = FORMATS[$('format').value]
+    $('stage').innerHTML = '<div class="frame"><iframe title="Poster preview"></iframe></div>'
+    const iframe = $('stage').querySelector('iframe')
+    iframe.width = fmt.w; iframe.height = fmt.h
+    iframe.onload = async () => {
+      current = { html, fmt, iframe }
+      try { await iframe.contentDocument.fonts.ready } catch {}
+      await new Promise((r) => setTimeout(r, 350))
+      view = 'final'
+      document.querySelectorAll('.view').forEach((x) => x.setAttribute('aria-pressed', String(x.dataset.view === 'final')))
+      applyView()
+      resolve()
+    }
+    iframe.srcdoc = withFonts(html)
+  })
+}
+
+/* ---------- 4. checks ---------- */
+const PLACEHOLDER = /lorem ipsum|dolor sit|your (text|title|headline|logo|name) here|company name|placeholder|xx\/xx|00\/00|tbd\b|\[[^\]]{2,30}\]/i
+const EMOJI = /[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}\u{1F1E6}-\u{1F1FF}]/u
+const norm = (s) => s.toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim()
+function rgb(css) { const m = css.match(/rgba?\(([^)]+)\)/); if (!m) return null; const p = m[1].split(/[ ,/]+/).map(Number); return { r: p[0], g: p[1], b: p[2], a: p[3] === undefined ? 1 : p[3] } }
+function hueBucket(c) {
+  const r = c.r / 255, g = c.g / 255, b = c.b / 255, mx = Math.max(r, g, b), mn = Math.min(r, g, b), d = mx - mn
+  if (mx < 0.16 || (mx ? d / mx : 0) < 0.22) return null
+  let h = mx === r ? ((g - b) / d) % 6 : mx === g ? (b - r) / d + 2 : (r - g) / d + 4
+  return ((Math.round(h * 2) % 12) + 12) % 12
+}
+function lum(c) { const f = (v) => { v /= 255; return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4 }; return 0.2126 * f(c.r) + 0.7152 * f(c.g) + 0.0722 * f(c.b) }
+function ratio(a, b) { const x = lum(a), y = lum(b); return (Math.max(x, y) + 0.05) / (Math.min(x, y) + 0.05) }
+
+/* the colour actually painted under a point: walks the stack, including thick borders such as the ring */
+function colourUnder(doc, x, y, skip) {
+  const win = doc.defaultView
+  for (const el of doc.elementsFromPoint(x, y)) {
+    if (el === skip || el.classList.contains('__studio')) continue
+    const cs = win.getComputedStyle(el)
+    const bw = parseFloat(cs.borderTopWidth) || 0
+    if (bw > 2) {
+      const r = el.getBoundingClientRect(), bc = rgb(cs.borderTopColor)
+      if (bc && bc.a > 0.5) {
+        const round = parseFloat(cs.borderTopLeftRadius) >= Math.min(r.width, r.height) / 2 - 1
+        const inBand = round
+          ? (() => { const d = Math.hypot(x - (r.left + r.width / 2), y - (r.top + r.height / 2)); return d <= r.width / 2 && d >= r.width / 2 - bw })()
+          : (x - r.left < bw || r.right - x < bw || y - r.top < bw || r.bottom - y < bw)
+        if (inBand) return bc
+      }
+    }
+    const bg = rgb(cs.backgroundColor)
+    if (bg && bg.a > 0.5) {
+      if (parseFloat(cs.borderTopLeftRadius) > 0) {   // a disc only covers its own circle
+        const r = el.getBoundingClientRect()
+        const round = parseFloat(cs.borderTopLeftRadius) >= Math.min(r.width, r.height) / 2 - 1
+        if (round && Math.hypot(x - (r.left + r.width / 2), y - (r.top + r.height / 2)) > r.width / 2) continue
+      }
+      return bg
+    }
+  }
+  return { r: 255, g: 255, b: 255, a: 1 }
+}
+
+function check() {
+  const { iframe, fmt } = current
+  const doc = iframe.contentDocument, win = doc.defaultView
+  const W = fmt.w, H = fmt.h, short = Math.min(W, H)
+  const items = []
+  const walker = doc.createTreeWalker(doc.body, NodeFilter.SHOW_TEXT)
+  let n
+  while ((n = walker.nextNode())) {
+    const text = n.textContent.replace(/\s+/g, ' ').trim()
+    if (!text) continue
+    const el = n.parentElement
+    if (!el || el.closest('.__studio, script, style, [aria-hidden="true"], [data-decor]')) continue
+    const cs = win.getComputedStyle(el)
+    if (cs.visibility === 'hidden' || cs.display === 'none' || parseFloat(cs.opacity) === 0) continue
+    const range = doc.createRange(); range.selectNodeContents(n)
+    const r = range.getBoundingClientRect()
+    if (r.width < 1 || r.height < 1) continue
+    items.push({ text, el, x: r.left, y: r.top, w: r.width, h: r.height, size: parseFloat(cs.fontSize),
+      family: cs.fontFamily.split(',')[0].replace(/["']/g, '').trim(), color: rgb(cs.color), align: cs.textAlign,
+      bleed: !!el.closest('[data-bleed]'), shadow: cs.textShadow !== 'none' })
+  }
+  const out = []
+  const add = (level, group, msg) => out.push({ level, group, msg })
+  const quote = (list) => list.slice(0, 4).map((i) => '"' + i.text.slice(0, 28) + '"').join(', ')
+  if (!items.length) add('FAIL', 'copy', 'There is no text on the poster.')
+
+  const families = [...new Set(items.map((i) => i.family))]
+  if (families.length > 3) add('FAIL', 'type', families.length + ' typefaces (' + families.join(', ') + '). Use two.')
+  else if (families.length === 3) add('WARN', 'type', '3 typefaces (' + families.join(', ') + '). Two is the limit.')
+  else add('PASS', 'type', 'Typefaces: ' + families.join(', '))
+  const sizes = [...new Set(items.filter((i) => !i.bleed).map((i) => Math.round(i.size * 10) / 10))].sort((a, b) => a - b)
+  if (sizes.length > 6) add('WARN', 'type', sizes.length + ' different text sizes. A poster needs 3 to 5 clear levels.')
+  else add('PASS', 'type', sizes.length + ' text sizes')
+  if (sizes.length) {
+    const chars = {}
+    items.forEach((i) => { const k = Math.round(i.size * 10) / 10; chars[k] = (chars[k] || 0) + i.text.length })
+    const body = +Object.keys(chars).sort((a, b) => chars[b] - chars[a])[0]
+    const big = Math.max(...items.map((i) => i.size))
+    const k = big / body
+    if (k < 3) add('WARN', 'type', 'The headline is only ' + k.toFixed(1) + ' times the reading size. Make it 4 times or more.')
+    else add('PASS', 'type', 'The headline is ' + k.toFixed(1) + ' times the reading size')
+    if (sizes[0] < short * 0.011) add('WARN', 'type', 'The smallest text is ' + Math.round(sizes[0]) + 'px on a ' + short + 'px sheet. It will not be readable from a distance.')
+  }
+
+  const m = short * 0.035
+  const off = items.filter((i) => !i.bleed && (i.x < -1 || i.y < -1 || i.x + i.w > W + 1 || i.y + i.h > H + 1))
+  const near = items.filter((i) => !i.bleed && !off.includes(i) && (i.x < m || i.y < m || i.x + i.w > W - m || i.y + i.h > H - m))
+  if (off.length) add('FAIL', 'layout', 'Text runs off the sheet: ' + quote(off))
+  if (near.length) add('FAIL', 'layout', 'Text is too close to the edge: ' + quote(near))
+  if (!off.length && !near.length && items.length) add('PASS', 'layout', 'All text is inside the safe margin')
+  if (doc.documentElement.scrollHeight > H + 2 || doc.documentElement.scrollWidth > W + 2) add('FAIL', 'layout', 'The design is bigger than the sheet, so part of it is cut off. It must fit 100vw by 100vh.')
+  if (items.length >= 4 && items.filter((i) => i.align === 'center').length / items.length > 0.85) add('WARN', 'layout', 'Almost everything is centred. Choose a left edge.')
+
+  const low = []
+  for (const i of items) {
+    if (i.bleed || !i.color) continue
+    let worst = 99
+    for (const fx of [0.15, 0.5, 0.85]) for (const fy of [0.3, 0.7]) {
+      const bg = colourUnder(doc, i.x + i.w * fx, i.y + i.h * fy, null)
+      worst = Math.min(worst, ratio(i.color, bg))
+    }
+    const need = i.size >= short * 0.03 ? 3 : 4.5
+    if (worst < need) low.push({ text: i.text, worst, need })
+  }
+  if (low.length) add(low.some((l) => l.worst < l.need * 0.7) ? 'FAIL' : 'WARN', 'contrast', 'Hard to read: ' + low.slice(0, 4).map((l) => '"' + l.text.slice(0, 24) + '" ' + l.worst.toFixed(1) + ':1 (needs ' + l.need + ')').join('; '))
+  else if (items.length) add('PASS', 'contrast', 'All text is readable against what is behind it')
+
+  const hues = new Set()
+  items.forEach((i) => { const h = i.color && hueBucket(i.color); if (h !== null && h !== undefined) hues.add(h) })
+  const css = [...doc.querySelectorAll('style:not(#__fonts)')].map((s) => s.textContent).join('\n') + [...doc.querySelectorAll('[style]')].map((e) => e.getAttribute('style')).join('\n')
+  for (const mm of css.matchAll(/#([0-9a-f]{6})\b/gi)) { const v = parseInt(mm[1], 16); const h = hueBucket({ r: v >> 16, g: (v >> 8) & 255, b: v & 255 }); if (h !== null) hues.add(h) }
+  if (hues.size > 4) add('WARN', 'colour', hues.size + ' different hues. Keep to the orange, the pale sky and the teal.')
+  else add('PASS', 'colour', hues.size + ' hue famil' + (hues.size === 1 ? 'y' : 'ies') + ' plus neutrals')
+  if (/gradient\(/i.test(css)) add('WARN', 'colour', 'There is a gradient. The look uses flat colour only.')
+  if (/backdrop-filter|box-shadow/i.test(css)) add('WARN', 'colour', 'There are shadows or frosted panels. The look has none.')
+  if (items.filter((i) => i.shadow).length) add('WARN', 'colour', 'Some text has a shadow or glow. Remove it.')
+  const orangeText = items.filter((i) => i.color && i.color.r > 220 && i.color.g > 60 && i.color.g < 140 && i.color.b < 90)
+  if (orangeText.length) add('WARN', 'colour', 'Orange is used for text: ' + quote(orangeText) + '. Keep orange for the one large shape.')
+
+  const words = items.reduce((s, i) => s + i.text.split(/\s+/).length, 0)
+  if (words > 70) add('WARN', 'copy', words + ' words. Cut to one message and the facts needed to act.')
+  else add('PASS', 'copy', words + ' words')
+  const joined = items.map((i) => i.text).join(' ')
+  if (PLACEHOLDER.test(joined)) add('FAIL', 'copy', 'Placeholder text is on the poster: "' + joined.match(PLACEHOLDER)[0] + '"')
+  if (EMOJI.test(joined)) add('FAIL', 'copy', 'Emoji are used as pictures. Draw the shape or remove it.')
+  if (doc.querySelector('img[src^="http"], script')) add('WARN', 'copy', 'The file loads outside images or scripts. A poster file should hold everything itself.')
+
+  /* what did Copilot add? numbers and dates you did not type are a FAIL; other words are listed for you to confirm */
+  const pool = ' ' + norm(allowedText()) + ' '
+  const added = items.filter((i) => norm(i.text) && !pool.includes(' ' + norm(i.text) + ' '))
+  const withNumbers = added.filter((i) => /\d/.test(i.text) && !/^0?[1-9]$/.test(i.text.trim()))
+  if (withNumbers.length) add('FAIL', 'facts', 'Numbers or dates you did not give: ' + quote(withNumbers) + '. Remove them or put the real ones in the brief.')
+  const wordsOnly = added.filter((i) => !withNumbers.includes(i))
+  if (wordsOnly.length) add('WARN', 'facts', 'Words Copilot wrote, for you to confirm are true and wanted: ' + wordsOnly.slice(0, 8).map((i) => '"' + i.text.slice(0, 40) + '"').join(', '))
+  if (!added.length && items.length) add('PASS', 'facts', 'Every word on the poster came from your brief')
+
+  const order = { FAIL: 0, WARN: 1, PASS: 2 }
+  out.sort((a, b) => order[a.level] - order[b.level])
+  return out
+}
+
+function showResults(res) {
+  const f = res.filter((r) => r.level === 'FAIL').length, w = res.filter((r) => r.level === 'WARN').length
+  $('sum').textContent = `${f} fail, ${w} warn, ${res.length - f - w} pass`
+  $('results').innerHTML = ''
+  for (const r of res) {
+    const li = document.createElement('li'); li.className = r.level
+    const b = document.createElement('b'); b.textContent = r.level
+    const g = document.createElement('i'); g.textContent = r.group
+    const s = document.createElement('span'); s.textContent = r.msg
+    li.append(b, g, s); $('results').appendChild(li)
+  }
+  $('fix').disabled = !(f + w)
+  window.__results = res
+}
+$('fix').onclick = () => {
+  const todo = (window.__results || []).filter((r) => r.level !== 'PASS')
+  const msg = 'Fix these in the poster and send the complete HTML file again in one code block. Change nothing else, and invent nothing:\n' + todo.map((r, i) => `${i + 1}. ${r.msg}`).join('\n')
+  copyText(msg, $('fixed'), 'Copied. Paste it into Copilot.')
+}
+
+let notes = ''
+async function run(html, research) {
+  notes = research || ''
+  $('sum').textContent = 'Checking ...'; $('results').innerHTML = ''
+  $('notes').textContent = notes || 'Copilot gave no research with this poster. Ask it: "Add the research part: audience, what works, three ideas, chosen, still needed."'
+  await render(html)
+  showResults(check())
+  for (const id of ['all', 'pdf', 'png', 'notesfile', 'save', 'print']) $(id).disabled = false
+}
+let options = [], optionIndex = 0
+const tag = () => (options.length > 1 ? '-option-' + (optionIndex + 1) : '')
+function choose(i) {
+  optionIndex = i
+  $('options').querySelectorAll('button').forEach((b, n) => b.setAttribute('aria-pressed', String(n === i)))
+  return run(options[i], extractNotes($('html').value))
+}
+function start(raw) {
+  options = extractAll(raw)
+  $('options').innerHTML = ''
+  $('options').hidden = options.length < 2
+  if (!options.length) { $('sum').textContent = 'No HTML found in what you pasted. Ask Copilot to write the HTML file, not an image.'; $('results').innerHTML = ''; return }
+  options.forEach((_, n) => {
+    const b = document.createElement('button'); b.className = 'quiet'; b.textContent = 'Option ' + (n + 1); b.onclick = () => choose(n)
+    $('options').appendChild(b)
+  })
+  return choose(0)
+}
+$('run').onclick = () => start($('html').value)
+
+/* ---------- 5. export ---------- */
+function download(name, blob) { const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 4000) }
+const say = (t) => { $('exported').textContent = t }
+const lib = (global, src) => window[global] ? Promise.resolve() : new Promise((ok, no) => { const el = document.createElement('script'); el.src = src; el.onload = ok; el.onerror = no; document.head.appendChild(el) })
+const OFFLINE = 'The file could not be made in this browser. Use Print and choose "Save as PDF", or in Edge press Ctrl+Shift+S to capture the preview.'
+
+/* A picture of the page only keeps its typefaces if the font files travel inside it.
+   This reads the poster's Google Fonts stylesheet, keeps the Latin faces, and inlines each file. */
+async function embedFonts(doc) {
+  let css = FONT_CSS
+  try {
+    const builtIn = (h) => FONT_CSS && !/family=(?!Figtree|Newsreader)/i.test(h)
+    const hrefs = [...doc.querySelectorAll('link[rel="stylesheet"]')].map((l) => l.href).filter((h) => /fonts\.googleapis\.com/.test(h) && !builtIn(h))
+    for (const href of hrefs) {
+      const text = await (await fetch(href)).text()
+      const faces = text.split('@font-face').slice(1).map((f) => '@font-face' + f)
+      const latin = faces.filter((f) => !/unicode-range/.test(f) || /U\+0000-00FF/i.test(f))
+      let extra = (latin.length ? latin : faces).join('\n')
+      for (const u of new Set([...extra.matchAll(/url\((https:[^)]+)\)/g)].map((m) => m[1]))) {
+        const blob = await (await fetch(u)).blob()
+        const data = await new Promise((ok) => { const fr = new FileReader(); fr.onload = () => ok(fr.result); fr.readAsDataURL(blob) })
+        extra = extra.split(u).join(data)
+      }
+      css += extra
+    }
+  } catch { /* no internet: the built-in faces and the system fonts are used */ }
+  return css
+}
+
+/* the poster as a PNG, at print resolution for paper sizes */
+let pngCache = null
+async function makePng() {
+  if (pngCache && pngCache.html === current.html && pngCache.fmt === current.fmt) return pngCache.blob
+  await lib('htmlToImage', 'https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/dist/html-to-image.js')
+  const { iframe, fmt } = current
+  const before = view; view = 'final'; applyView()
+  const fontEmbedCSS = await embedFonts(iframe.contentDocument)
+  const pixelRatio = fmt.w < 1200 ? 3 : 2      // A3 and A4 come out near 300 dpi
+  const blob = await window.htmlToImage.toBlob(iframe.contentDocument.documentElement, { width: fmt.w, height: fmt.h, pixelRatio, backgroundColor: '#ffffff', fontEmbedCSS })
+  view = before; applyView()
+  pngCache = { html: current.html, fmt: current.fmt, blob, px: [fmt.w * pixelRatio, fmt.h * pixelRatio] }
+  return blob
+}
+/* the same picture on a page of the exact paper size */
+async function makePdf() {
+  const png = await makePng()
+  await lib('jspdf', 'https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js')
+  const { fmt } = current
+  const w = parseFloat(fmt.page[0]), h = parseFloat(fmt.page[1])
+  const data = await new Promise((ok) => { const fr = new FileReader(); fr.onload = () => ok(fr.result); fr.readAsDataURL(png) })
+  const pdf = new window.jspdf.jsPDF({ orientation: w > h ? 'landscape' : 'portrait', unit: 'mm', format: [w, h], compress: true })
+  pdf.addImage(data, 'PNG', 0, 0, w, h, undefined, 'FAST')
+  return pdf.output('blob')
+}
+/* the brief, Copilot's research and the check results, as one readable file */
+function notesFile() {
+  const v = (id) => $(id).value.trim()
+  const res = window.__results || []
+  const f = res.filter((r) => r.level === 'FAIL').length, w = res.filter((r) => r.level === 'WARN').length
+  const brief = [['Kind', $('kind').value], ['Seen on', $('format').selectedOptions[0].text], ['The one message', v('message')], ['Headline', v('headline')], ['When', v('when')], ['Time', v('time')], ['Where', v('where')], ['Other words', lines($('extra').value).join('; ')]]
+  return ['# Poster notes', '',
+    '## Brief', '', ...brief.map(([k, x]) => `- **${k}:** ${x || 'not given'}`), '',
+    '## Research', '', notes || 'No research was given with this poster.', '',
+    '## Checks', '', `**${f} fail, ${w} warn, ${res.length - f - w} pass**`, '', ...res.map((r) => `- ${r.level} (${r.group}): ${r.msg}`), '',
+    '## Files', '', '- `poster.png`: for screens, chat and slides', '- `poster.pdf`: for printing, at the exact paper size', '- `poster.html`: the source; open it in a browser or change it and check again', '',
+    '## Before it goes up', '', '- Every fact on the poster was given by a person, not written by the assistant.', '- No member, patient or caller information.', '- The official logo file is added by hand if one is needed.', ''].join('\n')
+}
+
+$('save').onclick = () => download('poster' + tag() + '.html', new Blob([withFonts(current.html)], { type: 'text/html' }))
+$('notesfile').onclick = () => download('poster' + tag() + '-notes.md', new Blob([notesFile()], { type: 'text/markdown' }))
+$('png').onclick = async () => {
+  say('Making the PNG ...')
+  try { download('poster' + tag() + '.png', await makePng()); say(`Saved poster.png (${pngCache.px[0]} x ${pngCache.px[1]} px).`) } catch { say(OFFLINE) }
+}
+$('pdf').onclick = async () => {
+  say('Making the PDF ...')
+  try { download('poster' + tag() + '.pdf', await makePdf()); say(`Saved poster.pdf (${current.fmt.page[0]} x ${current.fmt.page[1]}).`) } catch { say(OFFLINE) }
+}
+$('all').onclick = async () => {
+  say('Making the PNG, the PDF and the notes ...')
+  try {
+    const png = await makePng(), pdf = await makePdf()
+    await lib('JSZip', 'https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js')
+    const zip = new window.JSZip()
+    zip.file('poster.png', png); zip.file('poster.pdf', pdf); zip.file('poster.html', withFonts(current.html)); zip.file('poster-notes.md', notesFile())
+    download('poster' + tag() + '-pack.zip', await zip.generateAsync({ type: 'blob' }))
+    say('Saved poster-pack.zip: poster.png, poster.pdf, poster.html and poster-notes.md. Open the PNG and compare it with the preview before you send it.')
+  } catch { say(OFFLINE) }
+}
+$('print').onclick = () => {
+  const { fmt, html } = current
+  const page = `<style>@page{size:${fmt.page[0]} ${fmt.page[1]};margin:0}html,body{width:${fmt.page[0]}!important;height:${fmt.page[1]}!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}</style>`
+  const w = window.open('', '_blank')
+  if (!w) { say('The browser blocked the print window. Allow pop-ups for this page and try again.'); return }
+  w.document.open(); w.document.write(withFonts(html).replace(/<\/head>/i, page + '</head>')); w.document.close()
+  const go = () => setTimeout(() => { w.focus(); w.print() }, 600)
+  if (w.document.fonts && w.document.fonts.ready) w.document.fonts.ready.then(go); else go()
+}
+
+/* ---------- example, so the page can be tried without Copilot ---------- */
+const EXAMPLE = `<!doctype html><html lang="en"><head><meta charset="utf-8"><title>Lock it</title>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@500;700;800&family=Newsreader:ital,wght@1,500&display=swap" rel="stylesheet">
+<style>
+:root{--u:1vmin;--cols:12}*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:100vw;height:100vh;overflow:hidden;background:#faf8f2}
+body{font-family:'Figtree',sans-serif;color:#3d3c38}
+.poster{position:relative;width:100vw;height:100vh;overflow:hidden;padding:calc(7*var(--u))}
+.disc{position:absolute;width:calc(92*var(--u));aspect-ratio:1;border-radius:50%;background:#ff612b;right:calc(-35*var(--u));bottom:calc(-24*var(--u))}
+.lock{position:absolute;right:calc(8*var(--u));bottom:calc(13*var(--u));width:calc(36*var(--u))}
+.k{font-size:calc(2*var(--u));font-weight:700;letter-spacing:.12em;text-transform:uppercase}
+h1{margin-top:calc(6*var(--u));font-size:calc(15.5*var(--u));font-weight:800;line-height:.92;letter-spacing:-.04em;position:relative}
+h1 em{font-family:'Newsreader',serif;font-weight:500}
+ul{position:absolute;left:calc(7*var(--u));bottom:calc(7*var(--u));width:calc(30*var(--u));list-style:none}
+li{border-top:calc(.4*var(--u)) solid #3d3c38;padding:calc(1.7*var(--u)) 0;font-size:calc(3.1*var(--u));font-weight:700}
+</style></head><body><main class="poster">
+<div class="disc" data-decor></div>
+<svg class="lock" data-decor viewBox="0 0 200 240"><path d="M52 108V78a48 48 0 0 1 96 0v30" fill="none" stroke="#3d3c38" stroke-width="22" stroke-linecap="round"/><rect x="18" y="104" width="164" height="128" rx="26" fill="#3d3c38"/><circle cx="100" cy="158" r="15" fill="#ff612b"/><rect x="92" y="160" width="16" height="38" rx="8" fill="#ff612b"/></svg>
+<p class="k">Privacy</p>
+<h1>Lock it<br>before you<br><em>leave</em> it.</h1>
+<ul><li>Lock your screen.</li><li>Shred your notes.</li><li>Clear your desk.</li></ul>
+</main></body></html>`
+const EXAMPLE_NOTES = `AUDIENCE: Advocates leaving and returning to their desks, passing a corridor wall at about 3 metres, for 3 seconds.
+WHAT WORKS: One object that says the subject before a word is read. A headline that is an instruction, not a slogan. Three short actions in the order they are done.
+THREE IDEAS: Words: the headline alone, very large. Picture: a padlock on an orange disc cropped by the corner. Layout: three numbered steps as the whole poster.
+CHOSEN: The picture. The padlock reads from across the room; the words alone looked like a notice, and the steps alone had nothing to stop the eye.
+STILL NEEDED: nothing.`
+$('example').onclick = () => {
+  $('kind').value = 'Privacy or security reminder'; $('format').value = 'a3'; $('picture').value = 'object'
+  $('message').value = 'Lock your screen and clear your desk every time you step away.'
+  $('headline').value = 'Lock it before you leave it.'
+  $('extra').value = 'Privacy\nLock your screen.\nShred your notes.\nClear your desk.'
+  $('html').value = EXAMPLE_NOTES + '\n\n```html\n' + EXAMPLE + '\n```'
+  start($('html').value)
+}
+</script>
+</body>
+</html>

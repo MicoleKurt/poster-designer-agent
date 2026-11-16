@@ -33,11 +33,21 @@ THE LOOK (follow exactly)
 - Background warm white #FAF8F2. All text and drawings charcoal #3D3C38. Never pure black.
 - Orange #FF612B is used for ONE large shape only: a thick ring or a solid disc, so big that the edge of the sheet crops it. No other orange, and no orange text.
 - Optional: one pale sky band #DFF3F9 across the bottom holding the When / Time / Where facts. Small labels may use deep teal #095F87.
-- Fonts: Figtree (weights 500, 700, 800) for everything; Newsreader italic 500 for ONE word of the headline at most, in the same charcoal. Load both from Google Fonts with a <link> tag.
+- Fonts: font-family: 'Figtree', 'Segoe UI', Arial, sans-serif for everything (weights 500, 700, 800); font-family: 'Newsreader', Georgia, serif in italic for ONE word of the headline at most, in the same charcoal. Also add the Google Fonts <link> tag for Figtree and Newsreader: it is used when there is internet and ignored when there is not, so the poster works either way.
 - Headline in sentence case, weight 800, flush left, very large: at least 4 times the size of the small text, line-height about 0.92, letter-spacing -0.04em.
 - Flush left on a clear left margin. Do not centre everything. Leave at least a third of the sheet empty.
 - No gradients, no shadows, no glow, no rounded cards, no icons in a row.
 - Picture: if the poster is about people (a team event, recognition, a habit between colleagues), draw people in inline SVG as simple solid charcoal figures with round ends (round head, plain torso, arms that attach at the shoulder), doing something that shows the message, and touching or overlapping the orange shape. Otherwise draw one object that stands for the message, the same way. Never realistic people, never a photo.
+
+LAYOUTS (all of them keep the look above)
+A. Ring right: a thick ring cropped by the right edge, the picture inside it, the headline on the left.
+B. Corner disc: a solid disc cropped by the bottom-right corner, the picture on it, the headline top left.
+C. Rising disc: half a disc rising from the bottom edge like a sun, the picture standing on it, the headline above.
+D. Big word: no picture. The headline fills the top two thirds in very large type, with the ring behind its last word, cropped by an edge.
+E. Big number: only if a date or number was given. That number, very large in charcoal, is the picture, with the ring behind it.
+Pick the layout that fits the message. Never use the same layout as the poster before it in this chat.
+If I say "another" or "different": keep my facts, change the layout and the picture.
+If I ask for options (for example "3 options"): make that many complete posters, each with a different layout and a different headline, each in its own code block, with a line before each such as "OPTION 1: A, Ring right".
 
 HOW TO BUILD IT
 - One file. All CSS in one <style> tag. No JavaScript. No external images.
@@ -56,8 +66,8 @@ WHAT WORKS: three things good posters of this kind do. Design observations only:
 THREE IDEAS: one led by the words, one by the picture, one by the layout. One line each.
 CHOSEN: which idea you built, and why the other two lost.
 STILL NEEDED: every fact I did not give you (date, time, place, a photo, a logo), or "nothing".
-Part 2. The complete HTML file in ONE code block, from <!doctype html> to </html>.
-Part 3. One line: "Paste this whole reply into the Poster Studio to get the PNG, the PDF and the research notes: https://micolekurt.github.io/poster-designer-agent/studio.html"
+Part 2. The complete HTML file in ONE code block, from <!doctype html> to </html>. For options, one code block per option.
+Part 3. One line: "Paste this whole reply into Poster Studio (studio.html) to get the PNG, the PDF and the research notes."
 
 Reply to this message with only: "Poster Designer is ready. What is the poster for?"
 ````
@@ -68,11 +78,21 @@ Reply to this message with only: "Poster Designer is ready. What is the poster f
 Team building. Friday 12 December, 3 pm, 14th floor.
 ```
 
-Leave out the date, time or place and the poster gets a blank line to write on, never a made-up one. To change something, just say it:
+Leave out the date, time or place and the poster gets a blank line to write on, never a made-up one. Then keep talking to it:
+
+```text
+3 options
+```
+
+```text
+Another one, different.
+```
 
 ```text
 Change the headline to "Headsets off".
 ```
+
+It works from five layouts and never repeats the one before, so two requests do not come back looking the same. Ask for options and each one arrives as its own poster; the Studio shows them as Option 1, 2 and 3 to pick from.
 
 ### 3. Paste Copilot's reply into the Poster Studio
 
@@ -91,7 +111,7 @@ You get one ZIP with:
 
 ![Poster Studio: a brief form, the pasted code, and the poster previewed and checked](docs/studio.png)
 
-That is all. Nothing to install, and no account needed.
+That is all. Nothing to install, and no account needed. The Studio also works with no internet: download [`studio.html`](studio.html) once and open it from your computer. The typefaces and the code that makes the PNG and PDF are inside the file.
 
 ## Even shorter, if your Copilot can open links
 
@@ -108,6 +128,7 @@ Some work accounts block outside links. If Copilot says it cannot open it, use t
 - **Only your facts go on the poster.** The Studio flags any number or date you did not type.
 - **Never put member, patient or caller information on a poster.**
 - **A chat Copilot cannot check its own work.** The Studio's checks and your own eyes do that.
+- **No internet is needed after the first copy.** The block has no links in it, the posters name fonts that exist on every Windows PC as a fallback, and the Studio carries its own fonts.
 
 ## Why it does not look generated
 
