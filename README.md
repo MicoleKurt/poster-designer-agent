@@ -1,127 +1,109 @@
 # Poster Designer
 
-**An agent for Claude Code and GitHub Copilot that designs posters for a customer care floor in the Optum look, the way a studio does: brief first, three ideas before one, and nothing leaves until it has been measured.**
+**Paste one block into Copilot, say what you need, and get a designed poster in the Optum look.**
 
-It writes each poster as HTML and CSS, renders it with a real browser to print-ready PNG and PDF, and checks the result with a script that fails on weak hierarchy, low contrast, text outside the margin, and any word the brief did not contain.
+![Three posters: a privacy reminder, a town hall invitation, and a call habit for the floor screens](docs/hero.png)
 
-![Three posters made with the agent: a privacy reminder, a town hall invitation, and a call habit for the floor screens](docs/hero.png)
+> **Unofficial.** Not affiliated with or endorsed by Optum. The look comes from studying the company's public website. There is no logo here, and the company's own brand guide and logo files take priority. Made for internal team posters.
 
-## Use it from a link
+## Make a poster in 3 steps
 
-Nothing to download.
+### 1. Copy this block and paste it into Copilot
 
-**Poster Studio online:** <https://micolekurt.github.io/poster-designer-agent/studio.html>
+Use the copy button at the top right of the box. It works in Microsoft Copilot, Microsoft 365 Copilot, GitHub Copilot chat and other chat assistants. Copilot answers "Poster Designer is ready."
 
-**In a Copilot that can open links,** paste this and add your details:
+````text
+From now on in this chat you are Poster Designer, a senior graphic designer who writes code. Every message I send after this one is a poster request. For each request, design one poster as a single HTML file. Never make an image. Write HTML and CSS only.
+
+HOW TO READ MY REQUEST
+- It is for a customer care (call centre) team.
+- Take from my message: what the poster is for, the date, the time, the place, and any words I want printed.
+- Size: use the one I name. If I name none, use a wall poster, A3 portrait, 1123 x 1587 CSS pixels. Other sizes: screen 1920 x 1080; chat post 1080 x 1350; A4 794 x 1123.
+- Headline: use mine if I gave one. Otherwise write it: 2 to 6 words, plain speech, no slogan, no exclamation mark.
+- If I did not give a date, a time or a place, show only its label (When, Time, Where) above a ruled line with empty space to write in. Never invent one.
+- If I say "change", "fix" or "again", edit the last poster and send the whole file again.
+
+RULES YOU MAY NOT BREAK
+1. Invent nothing: no dates, times, places, names, numbers, scores, quotes or logos beyond what I wrote. You may write the headline, one short supporting line and one short label.
+2. No member, patient or caller information. No performance numbers. No company logo.
+3. No emoji, no clip art, no stock or generated photos, no placeholder text.
+4. At most 45 words on the whole sheet.
+
+THE LOOK (follow exactly)
+- Background warm white #FAF8F2. All text and drawings charcoal #3D3C38. Never pure black.
+- Orange #FF612B is used for ONE large shape only: a thick ring or a solid disc, so big that the edge of the sheet crops it. No other orange, and no orange text.
+- Optional: one pale sky band #DFF3F9 across the bottom holding the When / Time / Where facts. Small labels may use deep teal #095F87.
+- Fonts: Figtree (weights 500, 700, 800) for everything; Newsreader italic 500 for ONE word of the headline at most, in the same charcoal. Load both from Google Fonts with a <link> tag.
+- Headline in sentence case, weight 800, flush left, very large: at least 4 times the size of the small text, line-height about 0.92, letter-spacing -0.04em.
+- Flush left on a clear left margin. Do not centre everything. Leave at least a third of the sheet empty.
+- No gradients, no shadows, no glow, no rounded cards, no icons in a row.
+- Picture: if the poster is about people (a team event, recognition, a habit between colleagues), draw people in inline SVG as simple solid charcoal figures with round ends (round head, plain torso, arms that attach at the shoulder), doing something that shows the message, and touching or overlapping the orange shape. Otherwise draw one object that stands for the message, the same way. Never realistic people, never a photo.
+
+HOW TO BUILD IT
+- One file. All CSS in one <style> tag. No JavaScript. No external images.
+- html and body: margin 0, width 100vw, height 100vh, overflow hidden.
+- Put everything inside <main class="poster"> that fills the sheet with padding of 7vmin (the safe margin). No text may come closer to the edge than that.
+- Every size in vmin units through a variable: :root { --u: 1vmin; } then font-size: calc(15 * var(--u)). No px sizes.
+- At most 4 different text sizes.
+- Add the attribute data-decor to shapes and drawings that hold no words. Text must never sit on top of the orange shape unless it is the headline.
+- Check line breaks: no single short word alone on a line.
+
+HOW TO REPLY TO EACH REQUEST
+1. One line: the idea you chose.
+2. The complete HTML file in ONE code block, from <!doctype html> to </html>.
+3. One line: "Paste this into the Poster Studio to check and export it: https://micolekurt.github.io/poster-designer-agent/studio.html"
+
+Reply to this message with only: "Poster Designer is ready. What is the poster for?"
+````
+
+### 2. Type what you want
+
+```text
+Team building. Friday 12 December, 3 pm, 14th floor.
+```
+
+Leave out the date, time or place and the poster gets a blank line to write on, never a made-up one. To change something, just say it:
+
+```text
+Change the headline to "Headsets off".
+```
+
+### 3. Paste Copilot's reply into the Poster Studio
+
+**Open the Studio: <https://micolekurt.github.io/poster-designer-agent/studio.html>**
+
+Paste the reply into box **02**, click **Preview and check**, then **Save as PDF** or **Save as PNG**. If a check fails, one button copies the fixes to send back to Copilot.
+
+![Poster Studio: a brief form, the pasted code, and the poster previewed and checked](docs/studio.png)
+
+That is all. Nothing to install, and no account needed.
+
+## Even shorter, if your Copilot can open links
 
 ```text
 Make my poster using https://micolekurt.github.io/poster-designer-agent/go.txt
 Team building. Friday 12 December, 3 pm, 14th floor.
 ```
 
-The first line never changes. The second line is your poster, in your own words.
+Some work accounts block outside links. If Copilot says it cannot open it, use the block above.
 
-**In any Copilot, even one that cannot open links,** paste the block in [`copilot/start.txt`](copilot/start.txt) once. Copilot answers "Poster Designer is ready", and for the rest of that chat every message you send is a poster request:
+## Good to know
 
-```text
-Team building. Friday 12 December, 3 pm, 14th floor.
-```
+- **Copilot writes the poster as code, not as a picture.** That is what keeps the type sharp and the layout exact. If it draws an image, reply: `Write the HTML file, not an image.`
+- **Only your facts go on the poster.** The Studio flags any number or date you did not type.
+- **Never put member, patient or caller information on a poster.**
+- **A chat Copilot cannot check its own work.** The Studio's checks and your own eyes do that.
 
-```text
-Change the headline to "Headsets off".
-```
+## Why it does not look generated
 
-Copilot answers with one HTML file. Paste its reply into the Studio to check it and export a PDF or PNG.
-
-A chat Copilot can read the instructions from the link, but it cannot run this repository's scripts. Some Copilots, especially on managed work accounts, are not allowed to open outside links; if yours says it cannot, use the Studio's **Copy the prompt for Copilot** button and paste the prompt itself.
-
-## Three ways to run it
-
-Copy the folder (clone it, download the ZIP, or carry it on a USB stick) and pick the one that fits where you are.
-
-| You have | Do this | Needs |
-|---|---|---|
-| **Any Copilot or chat assistant** (Microsoft Copilot, Microsoft 365 Copilot, GitHub Copilot chat) | Double-click **`studio.html`** | A browser. Nothing to install. |
-| **GitHub Copilot in agent mode, or Claude Code** | Open the folder and ask the **Poster Designer** agent for a poster | Python, set up with one command |
-| **Just a terminal** | `python poster.py new team-day`, then `render` and `check` | Python, set up with one command |
-
-### 1. Any Copilot: Poster Studio
-
-`studio.html` is one file that works offline in Edge or Chrome. It does the parts a chat assistant cannot.
-
-![Poster Studio: a brief form, the pasted code, and the poster previewed and checked](docs/studio.png)
-
-1. **Fill in the brief.** Only what you type is allowed on the poster as fact. An empty date becomes a blank line to write on, never a made-up one.
-2. **Copy the prompt** and paste it into Copilot. It carries the whole look and the rules.
-3. **Paste Copilot's reply back.** The Studio finds the HTML in it and draws the poster at its real size.
-4. **Look and check.** Grid, squint, grey and thumbnail views, plus measured checks. Numbers or dates you did not give are a FAIL. One button copies the fixes to send back to Copilot.
-5. **Export** a PDF for print or a PNG for screens and chat.
-
-The prompt on its own is in [`copilot/PROMPT.md`](copilot/PROMPT.md).
-
-What a chat Copilot cannot do is run the full checker or look at its own work, so the Studio's checks and your own eyes do that. The Python checker is still the stricter one (it measures contrast against photographs too).
-
-### 2. An agent: GitHub Copilot or Claude Code
-
-On Windows, double-click **`setup.bat`**. Anywhere else:
-
-```bash
-python poster.py setup
-```
-
-```bash
-python poster.py test
-```
-
-`setup` installs two Python packages and finds a browser to render with. If the machine cannot download Chromium, it uses the Microsoft Edge or Chrome that is already installed. `test` renders and checks the three examples and confirms the checker still rejects the bad one; it ends with "All good".
-
-Then open the folder in VS Code (Copilot Chat, agent mode, choose **Poster Designer**) or in Claude Code, and ask for a poster. The agent files are already in the places each tool looks, so there is no install step.
-
-### 3. A terminal
-
-```bash
-python poster.py new team-day --format a3
-```
-
-```bash
-python poster.py render posters/team-day/poster.html --format a3 --grid --pdf
-```
-
-```bash
-python poster.py check posters/team-day/poster.html --format a3 --brief posters/team-day/brief.json
-```
-
-All three were made with the files in this repository. Sources and briefs are in [`examples/`](examples).
-
-> **Unofficial.** This project is not affiliated with or endorsed by Optum. The look comes from a profile built by studying the company's public website. It contains no logo, the agent will not redraw one, and the company's own brand guide, templates and logo files take priority over everything here. It is meant for internal team posters, not for anything presented as an official statement.
-
-## The same brief, twice
-
-The slide on the left is what you get when no decision is made: the default gradient, a centred stack, four typefaces, glow, emoji for icons, and a satisfaction score nobody supplied. The one on the right is the same brief after the process. The checker is run on both.
+The same request made twice: once the way no decision gets made, once through the process. The checker result is under each.
 
 ![The same call-habit brief made two ways, with the checker result under each](docs/same-brief.png)
 
-```text
-$ python check.py slop.html --format landscape --brief brief.json
+## More
 
-FAIL  type      4 typefaces (Bebas Neue, Montserrat, Pacifico, Poppins). Use two: one to shout, one to explain.
-FAIL  contrast  low contrast: 'Excellence' 1.0:1 (needs 3.0); 'Lorem ipsum dolor sit amet, ' 2.8:1 (needs 4.5) ...
-FAIL  copy      placeholder text on the poster: 'Lorem ipsum'
-FAIL  copy      emoji used as graphics. Draw an icon or drop it.
-FAIL  brief     text that is not in the brief (invented or mistyped): '99% CSAT!'; 'Customer Service'; 'Delivering Smiles On Every Call!' ...
-WARN  type      8 different text sizes. A poster needs 3 to 5 clear levels.
-WARN  layout    almost everything is centred. A centred stack is the default; choose an axis, an edge or a deliberate asymmetry.
-WARN  colour    7 separate hues in play. Pick 1 or 2 and give each a job; the rest should be neutrals.
-WARN  colour    purple-to-blue or purple-to-pink gradient: the most recognisable generated-design default.
-WARN  colour    frosted-glass panel (backdrop-filter): a web-UI habit, not a poster device.
-WARN  colour    text-shadow on several pieces of text. Fix legibility with contrast or a plain panel, not glow.
-
-5 fail, 6 warn, 3 pass
-```
-
-The last FAIL is the one that matters most on a care floor. With `--brief`, every word on the sheet has to come from the brief. A poster cannot ship with an invented score, claim or name.
-
-## The house look
+<details>
+<summary><b>The house look</b></summary>
 
 Everything the agent makes starts from [`profiles/optum-callcenter.json`](skills/poster-design/profiles/optum-callcenter.json).
 
@@ -145,9 +127,12 @@ Rules that hold whatever the brief says:
 
 The typefaces in the examples are open-licence stand-ins (Figtree and Newsreader) for the brand's own faces. If the brand fonts are installed on your machine, the profile tells the agent to use those.
 
-## How it works
+</details>
 
-![The seven steps: brief, look, three concepts, build, measure, look again, hand over](docs/process.svg)
+<details>
+<summary><b>How it works: the seven steps, the four looks, what gets measured</b></summary>
+
+### The process\n\n![The seven steps: brief, look, three concepts, build, measure, look again, hand over](docs/process.svg)
 
 | Step | What the agent produces |
 |---|---|
@@ -157,11 +142,7 @@ The typefaces in the examples are open-licence stand-ins (Figtree and Newsreader
 | 4. Build | Grid, then type scale, then colour, then image, in `poster.html` |
 | 5. Measure | `check.py` at 0 FAIL; every WARN fixed or explained |
 | 6. Look again | Squint, thumbnail, greyscale and grid renders, and one more pass |
-| 7. Hand over | PNG, PDF, source, brief and a five-line rationale |
-
-## The four looks
-
-Every render also writes the views a designer checks by eye. Each has one question.
+| 7. Hand over | PNG, PDF, source, brief and a five-line rationale |\n\n### The four looks\n\nEvery render also writes the views a designer checks by eye. Each has one question.
 
 ![The privacy poster shown as final, with its grid, blurred, and in greyscale](docs/four-looks.png)
 
@@ -170,11 +151,7 @@ Every render also writes the views a designer checks by eye. Each has one questi
 | Grid and safe margin | Does every edge sit on a column? Is all text inside the margin? |
 | Squint | Blurred, is there exactly one thing the eye lands on? |
 | Greyscale | Without colour, is the order of importance still obvious? |
-| Thumbnail | At postage-stamp size, can you still tell what it is about? |
-
-## What gets measured
-
-| Rule | Limit |
+| Thumbnail | At postage-stamp size, can you still tell what it is about? |\n\n### What gets measured\n\n| Rule | Limit |
 |---|---|
 | Typefaces | 2 (3 warns, 4 fails) |
 | Text sizes | 3 to 5 clear levels |
@@ -189,9 +166,38 @@ Every render also writes the views a designer checks by eye. Each has one questi
 
 Contrast is measured against what is actually behind each piece of text in the render (the ring, a band, a giant letter), not against a declared background colour.
 
-## Installing the agent for other projects
+</details>
 
-Inside this folder nothing needs installing beyond `python poster.py setup`. To use the agent while working in a different project, copy it to your personal folders:
+<details>
+<summary><b>For developers: run it as an agent in GitHub Copilot or Claude Code</b></summary>
+
+On Windows, double-click **`setup.bat`**. Anywhere else:
+
+```bash
+python poster.py setup
+```
+
+```bash
+python poster.py test
+```
+
+`setup` installs two Python packages and finds a browser to render with. If the machine cannot download Chromium, it uses the Microsoft Edge or Chrome that is already installed. `test` renders and checks the three examples and confirms the checker still rejects the bad one; it ends with "All good".
+
+Then open the folder in VS Code (Copilot Chat, agent mode, choose **Poster Designer**) or in Claude Code, and ask for a poster. The agent files are already in the places each tool looks, so there is no install step.\n\n### From a terminal\n\n```bash
+python poster.py new team-day --format a3
+```
+
+```bash
+python poster.py render posters/team-day/poster.html --format a3 --grid --pdf
+```
+
+```bash
+python poster.py check posters/team-day/poster.html --format a3 --brief posters/team-day/brief.json
+```
+
+All three were made with the files in this repository. Sources and briefs are in [`examples/`](examples).
+
+> **Unofficial.** This project is not affiliated with or endorsed by Optum. The look comes from a profile built by studying the company's public website. It contains no logo, the agent will not redraw one, and the company's own brand guide, templates and logo files take priority over everything here. It is meant for internal team posters, not for anything presented as an official statement.\n\n### Installing the agent for other projects\n\nInside this folder nothing needs installing beyond `python poster.py setup`. To use the agent while working in a different project, copy it to your personal folders:
 
 | Tool | Windows | macOS, Linux, Git Bash |
 |---|---|---|
@@ -217,29 +223,10 @@ What to expect in GitHub Copilot:
 
 The Copilot agent files follow the VS Code documentation for [custom agents](https://code.visualstudio.com/docs/copilot/customization/custom-agents) and [agent skills](https://code.visualstudio.com/docs/copilot/customization/agent-skills). They have not been run inside Copilot yet. The Studio, the scripts and the rules they call are tested.
 
-## Use
+</details>
 
-In Claude Code, ask for a poster; the agent is picked up from its description, or you can name it. In Copilot Chat, choose **Poster Designer** from the agent list and ask the same way:
-
-```text
-Use the poster-designer agent. Floor-screen slide for this week's huddle topic:
-"Confirm the fix before you close." Three habits, no numbers.
-```
-
-It comes back with the brief to confirm, then three concepts, then the finished files.
-
-What it is made for:
-
-| Sheet | Format |
-|---|---|
-| Call-quality habit or huddle topic for the floor screens | `landscape` (16:9) |
-| Privacy, security and wellbeing reminders for corridors and break rooms | `a3` |
-| Town halls, team events and schedule changes for the team chat | `ig-portrait` (4:5) |
-| Recognition (with a supplied photograph and the person's consent) | `a3` or `ig-portrait` |
-
-Formats: `a4` `a3` `a2` `tabloid` `letter` `ig-portrait` `ig-square` `story` `landscape` `og`, or any `WIDTHxHEIGHT`. One HTML file renders at any of them, because every size in the poster is a fraction of the sheet.
-
-## What is in the repository
+<details>
+<summary><b>What is in the repository</b></summary>
 
 ```text
 studio.html                          Poster Studio: brief, prompt, preview, checks, export. For any Copilot.
@@ -272,7 +259,10 @@ posters/                             your own posters, one folder each
 docs/                                images used on this page
 ```
 
-## Where the rules come from
+</details>
+
+<details>
+<summary><b>Where the rules come from</b></summary>
 
 - **Process:** the studio poster process taught in Gareth David Studio's *Design Process Master Class: Design Posters Like a Pro* (brief, research and mood boards, type, grids, sketching, build, variations, presentation).
 - **Lighting and depth:** two Photoshop poster tutorials by Dharnyelpeter (two-tone ground, a chosen light source, clean cut-out edges, contact and cast shadows, objects interleaved with shapes).
@@ -282,6 +272,8 @@ docs/                                images used on this page
 - **Signs of generated design:** [UX Collective on de-slopifying designs](https://uxdesign.cc/how-to-de-slopify-your-designs-4c40c57c1dc9), [Mika Reyes on spotting AI-made posters](https://mikareyes.com/ai/how-to-spot-ai-made-graphic-design-and-posters).
 
 The copy on the example posters is sample text; the town hall date and room are placeholders. Fonts are loaded from Google Fonts under their open licences. Optum is a trademark of its owner and is named here only to describe the look the profile follows.
+
+</details>
 
 ## Licence
 

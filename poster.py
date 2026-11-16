@@ -113,6 +113,11 @@ def test():
         failures += not same
         print(f"  {'ok  ' if same else 'FAIL'}  {copy.relative_to(ROOT).as_posix()} matches {source.relative_to(ROOT).as_posix()}")
 
+    block = (ROOT / "copilot" / "start.txt").read_text(encoding="utf8").strip()
+    same = block in (ROOT / "README.md").read_text(encoding="utf8")
+    failures += not same
+    print(f"  {'ok  ' if same else 'FAIL'}  README.md carries the same block as copilot/start.txt")
+
     shutil.rmtree(out, ignore_errors=True)
     if failures:
         sys.exit(f"\n{failures} problem(s). If rendering failed, run:  python poster.py setup")
