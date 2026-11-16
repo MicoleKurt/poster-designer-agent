@@ -28,7 +28,7 @@ Follow the seven steps in `references/process.md` in order. In short:
 4. **Build.** Start from `templates/base.html`. Grid, then type scale, then colour, then the image. Use `--u` units so one file renders at any size.
 5. **Measure.** `render.py --grid`, then `check.py --brief`. Fix every FAIL. For every WARN, fix it or write one sentence on why it stays.
 6. **Look again.** Open the four images. Apply the checks in `references/anti-slop.md`. Change something and render again at least once: the first render is a draft.
-7. **Hand over.** Final PNG (and PDF for print), the brief, the HTML source, and a short rationale: the idea, the three decisions that matter, what was checked, and anything still open.
+7. **Hand over.** Always these files, in the poster's folder: `poster.png`, `poster.pdf`, `poster.html`, `brief.json`, and `research.md`. The research file has six short sections: Audience (who, where, how far, how long); What works (what you saw in real references, in words; no invented statistics or sources); Three ideas (with the concepts sheet); Chosen (and why the other two lost); Decisions (the three that matter); Checks and what is still needed (the check.py result line, what you looked at, and every fact, photo or logo still owed).
 
 ## Product posters
 When a product is the subject, read `references/product-lighting.md` first. Decide where the light comes from before anything else, then make the highlight, the shade, the rim light, the contact shadow and the cast shadow all agree with it. A product with no shadow is a sticker.

@@ -49,9 +49,15 @@ HOW TO BUILD IT
 - Check line breaks: no single short word alone on a line.
 
 HOW TO REPLY TO EACH REQUEST
-1. One line: the idea you chose.
-2. The complete HTML file in ONE code block, from <!doctype html> to </html>.
-3. One line: "Paste this into the Poster Studio to check and export it: https://micolekurt.github.io/poster-designer-agent/studio.html"
+Always three parts, in this order:
+Part 1. RESEARCH, as short plain text (about 130 words in all), under these five headings:
+AUDIENCE: who sees it, where, from how far away, and for how long.
+WHAT WORKS: three things good posters of this kind do. Design observations only: no statistics, no studies, no sources.
+THREE IDEAS: one led by the words, one by the picture, one by the layout. One line each.
+CHOSEN: which idea you built, and why the other two lost.
+STILL NEEDED: every fact I did not give you (date, time, place, a photo, a logo), or "nothing".
+Part 2. The complete HTML file in ONE code block, from <!doctype html> to </html>.
+Part 3. One line: "Paste this whole reply into the Poster Studio to get the PNG, the PDF and the research notes: https://micolekurt.github.io/poster-designer-agent/studio.html"
 
 Reply to this message with only: "Poster Designer is ready. What is the poster for?"
 ````
@@ -72,7 +78,16 @@ Change the headline to "Headsets off".
 
 **Open the Studio: <https://micolekurt.github.io/poster-designer-agent/studio.html>**
 
-Paste the reply into box **02**, click **Preview and check**, then **Save as PDF** or **Save as PNG**. If a check fails, one button copies the fixes to send back to Copilot.
+Paste the whole reply into box **02**, click **Preview and check**, then **Download everything**. If a check fails, one button copies the fixes to send back to Copilot.
+
+You get one ZIP with:
+
+| File | What it is |
+|---|---|
+| `poster.png` | The poster as an image, for screens, chat and slides |
+| `poster.pdf` | The poster at the exact paper size, for printing |
+| `poster-notes.md` | The research: who it is for, what works, the three ideas, the one chosen and why, what is still needed, plus your brief and the check results |
+| `poster.html` | The source, to change and check again |
 
 ![Poster Studio: a brief form, the pasted code, and the poster previewed and checked](docs/studio.png)
 

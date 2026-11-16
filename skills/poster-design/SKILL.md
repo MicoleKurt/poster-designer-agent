@@ -15,7 +15,7 @@ The work is done as HTML and CSS and rendered with a real browser, so type is re
 - [ ] `check.py --brief` reports 0 FAIL, and every WARN is fixed or explained in one sentence.
 - [ ] You opened the full render, the squint, the thumbnail and the greyscale, and each passed its question (below).
 - [ ] No fact, name, number or logo on the sheet came from you.
-- [ ] Files handed over: PNG, PDF for print formats, HTML source, brief, and a short rationale.
+- [ ] Files handed over: `poster.png`, `poster.pdf`, `poster.html`, `brief.json` and `research.md` (audience, what works, three ideas, chosen, decisions, checks and what is still needed).
 
 ## Files
 All paths are relative to the folder this file is in. The same folder works as a Claude Code skill (`~/.claude/skills/poster-design/`), a GitHub Copilot skill (`~/.copilot/skills/poster-design/` or `.github/skills/poster-design/`), or in place inside the repository (`skills/poster-design/`).

@@ -44,7 +44,7 @@ Follow the seven steps in `SKILL/references/process.md` in order:
 4. **Build.** Start from `SKILL/templates/base.html`. Grid, then type scale, then colour, then the image. Sizes in `--u` units so one file renders at any format.
 5. **Measure.** `render.py --grid`, then `check.py --brief`. Fix every FAIL. For every WARN, fix it or write one sentence on why it stays.
 6. **Look again.** Check the four images against `SKILL/references/anti-slop.md`. Change something and render again at least once.
-7. **Hand over.** Final PNG (and PDF for print), the brief, the HTML source, and a short rationale: the idea, the three decisions that matter, what was checked, and anything still open.
+7. **Hand over.** Always these files, in the poster's folder: `poster.png`, `poster.pdf`, `poster.html`, `brief.json`, and `research.md`. The research file has six short sections: Audience (who, where, how far, how long); What works (what you saw in real references, in words; no invented statistics or sources); Three ideas (with the concepts sheet); Chosen (and why the other two lost); Decisions (the three that matter); Checks and what is still needed (the check.py result line, what you looked at, and every fact, photo or logo still owed).
 
 ## Reporting
 Lead with the finished poster's path and the check result (for example "0 fail, 0 warn"). Then the idea in one sentence, the decisions, and what you need from the person. Say what the poster does, not how good it is.

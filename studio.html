@@ -52,6 +52,7 @@
   .FAIL b { color: var(--bad); } .WARN b { color: var(--warn); } .PASS b { color: var(--good); }
   ul.results i { font-style: normal; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: #6b6960; }
   .sum { font-weight: 800; font-size: 18px; margin-top: 14px; }
+  pre.notes { white-space: pre-wrap; font: inherit; background: var(--paper); border: 1.5px solid var(--line); border-radius: 10px; padding: 16px 18px; max-width: 80ch; }
   .looks { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; margin-top: 14px; font-size: 14px; }
   .looks div { background: var(--tint); border-radius: 10px; padding: 12px 14px; }
   .looks strong { display: block; font-weight: 800; }
@@ -63,7 +64,7 @@
 <header>
   <p class="k">Poster Studio · works with any Copilot</p>
   <h1>Brief it. Paste it. <em>Check</em> it.</h1>
-  <p class="lead">Nothing to install. Fill in the brief, copy the prompt into Copilot, paste back the code it writes, then check and export the poster here.</p>
+  <p class="lead">Nothing to install. Fill in the brief, copy the prompt into Copilot and paste back its reply. You get the poster as PNG and PDF, the research behind it, and the checks.</p>
 </header>
 
 <main>
@@ -114,8 +115,14 @@
     </div>
   </section>
 
+  <section aria-labelledby="sr">
+    <h2 id="sr"><b>03</b>Research</h2>
+    <p class="hint">What Copilot worked out before designing: who the poster is for, what works, the three ideas, the one it chose, and what it still needs from you. It is saved with the poster.</p>
+    <pre id="notes" class="notes">The research appears here.</pre>
+  </section>
+
   <section aria-labelledby="s3">
-    <h2 id="s3"><b>03</b>Look</h2>
+    <h2 id="s3"><b>04</b>Look</h2>
     <p class="hint">Four views, one question each. A "no" means go back to Copilot with what is wrong.</p>
     <div class="row" role="group" aria-label="View">
       <button class="quiet view" data-view="final" aria-pressed="true">Final</button>
@@ -134,7 +141,7 @@
   </section>
 
   <section aria-labelledby="s4">
-    <h2 id="s4"><b>04</b>Checks</h2>
+    <h2 id="s4"><b>05</b>Checks</h2>
     <p class="hint">Measured on the poster as it is drawn. Fix every FAIL. For a WARN, fix it or know why it stays.</p>
     <p class="sum" id="sum">Nothing checked yet.</p>
     <ul class="results" id="results"></ul>
@@ -145,14 +152,17 @@
   </section>
 
   <section aria-labelledby="s5">
-    <h2 id="s5"><b>05</b>Export</h2>
-    <p class="hint">PDF is for printing and is exact. In the print window choose "Save as PDF", margins "None", and turn on "Background graphics". PNG is for screens and chat, and needs the internet once.</p>
+    <h2 id="s5"><b>06</b>Download</h2>
+    <p class="hint">One click each. "Everything" is a ZIP with the PNG, the PDF, the HTML file and the research notes with the check results. The files are made in your browser; the first download needs the internet.</p>
     <div class="row">
-      <button id="pdf" disabled>Save as PDF</button>
-      <button id="png" class="quiet" disabled>Save as PNG</button>
-      <button id="save" class="quiet" disabled>Save the HTML file</button>
-      <span id="exported" class="said" role="status"></span>
+      <button id="all" disabled>Download everything</button>
+      <button id="png" class="quiet" disabled>PNG</button>
+      <button id="pdf" class="quiet" disabled>PDF</button>
+      <button id="notesfile" class="quiet" disabled>Research notes</button>
+      <button id="save" class="quiet" disabled>HTML file</button>
+      <button id="print" class="quiet" disabled>Print</button>
     </div>
+    <p id="exported" class="said" role="status" style="margin-top:12px"></p>
   </section>
 </main>
 
@@ -227,8 +237,15 @@ HOW TO BUILD IT
 - Check line breaks: no single short word alone on a line.
 
 YOUR REPLY
-First, three lines: three different ideas for this poster in one line each (one led by the words, one by the picture, one by the layout), then one line naming the idea you chose and why.
-Then the complete HTML file in ONE code block, from <!doctype html> to </html>. Nothing after it.`
+Always three parts, in this order:
+Part 1. RESEARCH, as short plain text (about 130 words in all), under these five headings:
+AUDIENCE: who sees it, where, from how far away, and for how long.
+WHAT WORKS: three things good posters of this kind do. Design observations only: no statistics, no studies, no sources.
+THREE IDEAS: one led by the words, one by the picture, one by the layout. One line each.
+CHOSEN: which idea you built, and why the other two lost.
+STILL NEEDED: every fact I did not give you (date, time, place, a photo, a logo), or "nothing".
+Part 2. The complete HTML file in ONE code block, from <!doctype html> to </html>.
+Part 3. One line: "Paste this whole reply into the Poster Studio to get the PNG, the PDF and the research notes: https://micolekurt.github.io/poster-designer-agent/studio.html"`
 }
 
 function allowedText() {
@@ -252,6 +269,11 @@ function extractHtml(raw) {
   const end = s.toLowerCase().lastIndexOf('</html>')
   if (start === -1) return null
   return (end > start ? s.slice(start, end + 7) : s.slice(start)).trim()
+}
+/* everything Copilot wrote before the code is its research */
+function extractNotes(raw) {
+  const cut = raw.search(/```|<!doctype html|<html/i)
+  return (cut === -1 ? '' : raw.slice(0, cut)).replace(/\*\*/g, '').trim()
 }
 
 /* ---------- 3. preview ---------- */
@@ -480,34 +502,32 @@ $('fix').onclick = () => {
   copyText(msg, $('fixed'), 'Copied. Paste it into Copilot.')
 }
 
-async function run(html) {
+let notes = ''
+async function run(html, research) {
+  notes = research || ''
+  $('sum').textContent = 'Checking ...'; $('results').innerHTML = ''
+  $('notes').textContent = notes || 'Copilot gave no research with this poster. Ask it: "Add the research part: audience, what works, three ideas, chosen, still needed."'
   await render(html)
   showResults(check())
-  for (const id of ['pdf', 'png', 'save']) $(id).disabled = false
+  for (const id of ['all', 'pdf', 'png', 'notesfile', 'save', 'print']) $(id).disabled = false
 }
 $('run').onclick = () => {
   const html = extractHtml($('html').value)
   if (!html) { $('sum').textContent = 'No HTML found in what you pasted. Ask Copilot to write the HTML file, not an image.'; $('results').innerHTML = ''; return }
-  run(html)
+  run(html, extractNotes($('html').value))
 }
 
 /* ---------- 5. export ---------- */
 function download(name, blob) { const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 4000) }
-$('save').onclick = () => download('poster.html', new Blob([current.html], { type: 'text/html' }))
-$('pdf').onclick = () => {
-  const { fmt, html } = current
-  const page = `<style>@page{size:${fmt.page[0]} ${fmt.page[1]};margin:0}html,body{width:${fmt.page[0]}!important;height:${fmt.page[1]}!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}</style>`
-  const w = window.open('', '_blank')
-  if (!w) { $('exported').textContent = 'The browser blocked the print window. Allow pop-ups for this page and try again.'; return }
-  w.document.open(); w.document.write(html.replace(/<\/head>/i, page + '</head>')); w.document.close()
-  const go = () => setTimeout(() => { w.focus(); w.print() }, 600)
-  if (w.document.fonts && w.document.fonts.ready) w.document.fonts.ready.then(go); else go()
-}
+const say = (t) => { $('exported').textContent = t }
+const lib = (global, src) => window[global] ? Promise.resolve() : new Promise((ok, no) => { const el = document.createElement('script'); el.src = src; el.onload = ok; el.onerror = no; document.head.appendChild(el) })
+const OFFLINE = 'These downloads need the internet the first time and it was blocked here. Use Print and choose "Save as PDF", or in Edge press Ctrl+Shift+S to capture the preview.'
+
 /* A picture of the page only keeps its typefaces if the font files travel inside it.
    This reads the poster's Google Fonts stylesheet, keeps the Latin faces, and inlines each file. */
 async function embedFonts(doc) {
   const hrefs = [...doc.querySelectorAll('link[rel="stylesheet"]')].map((l) => l.href).filter((h) => /fonts\.googleapis\.com/.test(h))
-  for (const s of doc.querySelectorAll('style')) for (const m of s.textContent.matchAll(/@import\s+url\(["']?(https:\/\/fonts\.googleapis\.com[^"')]+)/g)) hrefs.push(m[1])
+  for (const st of doc.querySelectorAll('style')) for (const m of st.textContent.matchAll(/@import\s+url\(["']?(https:\/\/fonts\.googleapis\.com[^"')]+)/g)) hrefs.push(m[1])
   let css = ''
   for (const href of hrefs) {
     const text = await (await fetch(href)).text()
@@ -524,21 +544,74 @@ async function embedFonts(doc) {
   return css
 }
 
+/* the poster as a PNG, at print resolution for paper sizes */
+let pngCache = null
+async function makePng() {
+  if (pngCache && pngCache.html === current.html && pngCache.fmt === current.fmt) return pngCache.blob
+  await lib('htmlToImage', 'https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/dist/html-to-image.js')
+  const { iframe, fmt } = current
+  const before = view; view = 'final'; applyView()
+  const fontEmbedCSS = await embedFonts(iframe.contentDocument)
+  const pixelRatio = fmt.w < 1200 ? 3 : 2      // A3 and A4 come out near 300 dpi
+  const blob = await window.htmlToImage.toBlob(iframe.contentDocument.documentElement, { width: fmt.w, height: fmt.h, pixelRatio, backgroundColor: '#ffffff', fontEmbedCSS })
+  view = before; applyView()
+  pngCache = { html: current.html, fmt: current.fmt, blob, px: [fmt.w * pixelRatio, fmt.h * pixelRatio] }
+  return blob
+}
+/* the same picture on a page of the exact paper size */
+async function makePdf() {
+  const png = await makePng()
+  await lib('jspdf', 'https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js')
+  const { fmt } = current
+  const w = parseFloat(fmt.page[0]), h = parseFloat(fmt.page[1])
+  const data = await new Promise((ok) => { const fr = new FileReader(); fr.onload = () => ok(fr.result); fr.readAsDataURL(png) })
+  const pdf = new window.jspdf.jsPDF({ orientation: w > h ? 'landscape' : 'portrait', unit: 'mm', format: [w, h], compress: true })
+  pdf.addImage(data, 'PNG', 0, 0, w, h, undefined, 'FAST')
+  return pdf.output('blob')
+}
+/* the brief, Copilot's research and the check results, as one readable file */
+function notesFile() {
+  const v = (id) => $(id).value.trim()
+  const res = window.__results || []
+  const f = res.filter((r) => r.level === 'FAIL').length, w = res.filter((r) => r.level === 'WARN').length
+  const brief = [['Kind', $('kind').value], ['Seen on', $('format').selectedOptions[0].text], ['The one message', v('message')], ['Headline', v('headline')], ['When', v('when')], ['Time', v('time')], ['Where', v('where')], ['Other words', lines($('extra').value).join('; ')]]
+  return ['# Poster notes', '',
+    '## Brief', '', ...brief.map(([k, x]) => `- **${k}:** ${x || 'not given'}`), '',
+    '## Research', '', notes || 'No research was given with this poster.', '',
+    '## Checks', '', `**${f} fail, ${w} warn, ${res.length - f - w} pass**`, '', ...res.map((r) => `- ${r.level} (${r.group}): ${r.msg}`), '',
+    '## Files', '', '- `poster.png`: for screens, chat and slides', '- `poster.pdf`: for printing, at the exact paper size', '- `poster.html`: the source; open it in a browser or change it and check again', '',
+    '## Before it goes up', '', '- Every fact on the poster was given by a person, not written by the assistant.', '- No member, patient or caller information.', '- The official logo file is added by hand if one is needed.', ''].join('\n')
+}
+
+$('save').onclick = () => download('poster.html', new Blob([current.html], { type: 'text/html' }))
+$('notesfile').onclick = () => download('poster-notes.md', new Blob([notesFile()], { type: 'text/markdown' }))
 $('png').onclick = async () => {
-  const say = $('exported')
-  say.textContent = 'Making the PNG ...'
+  say('Making the PNG ...')
+  try { download('poster.png', await makePng()); say(`Saved poster.png (${pngCache.px[0]} x ${pngCache.px[1]} px).`) } catch { say(OFFLINE) }
+}
+$('pdf').onclick = async () => {
+  say('Making the PDF ...')
+  try { download('poster.pdf', await makePdf()); say(`Saved poster.pdf (${current.fmt.page[0]} x ${current.fmt.page[1]}).`) } catch { say(OFFLINE) }
+}
+$('all').onclick = async () => {
+  say('Making the PNG, the PDF and the notes ...')
   try {
-    if (!window.htmlToImage) await new Promise((ok, no) => { const s = document.createElement('script'); s.src = 'https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/dist/html-to-image.js'; s.onload = ok; s.onerror = no; document.head.appendChild(s) })
-    const { iframe, fmt } = current
-    const before = view; view = 'final'; applyView()
-    const fontEmbedCSS = await embedFonts(iframe.contentDocument)
-    const blob = await window.htmlToImage.toBlob(iframe.contentDocument.documentElement, { width: fmt.w, height: fmt.h, pixelRatio: 2, backgroundColor: '#ffffff', fontEmbedCSS })
-    view = before; applyView()
-    download('poster.png', blob)
-    say.textContent = `Saved poster.png (${fmt.w * 2} x ${fmt.h * 2} px). Compare it with the preview before you send it.`
-  } catch (e) {
-    say.textContent = 'PNG export needs the internet and was blocked here. Use Save as PDF, or in Edge press Ctrl+Shift+S to capture the preview.'
-  }
+    const png = await makePng(), pdf = await makePdf()
+    await lib('JSZip', 'https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js')
+    const zip = new window.JSZip()
+    zip.file('poster.png', png); zip.file('poster.pdf', pdf); zip.file('poster.html', current.html); zip.file('poster-notes.md', notesFile())
+    download('poster-pack.zip', await zip.generateAsync({ type: 'blob' }))
+    say('Saved poster-pack.zip: poster.png, poster.pdf, poster.html and poster-notes.md. Open the PNG and compare it with the preview before you send it.')
+  } catch { say(OFFLINE) }
+}
+$('print').onclick = () => {
+  const { fmt, html } = current
+  const page = `<style>@page{size:${fmt.page[0]} ${fmt.page[1]};margin:0}html,body{width:${fmt.page[0]}!important;height:${fmt.page[1]}!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}</style>`
+  const w = window.open('', '_blank')
+  if (!w) { say('The browser blocked the print window. Allow pop-ups for this page and try again.'); return }
+  w.document.open(); w.document.write(html.replace(/<\/head>/i, page + '</head>')); w.document.close()
+  const go = () => setTimeout(() => { w.focus(); w.print() }, 600)
+  if (w.document.fonts && w.document.fonts.ready) w.document.fonts.ready.then(go); else go()
 }
 
 /* ---------- example, so the page can be tried without Copilot ---------- */
@@ -563,13 +636,18 @@ li{border-top:calc(.4*var(--u)) solid #3d3c38;padding:calc(1.7*var(--u)) 0;font-
 <h1>Lock it<br>before you<br><em>leave</em> it.</h1>
 <ul><li>Lock your screen.</li><li>Shred your notes.</li><li>Clear your desk.</li></ul>
 </main></body></html>`
+const EXAMPLE_NOTES = `AUDIENCE: Advocates leaving and returning to their desks, passing a corridor wall at about 3 metres, for 3 seconds.
+WHAT WORKS: One object that says the subject before a word is read. A headline that is an instruction, not a slogan. Three short actions in the order they are done.
+THREE IDEAS: Words: the headline alone, very large. Picture: a padlock on an orange disc cropped by the corner. Layout: three numbered steps as the whole poster.
+CHOSEN: The picture. The padlock reads from across the room; the words alone looked like a notice, and the steps alone had nothing to stop the eye.
+STILL NEEDED: nothing.`
 $('example').onclick = () => {
   $('kind').value = 'Privacy or security reminder'; $('format').value = 'a3'; $('picture').value = 'object'
   $('message').value = 'Lock your screen and clear your desk every time you step away.'
   $('headline').value = 'Lock it before you leave it.'
   $('extra').value = 'Privacy\nLock your screen.\nShred your notes.\nClear your desk.'
-  $('html').value = EXAMPLE
-  run(EXAMPLE)
+  $('html').value = EXAMPLE_NOTES + '\n\n```html\n' + EXAMPLE + '\n```'
+  run(EXAMPLE, EXAMPLE_NOTES)
 }
 </script>
 </body>
