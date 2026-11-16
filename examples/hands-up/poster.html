@@ -9,20 +9,23 @@
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{width:100vw;height:100vh;overflow:hidden;background:var(--paper)}
 .poster{position:relative;width:100vw;height:100vh;overflow:hidden;background:var(--paper);color:var(--ink);font-family:'Figtree','Segoe UI',Arial,sans-serif;-webkit-font-smoothing:antialiased}
-.poster>*{position:absolute}
+.stage{position:absolute;left:0;top:calc(0*var(--u));width:100vw;height:calc(141.318*var(--u))}
+.stage>*{position:absolute}
 .l{display:block;white-space:nowrap}
-.head{font-weight:900;letter-spacing:-.035em;white-space:nowrap}
+.head{white-space:nowrap}
 .fact{font-weight:800;line-height:1.2;letter-spacing:-.012em}
 .say{font-family:'Newsreader',Georgia,serif;font-style:italic;font-weight:400;line-height:1.18}
 .pt{font-weight:600;line-height:1.26}
 .kick{font-weight:700;line-height:1.2;letter-spacing:.14em;text-transform:uppercase;white-space:nowrap}
-.art{left:0;top:0;width:100vw;height:100vh;display:block}
+.art{left:0;top:0;width:100%;height:100%;display:block;overflow:visible}
 .ring{border-radius:50%;border-style:solid;border-color:var(--orange)}
 </style>
 </head>
 <body>
 <main class="poster L-counter">
-<div class="ring" data-decor style="left:calc(-29*var(--u));top:calc(11.018*var(--u));width:calc(180*var(--u));height:calc(180*var(--u));border-width:calc(40*var(--u))"></div><p class="kick" style="left:calc(7*var(--u));top:calc(7*var(--u));font-size:calc(1.55*var(--u))">Team building</p><h1 class="head" style="left:calc(19.494*var(--u));top:calc(77.918*var(--u));font-size:calc(12.341*var(--u));line-height:0.86"><span class="l">Headsets off.</span><span class="l">Hands up.</span></h1><div class="info" style="left:calc(20.05*var(--u));top:calc(101.544*var(--u))"><p class="fact" style="font-size:calc(3.4*var(--u))"><span class="l">Friday 12 December</span><span class="l">3 pm</span><span class="l">14th floor</span></p><p class="say" style="font-size:calc(3*var(--u));margin-top:calc(2.2*var(--u))"><span class="l">Time away from the queue,</span><span class="l">with the people who share it.</span></p></div>
+<div class="stage">
+<div class="ring" data-decor style="left:calc(-19*var(--u));top:calc(21.018*var(--u));width:calc(160*var(--u));height:calc(160*var(--u));border-width:calc(30*var(--u))"></div><h1 class="head" style="left:calc(19.983*var(--u));top:calc(77.244*var(--u));font-size:calc(12.258*var(--u));line-height:0.86;font-weight:900;letter-spacing:-0.035em"><span class="l">Headsets off.</span><span class="l">Hands up.</span></h1><div class="info" style="left:calc(20.535*var(--u));top:calc(102.598*var(--u))"><p class="fact" style="font-size:calc(3.4*var(--u))"><span class="l">Friday 12 December</span><span class="l">3 pm</span><span class="l">14th floor</span></p><p class="say" style="font-size:calc(3*var(--u));margin-top:calc(2.2*var(--u))"><span class="l">Time away from the queue,</span><span class="l">with the people who share it.</span></p></div>
+</div>
 </main>
 </body>
 </html>

@@ -9,24 +9,26 @@
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{width:100vw;height:100vh;overflow:hidden;background:var(--paper)}
 .poster{position:relative;width:100vw;height:100vh;overflow:hidden;background:var(--paper);color:var(--ink);font-family:'Figtree','Segoe UI',Arial,sans-serif;-webkit-font-smoothing:antialiased}
-.poster>*{position:absolute}
+.stage{position:absolute;left:0;top:calc(0*var(--u));width:100vw;height:calc(141.318*var(--u))}
+.stage>*{position:absolute}
 .l{display:block;white-space:nowrap}
-.head{font-weight:900;letter-spacing:-.035em;white-space:nowrap}
+.head{white-space:nowrap}
 .fact{font-weight:800;line-height:1.2;letter-spacing:-.012em}
 .say{font-family:'Newsreader',Georgia,serif;font-style:italic;font-weight:400;line-height:1.18}
 .pt{font-weight:600;line-height:1.26}
 .kick{font-weight:700;line-height:1.2;letter-spacing:.14em;text-transform:uppercase;white-space:nowrap}
-.art{left:0;top:0;width:100vw;height:100vh;display:block}
-.caps{left:0;top:0;font-weight:900;text-transform:uppercase;letter-spacing:-0.01em}
-.ln{position:absolute;display:block;white-space:nowrap;line-height:1}
-.cover{position:absolute;background:var(--paper)}
+.art{left:0;top:0;width:100%;height:100%;display:block;overflow:visible}
+.caps{left:0;top:0;font-weight:900;text-transform:uppercase}
+.ln{position:absolute;display:block;white-space:nowrap;line-height:1;letter-spacing:-0.01em}
+.cover{position:absolute;background:var(--paper);border-radius:50%}
 .o{position:absolute;box-sizing:border-box;border-radius:50%;border:.19em solid var(--orange)}
-.o.dot{border:0;background:var(--orange)}
 </style>
 </head>
 <body>
 <main class="poster L-letters">
-<h1 class="caps" data-bleed><span class="ln" style="left:calc(-1.889*var(--u));top:calc(-2.678*var(--u));font-size:calc(37.779*var(--u))">Lock</span><span class="ln" style="left:calc(-1.048*var(--u));top:calc(28.593*var(--u));font-size:calc(20.969*var(--u))">it before</span><span class="ln" style="left:calc(-2.435*var(--u));top:calc(41.554*var(--u));font-size:calc(48.709*var(--u))">you<i class="cover" data-decor style="left:0.69em;top:0.129em;width:0.767em;height:0.742em"></i><i class="o" data-decor style="left:0.708em;top:0.135em;width:0.73em;height:0.73em"></i></span><span class="ln" style="left:calc(-1.147*var(--u));top:calc(81.83*var(--u));font-size:calc(22.941*var(--u))">leave it.</span></h1><div class="info" style="left:calc(7*var(--u));top:calc(116.931*var(--u))"><p class="fact" style="font-size:calc(4.293*var(--u))"><span class="l">Lock your screen.</span></p><p class="fact" style="font-size:calc(4.293*var(--u));margin-top:calc(0.966*var(--u))"><span class="l">Shred your notes.</span></p><p class="fact" style="font-size:calc(4.293*var(--u));margin-top:calc(0.966*var(--u))"><span class="l">Clear your desk.</span></p></div><div class="info" style="left:calc(52.5*var(--u));top:calc(132.458*var(--u))"><p class="kick" style="font-size:calc(1.55*var(--u))"><span class="l">Privacy</span></p></div>
+<div class="stage">
+<h1 class="caps" data-bleed><span class="ln" style="left:calc(-1.889*var(--u));top:calc(-2.3*var(--u));font-size:calc(37.779*var(--u))">Lock</span><span class="ln" style="left:calc(-1.048*var(--u));top:calc(29.748*var(--u));font-size:calc(20.969*var(--u))">it before</span><span class="ln" style="left:calc(-2.435*var(--u));top:calc(43.51*var(--u));font-size:calc(48.709*var(--u))">you<i class="cover" data-decor style="left:0.688em;top:0.127em;width:0.771em;height:0.746em"></i><i class="o" data-decor style="left:0.708em;top:0.135em;width:0.73em;height:0.73em"></i></span><span class="ln" style="left:calc(-1.147*var(--u));top:calc(84.517*var(--u));font-size:calc(22.941*var(--u))">leave it.</span></h1><div class="info" style="left:calc(7*var(--u));top:calc(116.978*var(--u))"><p class="fact" style="font-size:calc(4.08*var(--u))"><span class="l">Lock your screen.</span></p><p class="fact" style="font-size:calc(4.08*var(--u));margin-top:calc(1.326*var(--u))"><span class="l">Shred your notes.</span></p><p class="fact" style="font-size:calc(4.08*var(--u));margin-top:calc(1.326*var(--u))"><span class="l">Clear your desk.</span></p></div>
+</div>
 </main>
 </body>
 </html>

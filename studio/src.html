@@ -86,7 +86,7 @@
       <div><label for="when">When <span>date</span></label><input id="when"></div>
       <div><label for="time">Time</label><input id="time"></div>
       <div class="wide"><label for="where">Where</label><input id="where"></div>
-      <div class="wide"><label for="extra">Points <span>optional: up to three short actions, one per line</span></label>
+      <div class="wide"><label for="extra">Points <span>optional: short actions, one per line. Three is best; five at most.</span></label>
         <textarea id="extra" style="min-height:84px"></textarea></div>
       <div><label for="layout">Layout</label>
         <select id="layout"><option value="">Chosen for you</option><option value="letters">The O in the headline</option><option value="counter">Inside the O</option><option value="record">Headline over the O</option><option value="arcs">Rings from the full stop</option><option value="rings">Words round the O (tall sizes)</option><option value="burst">Burst</option><option value="numeral">The date as the picture (needs a date)</option><option value="steps">Three rings (needs 2 or 3 points)</option></select></div>
@@ -111,6 +111,7 @@
     <textarea id="html" class="code" spellcheck="false" style="margin-top:14px"></textarea>
     <div class="row">
       <button id="run">Use Copilot's reply</button>
+      <span id="ran" class="said" role="status"></span>
     </div>
     <div class="row" id="options" role="group" aria-label="Options" hidden></div>
   </section>
@@ -123,7 +124,7 @@
 
   <section aria-labelledby="s3">
     <h2 id="s3"><b>04</b>Look</h2>
-    <p class="hint">Four views, one question each. A "no" means go back to Copilot with what is wrong.</p>
+    <p class="hint">Four views, one question each. A "no" means change the words or the layout above, or press Another look.</p>
     <div class="row" role="group" aria-label="View">
       <button class="quiet view" data-view="final" aria-pressed="true">Final</button>
       <button class="quiet view" data-view="grid" aria-pressed="false">Grid</button>
@@ -177,9 +178,13 @@
 const $ = (id) => document.getElementById(id)
 /* the two typefaces travel inside this file, so posters look right with no internet */
 const FONT_CSS = $('fontfaces').textContent.includes('@font-face') ? $('fontfaces').textContent : ''
-const withFonts = (html) => !FONT_CSS ? html : /<head[^>]*>/i.test(html)
-  ? html.replace(/<head[^>]*>/i, (m) => m + '<style id="__fonts">' + FONT_CSS + '</style>')
-  : '<style id="__fonts">' + FONT_CSS + '</style>' + html
+const withFonts = (html) => {
+  if (!FONT_CSS) return html
+  html = html.replace(/<link[^>]+fonts\.(?:googleapis|gstatic)\.com[^>]*>\s*/gi, '').replace(/<script[\s\S]*?<\/script\s*>/gi, '')
+  return /<head[^>]*>/i.test(html)
+    ? html.replace(/<head[^>]*>/i, (m) => m + '<style id="__fonts">' + FONT_CSS + '</style>')
+    : '<style id="__fonts">' + FONT_CSS + '</style>' + html
+}
 const FORMATS = {
   a3: { w: 1123, h: 1587, page: ['297mm', '420mm'], seen: 'a wall, about 3 metres away, for 3 seconds' },
   a4: { w: 794, h: 1123, page: ['210mm', '297mm'], seen: 'a notice board, at arm\'s length' },
@@ -190,7 +195,12 @@ const FORMATS = {
 }
 const lines = (s) => s.split(/\n/).map((x) => x.trim()).filter(Boolean)
 const E = window.PosterEngine
-const SIZE = { post: 'ig-portrait', social: 'ig-portrait', chat: 'ig-portrait', 'ig-portrait': 'ig-portrait', square: 'ig-square', 'ig-square': 'ig-square', story: 'story', phone: 'story', a3: 'a3', a4: 'a4', screen: 'landscape', landscape: 'landscape' }
+const sizeOf = (v) => { v = String(v || '').toLowerCase()
+  return /square|1:1|1x1/.test(v) ? 'ig-square' : /story|stories|9:16|phone|reel/.test(v) ? 'story' : /\ba3\b/.test(v) ? 'a3' : /\ba4\b/.test(v) ? 'a4'
+    : /screen|16:9|landscape|wide|tv/.test(v) ? 'landscape' : 'ig-portrait' }
+/* what an assistant writes when it means "nothing" */
+const EMPTY = /^[\s(\[]*((leave (it )?)?empty|none|nothing|n\/?a|not (given|provided|known|set)( yet)?|unknown|((date|time|place|venue|room) )?(tb[cda]|to be (confirmed|announced|decided|advised)|to follow)|-+|—|–)[\s)\].]*$/i
+const KINDLY = { 'Town hall': /town|hall|all.?hands|meeting|q ?& ?a/, 'Team building': /team|social|outing|party|celebrat/, 'Call habit': /call|habit|quality|listen|every call/, Privacy: /privacy|security|secure|lock|data/, Recognition: /recogni|thank|award|kudos|shout/, Wellbeing: /well|break|rest|health|stretch/, Notice: /notice|schedule|change|reminder|update/ }
 const WHY = {
   letters: 'The O in the headline: the words are the whole sheet, set in capitals from edge to edge, and one letter O is the orange ring.',
   counter: 'Inside the O: one letter is the whole poster. A giant O leaves the sheet and the words stand in the space inside it.',
@@ -210,11 +220,13 @@ function formData() {
 }
 /* a card from Copilot or from a link, made safe and put into the form */
 function cardToData(c) {
-  const kind = Object.keys(E.KINDS).find((k) => k.toLowerCase() === String(c.kind || '').trim().toLowerCase()) || 'Notice'
-  const pick = (v, table) => (table[String(v || '').trim().toLowerCase()] !== undefined ? String(v).trim().toLowerCase() : '')
-  return { kind, format: SIZE[String(c.size || c.format || '').trim().toLowerCase()] || 'ig-portrait', headline: (c.headline || '').trim(), line: (c.line || '').trim(),
-    points: String(c.points || '').split('|').map((x) => x.trim()).filter(Boolean).slice(0, 3),
-    when: (c.when || '').trim(), time: (c.time || '').trim(), where: (c.where || '').trim(),
+  const val = (v) => { v = String(v || '').replace(/\*\*|__|`/g, '').replace(/^["“'\s]+|["”'\s]+$/g, '').trim(); return EMPTY.test(v) ? '' : v }
+  const said = val(c.kind).toLowerCase()
+  const kind = Object.keys(E.KINDS).find((k) => k.toLowerCase() === said) || Object.keys(KINDLY).find((k) => said && KINDLY[k].test(said)) || 'Notice'
+  const pick = (v, table) => (table[val(v).toLowerCase()] !== undefined ? val(v).toLowerCase() : '')
+  return { kind, format: sizeOf(c.size || c.format), headline: val(c.headline).replace(/\*/g, '').trim(), line: val(c.line),
+    points: String(c.points || '').split(/\s*\|\s*/).map(val).filter(Boolean).slice(0, 5),
+    when: val(c.when), time: val(c.time), where: val(c.where),
     layout: pick(c.layout, E.LAYOUTS), style: pick(c.style || c.colour || c.color, E.STYLES) || 'light' }
 }
 function setForm(d) {
@@ -224,34 +236,49 @@ function setForm(d) {
 }
 function designNotes(d, res) {
   const f = FORMATS[d.format]
+  const event = /Team building|Town hall|Notice/.test(d.kind)
   return ['AUDIENCE: A customer care team, seeing it on ' + f.seen + '.',
-    'LAYOUT: ' + WHY[res.layout],
+    'LAYOUT: ' + WHY[res.layout] + (res.why ? ' (' + E.LAYOUTS[res.asked] + ' ' + res.why + '.)' : ''),
     'LOOK: The Big O. One orange ring is the hero; warm white, charcoal and orange only; two typefaces; no icons or drawn people.',
-    'WORDS: Typed by a person in Poster Studio. Nothing on the poster was invented.',
-    'STILL NEEDED: ' + (['when', 'time', 'where'].filter((k) => !d[k].trim()).join(', ') || 'nothing') + '.'].join('\n')
+    byCopilot ? 'WORDS: Written by an assistant from your request. Read them, and check every fact, before the poster goes up.' : 'WORDS: Typed by a person in Poster Studio. Nothing on the poster was invented.',
+    'STILL NEEDED: ' + ((event ? ['when', 'time', 'where'].filter((k) => !d[k].trim()).join(', ') : '') || 'nothing') + '.'].join('\n')
 }
-let look = 0, lastLayout = ''
-async function makeFromForm(shuffle) {
+/* what was drawn, and why it is not what was asked for when it is not */
+function madeLine(res) {
+  return (res.why ? E.LAYOUTS[res.asked] + ' ' + res.why + ', so this is ' + E.LAYOUTS[res.layout] : E.LAYOUTS[res.layout]) + ', ' + E.STYLES[res.style].name.toLowerCase() + '.'
+}
+const toStage = () => { try { $('s3').scrollIntoView({ behavior: 'smooth', block: 'start' }) } catch {} }
+let look = 0, lastLayout = '', byCopilot = false, research = '', typing = 0
+async function makeFromForm(shuffle, quiet) {
+  clearTimeout(typing)
   await E.ready()
   const d = formData()
-  if (!d.headline.trim()) { $('made').textContent = 'Type a headline first.'; $('headline').focus(); return }
-  if (shuffle) {      // the next layout that suits this kind and these words, and the other colour every third press
+  if (!d.headline.replace(/\*/g, '').trim()) { if (!quiet) { $('made').textContent = 'Type a headline first.'; $('headline').focus() } return }
+  if (shuffle) {      // the next layout that suits this kind and these words; the colour stays as chosen
     look++
     const layouts = E.KINDS[d.kind].layouts.filter((l) => E.makePoster({ ...d, layout: l }).layout === l)
     const at = layouts.indexOf(lastLayout)
-    d.layout = layouts[(at + 1) % layouts.length]
-    d.style = look % 3 === 2 ? 'dark' : 'light'
-    $('layout').value = d.layout; $('style').value = d.style
+    d.layout = layouts[(at + 1) % layouts.length] || ''
   }
   const res = E.makePoster(d)
   lastLayout = res.layout
-  origin = 'form'; cards = []; options = [res.html]
-  $('options').hidden = true; $('options').innerHTML = ''
-  $('made').textContent = E.LAYOUTS[res.layout] + ', ' + E.STYLES[res.style].name.toLowerCase() + '.'
-  return run(res.html, designNotes(d, res))
+  if (shuffle || res.why) $('layout').value = res.layout
+  origin = byCopilot ? 'copilot' : 'form'
+  if (cards.length > 1) { cards[optionIndex] = { ...d, layout: res.layout }; options[optionIndex] = res.html }
+  else { cards = []; options = [res.html]; $('options').hidden = true; $('options').innerHTML = '' }
+  $('made').textContent = madeLine(res)
+  if (!quiet) toStage()
+  return run(res.html, (byCopilot && research ? research + '\n\n' : '') + designNotes(d, res))
 }
 $('make').onclick = () => makeFromForm(false)
 $('another').onclick = () => makeFromForm(true)
+/* the poster follows the form: change a size, a word or a layout and it is drawn again */
+const remake = () => { if (current && origin !== 'html') makeFromForm(false, true) }
+for (const id of ['kind', 'format', 'layout', 'style']) $(id).addEventListener('change', remake)
+for (const id of ['headline', 'message', 'when', 'time', 'where', 'extra']) {
+  $(id).addEventListener('input', () => { clearTimeout(typing); typing = setTimeout(remake, 700) })
+  if (id !== 'extra') $(id).addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); clearTimeout(typing); makeFromForm(false) } })
+}
 
 /* words that may be on the poster: what was typed, plus the Studio's own labels */
 function allowedText() {
@@ -269,14 +296,23 @@ $('copy').onclick = () => copyText($('startblock').textContent.trim(), $('copied
 /* a POSTER card: lines of "key: value" under the word POSTER */
 function parseCards(raw) {
   const out = []
-  for (const block of raw.split(/^[ \t`]*POSTER[ \t]*$/im).slice(1)) {
+  const KEY = /^[\s>*•\-–]*(?:\*\*|__|`)?\s*(kind|headline|line|points|picture|layout|style|colour|color|size|when|time|where)\s*(?:\*\*|__|`)?\s*:\s*(?:\*\*|__|`)?\s*(.*)$/i
+  const text = raw.replace(/\r/g, '')
+  let blocks = text.split(/^(?![^\n]*:\s*\S)[^\n]{0,34}\bPOSTER\b[^\n]{0,14}$/m).slice(1)
+  if (!blocks.length) blocks = text.split(/^(?=[\s>*•\-–`]*(?:\*\*|__)?kind\s*(?:\*\*|__)?\s*:)/im).slice(1)      // no POSTER line: a card starts at "kind:"
+  for (const block of blocks) {
     const c = {}
     for (const line of block.split('\n')) {
-      const m = line.match(/^\s*[-*]?\s*(kind|headline|line|points|layout|style|colour|color|size|when|time|where)\s*:\s*(.*)$/i)
-      if (m) c[m[1].toLowerCase()] = m[2].trim().replace(/^["“]|["”]$/g, '')
+      const m = line.match(KEY)
+      if (m) {
+        const k = m[1].toLowerCase()
+        if (k in c) break                      // a key seen twice is the start of something else
+        c[k] = m[2].trim()
+      } else if (Object.keys(c).length && line.trim() && !/^\s*```/.test(line)) break     // the card ends at the first line that is not one of its keys
       else if (/^\s*```/.test(line) && Object.keys(c).length) break
     }
-    if (c.headline) out.push(cardToData(c))
+    const d = cardToData(c)
+    if (d.headline) out.push(d)
   }
   return out
 }
@@ -349,18 +385,25 @@ window.addEventListener('resize', fit)
 function render(html) {
   return new Promise((resolve) => {
     const fmt = FORMATS[$('format').value]
-    $('stage').innerHTML = '<div class="frame"><iframe title="Poster preview"></iframe></div>'
+    $('stage').innerHTML = '<div class="frame"><iframe title="Poster preview" sandbox="allow-same-origin"></iframe></div>'
     const iframe = $('stage').querySelector('iframe')
     iframe.width = fmt.w; iframe.height = fmt.h
-    iframe.onload = async () => {
+    let fired = false
+    const live = () => iframe === $('stage').querySelector('iframe')
+    const ready = async () => {
+      if (fired || !live()) { if (!live()) resolve(false); return }
+      fired = true
       current = { html, fmt, iframe }
-      try { await iframe.contentDocument.fonts.ready } catch {}
-      await new Promise((r) => setTimeout(r, 350))
+      try { await Promise.race([iframe.contentDocument.fonts.ready, new Promise((r) => setTimeout(r, 2500))]) } catch {}
+      await new Promise((r) => setTimeout(r, 300))
+      if (!live()) { resolve(false); return }
       view = 'final'
       document.querySelectorAll('.view').forEach((x) => x.setAttribute('aria-pressed', String(x.dataset.view === 'final')))
       applyView()
-      resolve()
+      resolve(true)
     }
+    iframe.onload = ready
+    setTimeout(ready, 4000)                     // a page that never finishes loading is checked as it stands
     iframe.srcdoc = withFonts(html)
   })
 }
@@ -435,7 +478,8 @@ function check() {
     if (r.width < 1 || r.height < 1) continue
     items.push({ text, el, x: r.left, y: r.top, w: r.width, h: r.height, size: parseFloat(cs.fontSize),
       family: cs.fontFamily.split(',')[0].replace(/["']/g, '').trim(), color: rgb(el instanceof win.SVGElement ? cs.fill : cs.color), align: cs.textAlign, onPath: el instanceof win.SVGElement,
-      bleed: !!el.closest('[data-bleed]'), shadow: cs.textShadow !== 'none' })
+      bleed: !!el.closest('[data-bleed]'), shadow: cs.textShadow !== 'none',
+      font: `${cs.fontStyle} ${cs.fontWeight} ${cs.fontSize} ${cs.fontFamily}`, tt: cs.textTransform === 'uppercase' ? text.toUpperCase() : text })
   }
   const out = []
   const add = (level, group, msg) => out.push({ level, group, msg })
@@ -450,25 +494,43 @@ function check() {
   if (sizes.length > 6) add('WARN', 'type', sizes.length + ' different text sizes. A poster needs 3 to 5 clear levels.')
   else add('PASS', 'type', sizes.length + ' text sizes')
   if (sizes.length) {
+    /* the reading size is the quiet text; the bold facts are a level of their own between it and the headline */
+    const quiet = items.filter((i) => !i.el.closest('.fact, .step, .num, h1, .type'))
+    const under = items.filter((i) => !i.el.closest('.num, h1, .type'))          // everything that is not the headline
     const chars = {}
-    items.forEach((i) => { const k = Math.round(i.size * 10) / 10; chars[k] = (chars[k] || 0) + i.text.length })
+    ;(quiet.length ? quiet : under.length ? under : items).forEach((i) => { const k = Math.round(i.size * 10) / 10; chars[k] = (chars[k] || 0) + i.text.length })
     const big = Math.max(...items.map((i) => i.size))
     const rest = Object.keys(chars).filter((k) => +k < big - 0.05)
     const body = +(rest.length ? rest : Object.keys(chars)).sort((a, b) => chars[b] - chars[a])[0]
-    const k = big / body
-    if (k < 3) add('WARN', 'type', 'The headline is only ' + k.toFixed(1) + ' times the reading size. Make it 4 times or more.')
-    else add('PASS', 'type', 'The headline is ' + k.toFixed(1) + ' times the reading size')
-    if (sizes[0] < short * 0.011) add('WARN', 'type', 'The smallest text is ' + Math.round(sizes[0]) + 'px on a ' + short + 'px sheet. It will not be readable from a distance.')
+    const k = big / body, need = quiet.length ? 3 : 1.8
+    if (!rest.length || !under.length) add('PASS', 'type', 'The headline is the only text')
+    else if (k < need) add('WARN', 'type', 'The headline is only ' + k.toFixed(1) + ' times the ' + (quiet.length ? 'reading size' : 'facts') + '. Make it ' + need + ' times or more.')
+    else add('PASS', 'type', 'The headline is ' + k.toFixed(1) + ' times the ' + (quiet.length ? 'reading size' : 'facts'))
+    if (sizes[0] < short * 0.02) add('WARN', 'type', 'The smallest text is ' + Math.round(sizes[0]) + 'px on a ' + short + 'px sheet. It will be hard to read on a phone or from a distance.')
   }
 
   const m = short * 0.035
-  const off = items.filter((i) => !i.bleed && (i.x < -1 || i.y < -1 || i.x + i.w > W + 1 || i.y + i.h > H + 1))
-  const near = items.filter((i) => !i.bleed && !off.includes(i) && (i.x < m || i.y < m || i.x + i.w > W - m || i.y + i.h > H - m))
+  /* a line box has empty space above and below its letters, so edges are measured on the ink */
+  const pen = document.createElement('canvas').getContext('2d')
+  const inkOf = (i) => {
+    if (i.onPath) return [i.y, i.y + i.h]
+    try {
+      pen.font = i.font
+      const t = pen.measureText(i.tt), box = t.fontBoundingBoxAscent + t.fontBoundingBoxDescent
+      if (!(box > 0) || i.h > box * 1.6) throw 0                       // a text node on several lines: fall back to proportions
+      const base = i.y + (i.h - box) / 2 + t.fontBoundingBoxAscent
+      return [base - t.actualBoundingBoxAscent, base + Math.max(0, t.actualBoundingBoxDescent)]
+    } catch { return [i.y + 0.19 * i.size, i.y + i.h - 0.22 * i.size] }
+  }
+  items.forEach((i) => { i.ink = inkOf(i) })
+  const inkTop = (i) => i.ink[0], inkFoot = (i) => i.ink[1] - 0.5
+  const off = items.filter((i) => !i.bleed && (i.x < -1 || inkTop(i) < -1 || i.x + i.w > W + 1 || inkFoot(i) > H + 1))
+  const near = items.filter((i) => !i.bleed && !off.includes(i) && (i.x < m || inkTop(i) < m || i.x + i.w > W - m || inkFoot(i) > H - m))
   if (off.length) add('FAIL', 'layout', 'Text runs off the sheet: ' + quote(off))
   if (near.length) add('FAIL', 'layout', 'Text is too close to the edge: ' + quote(near))
   if (!off.length && !near.length && items.length) add('PASS', 'layout', 'All text is inside the safe margin')
   if (doc.documentElement.scrollHeight > H + 2 || doc.documentElement.scrollWidth > W + 2) add('FAIL', 'layout', 'The design is bigger than the sheet, so part of it is cut off. It must fit 100vw by 100vh.')
-  if (items.length >= 4 && items.filter((i) => i.align === 'center').length / items.length > 0.85) add('WARN', 'layout', 'Almost everything is centred. Choose a left edge.')
+  if (!doc.querySelector('.L-rings') && items.length >= 4 && items.filter((i) => i.align === 'center').length / items.length > 0.85) add('WARN', 'layout', 'Almost everything is centred. Choose a left edge.')
 
   const low = []
   for (const i of items) {
@@ -504,8 +566,38 @@ function check() {
   if (EMOJI.test(joined)) add('FAIL', 'copy', 'Emoji are used as pictures. Draw the shape or remove it.')
   if (doc.querySelector('img[src^="http"], script')) add('WARN', 'copy', 'The file loads outside images or scripts. A poster file should hold everything itself.')
 
+  /* was anything that was typed left off the sheet? */
+  if (origin !== 'html') {
+    const on = new Set(norm(items.map((i) => i.text).join(' ')).split(' '))
+    const typed = norm([$('headline').value, $('message').value, $('when').value, $('time').value, $('where').value, $('extra').value].join(' ').replace(/\*/g, '')).split(' ').filter(Boolean)
+    const lost = [...new Set(typed.filter((w) => !on.has(w)))]
+    if (lost.length) add('FAIL', 'copy', 'Words you gave are not on the poster: ' + lost.slice(0, 8).join(', ') + '. Choose another layout or shorten the words.')
+    else if (items.length) add('PASS', 'copy', 'Everything you typed is on the poster')
+  }
+  /* does any type sit on top of other type? measured on the middle of each line, where the letters are */
+  const core = (i) => ({ x1: i.x + 1, x2: i.x + i.w - 1, y1: i.y + i.h * 0.3, y2: i.y + i.h * 0.74 })
+  const flat = items.filter((i) => !i.onPath)
+  const hits = []
+  for (let a = 0; a < flat.length; a++) for (let b = a + 1; b < flat.length; b++) {
+    const A = core(flat[a]), B = core(flat[b])
+    if (A.x1 < B.x2 && B.x1 < A.x2 && A.y1 < B.y2 && B.y1 < A.y2) hits.push('"' + flat[a].text.slice(0, 20) + '" and "' + flat[b].text.slice(0, 20) + '"')
+  }
+  if (hits.length) add('FAIL', 'layout', 'Type sits on top of other type: ' + hits.slice(0, 3).join('; ') + '. Shorten the words or choose another layout.')
+  else if (items.length) add('PASS', 'layout', 'No type touches other type')
+  /* lines of the headline: the foot of one must clear the top of the next */
+  const heads = items.filter((i) => i.el.closest('h1') && !i.onPath).sort((a, b) => a.y - b.y)
+  const fused = []
+  for (let a = 0; a < heads.length - 1; a++) {
+    const A = heads[a], B = heads[a + 1]
+    if (A.el.closest('h1') === B.el.closest('h1') && A.ink[1] > B.ink[0] + 0.5 && A.x < B.x + B.w && B.x < A.x + A.w) fused.push('"' + A.text.slice(0, 20) + '" and "' + B.text.slice(0, 20) + '"')
+  }
+  if (fused.length) add('FAIL', 'layout', 'Lines of the headline touch: ' + fused.slice(0, 3).join('; ') + '. Shorten the headline or choose another layout.')
+  const h1 = items.filter((i) => i.el.closest('h1')), rest = items.filter((i) => !i.el.closest('h1') && !i.el.closest('.num'))
+  if (h1.length && rest.length && Math.max(...h1.map((i) => i.size)) < 1.4 * Math.max(...rest.map((i) => i.size))) add('WARN', 'type', 'The headline is hardly bigger than the text under it. Shorten the headline or the other words.')
+
   /* what did Copilot add? numbers and dates you did not type are a FAIL; other words are listed for you to confirm */
-  const pool = ' ' + norm(allowedText()) + ' '
+  const allowed = allowedText()
+  const pool = ' ' + norm(allowed + ' | ' + allowed.replace(/(\d+)(st|nd|rd|th)\b/gi, '$1')) + ' '      // "the 12th" also allows a plain 12
   const added = items.filter((i) => norm(i.text) && !pool.includes(' ' + norm(i.text) + ' '))
   const withNumbers = added.filter((i) => /\d/.test(i.text) && !/^0?[1-9]$/.test(i.text.trim()))
   if (withNumbers.length) add('FAIL', 'facts', 'Numbers or dates you did not give: ' + quote(withNumbers) + '. Remove them or put the real ones in the brief.')
@@ -534,8 +626,8 @@ function showResults(res) {
   window.__results = res
 }
 $('fix').onclick = () => {
-  const todo = (window.__results || []).filter((r) => r.level !== 'PASS')
-  const msg = 'Fix these in the poster and send the complete HTML file again in one code block. Change nothing else, and invent nothing:\n' + todo.map((r, i) => `${i + 1}. ${r.msg}`).join('\n')
+  const todo = (window.__results || []).filter((r) => r.level !== 'PASS' && !/^Copilot wrote the headline/.test(r.msg))
+  const msg = 'Poster Studio checked the poster and found these. Change the card to fix them and send the card and the link again. Change nothing else, and invent nothing:\n' + todo.map((r, i) => `${i + 1}. ${r.msg}`).join('\n')
   copyText(msg, $('fixed'), 'Copied. Paste it into Copilot.')
 }
 
@@ -544,30 +636,50 @@ async function run(html, research) {
   notes = research || ''
   $('sum').textContent = 'Checking ...'; $('results').innerHTML = ''
   $('notes').textContent = notes || 'No notes with this poster.'
-  await render(html)
+  if (!(await render(html))) return             // a newer poster took its place
   showResults(check())
   for (const id of ['all', 'pdf', 'png', 'notesfile', 'save', 'print']) $(id).disabled = false
 }
 let options = [], optionIndex = 0, cards = [], origin = 'form'
 const tag = () => (options.length > 1 ? '-option-' + (optionIndex + 1) : '')
 function choose(i) {
+  clearTimeout(typing)
   optionIndex = i
   $('options').querySelectorAll('button').forEach((b, n) => b.setAttribute('aria-pressed', String(n === i)))
-  if (cards[i]) setForm(cards[i])          // the form shows what is on the poster, and can be edited and made again
-  return run(options[i], extractNotes($('html').value) || (cards[i] ? designNotes(cards[i], E.makePoster(cards[i])) : ''))
+  let note = ''
+  if (cards[i]) {                          // the form shows what is on the poster, and can be edited and made again
+    const res = E.makePoster(cards[i])
+    setForm({ ...cards[i], layout: res.layout })
+    lastLayout = res.layout
+    $('made').textContent = madeLine(res)
+    note = (research ? research + '\n\n' : '') + designNotes(cards[i], res)
+  }
+  return run(options[i], note || extractNotes($('html').value))
 }
 async function start(raw) {
+  clearTimeout(typing)
   await E.ready()
-  cards = parseCards(raw)
-  options = cards.length ? cards.map((c) => E.makePoster(c).html) : extractAll(raw)
-  origin = cards.length ? 'copilot' : 'html'
+  const found = parseCards(raw)
+  const pages = found.length ? [] : extractAll(raw)
+  if (!found.length && !pages.length) {
+    const msg = 'No poster found in what you pasted. Paste the whole reply, including the part that starts with POSTER.'
+    $('ran').textContent = msg
+    if (!current) { $('sum').textContent = msg; $('results').innerHTML = '' }
+    return
+  }
+  $('ran').textContent = found.length ? (found.length > 1 ? found.length + ' options found. The form now shows the one on screen.' : 'Card read. The form now shows what is on the poster.') : 'Page read.'
+  cards = found
+  byCopilot = !!found.length
+  research = found.length ? extractNotes(raw) : ''
+  options = found.length ? found.map((c) => E.makePoster(c).html) : pages
+  origin = found.length ? 'copilot' : 'html'
   $('options').innerHTML = ''
   $('options').hidden = options.length < 2
-  if (!options.length) { $('sum').textContent = 'No poster found in what you pasted. Paste the whole reply, including the part that starts with POSTER.'; $('results').innerHTML = ''; return }
   options.forEach((_, n) => {
     const b = document.createElement('button'); b.className = 'quiet'; b.textContent = 'Option ' + (n + 1); b.onclick = () => choose(n)
     $('options').appendChild(b)
   })
+  toStage()
   return choose(0)
 }
 $('run').onclick = () => start($('html').value)
@@ -609,7 +721,7 @@ async function makePng() {
   const { iframe, fmt } = current
   const before = view; view = 'final'; applyView()
   const fontEmbedCSS = await embedFonts(iframe.contentDocument)
-  const pixelRatio = fmt.w < 1200 ? 3 : 2      // A3 and A4 come out near 300 dpi
+  const pixelRatio = /^(a3|a4)$/.test($('format').value) ? 3 : 2      // A3 and A4 come out near 300 dpi; posts at twice their size
   const blob = await window.htmlToImage.toBlob(iframe.contentDocument.documentElement, { width: fmt.w, height: fmt.h, pixelRatio, backgroundColor: '#ffffff', fontEmbedCSS })
   view = before; applyView()
   pngCache = { html: current.html, fmt: current.fmt, blob, px: [fmt.w * pixelRatio, fmt.h * pixelRatio] }
@@ -644,11 +756,11 @@ $('save').onclick = () => download('poster' + tag() + '.html', new Blob([withFon
 $('notesfile').onclick = () => download('poster' + tag() + '-notes.md', new Blob([notesFile()], { type: 'text/markdown' }))
 $('png').onclick = async () => {
   say('Making the PNG ...')
-  try { download('poster' + tag() + '.png', await makePng()); say(`Saved poster.png (${pngCache.px[0]} x ${pngCache.px[1]} px).`) } catch { say(OFFLINE) }
+  try { const name = 'poster' + tag() + '.png'; download(name, await makePng()); say(`Saved ${name} (${pngCache.px[0]} x ${pngCache.px[1]} px).`) } catch { say(OFFLINE) }
 }
 $('pdf').onclick = async () => {
   say('Making the PDF ...')
-  try { download('poster' + tag() + '.pdf', await makePdf()); say(`Saved poster.pdf (${current.fmt.page[0]} x ${current.fmt.page[1]}).`) } catch { say(OFFLINE) }
+  try { const name = 'poster' + tag() + '.pdf'; download(name, await makePdf()); say(`Saved ${name} (${current.fmt.page[0]} x ${current.fmt.page[1]}).`) } catch { say(OFFLINE) }
 }
 $('all').onclick = async () => {
   say('Making the PNG, the PDF and the notes ...')
@@ -658,7 +770,7 @@ $('all').onclick = async () => {
     const zip = new window.JSZip()
     zip.file('poster.png', png); zip.file('poster.pdf', pdf); zip.file('poster.html', withFonts(current.html)); zip.file('poster-notes.md', notesFile())
     download('poster' + tag() + '-pack.zip', await zip.generateAsync({ type: 'blob' }))
-    say('Saved poster-pack.zip: poster.png, poster.pdf, poster.html and poster-notes.md. Open the PNG and compare it with the preview before you send it.')
+    say('Saved poster' + tag() + '-pack.zip: poster.png, poster.pdf, poster.html and poster-notes.md. Open the PNG and compare it with the preview before you send it.')
   } catch { say(OFFLINE) }
 }
 $('print').onclick = () => {
@@ -673,20 +785,37 @@ $('print').onclick = () => {
 
 /* ---------- an example, and posters opened from a link ---------- */
 $('example').onclick = () => {
+  byCopilot = false; research = ''; cards = []
   setForm({ kind: 'Team building', format: 'ig-portrait', headline: 'Headsets off. Hands up.', line: 'Time away from the queue, with the people who share it.',
     points: [], when: 'Friday 12 December', time: '3 pm', where: '14th floor', layout: 'counter', style: 'light' })
   makeFromForm(false)
 }
 /* studio.html#kind=Team+building&headline=...  The part after # never leaves this computer. */
-if (location.hash.length > 1) {
-  const q = new URLSearchParams(location.hash.slice(1)), c = {}
-  for (const [k, v] of q) c[k.toLowerCase()] = v
-  if (c.headline) E.ready().then(() => {
-    const d = cardToData(c)
-    setForm(d); origin = 'copilot'; cards = [d]; options = [E.makePoster(d).html]
-    run(options[0], designNotes(d, E.makePoster(d)))
+function fromLink() {
+  if (location.hash.length < 2) return
+  const KEYS = /^(kind|headline|line|points|picture|layout|style|colour|color|size|format|when|time|where)$/i
+  const q = new URLSearchParams(location.hash.slice(1).replace(/\+\+\+/g, '+%2B+')), c = {}
+  let last = ''
+  for (const [k, v] of q) {
+    if (KEYS.test(k)) { last = k.toLowerCase(); c[last] = v }
+    else if (last) c[last] += '&' + k + (v ? '=' + v : '')              // an & inside the words, not a new key
+  }
+  if (!Object.keys(c).length) return
+  const d = cardToData(c)
+  if (!d.headline) { $('made').textContent = 'That link has no headline in it. Type one here and press Make.'; setForm({ ...d, headline: '' }); $('headline').focus(); return }
+  clearTimeout(typing)
+  E.ready().then(() => {
+    byCopilot = true; research = ''
+    const res = E.makePoster(d)
+    setForm({ ...d, layout: res.layout }); lastLayout = res.layout
+    origin = 'copilot'; cards = [d]; options = [res.html]
+    $('options').hidden = true; $('options').innerHTML = ''
+    $('made').textContent = madeLine(res)
+    run(res.html, designNotes(d, res))
   })
 }
+window.addEventListener('hashchange', fromLink)
+fromLink()
 </script>
 </body>
 </html>

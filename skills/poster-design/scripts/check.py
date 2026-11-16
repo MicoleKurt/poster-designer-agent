@@ -188,8 +188,11 @@ def main():
 
     # ---- layout ----
     m = max(data["marginPx"] * 0.5, short * 0.025)
-    outside = [i for i in items if not i["bleed"] and (i["x"] < m or i["y"] < m or i["x"] + i["w"] > W - m or i["y"] + i["h"] > H - m)]
-    off = [i for i in items if not i["bleed"] and (i["x"] < -1 or i["y"] < -1 or i["x"] + i["w"] > W + 1 or i["y"] + i["h"] > H + 1)]
+    # a line box carries empty space above its letters, so the margin is measured on the letters
+    top = lambda i: i["y"] + 0.19 * i["size"]
+    foot = lambda i: i["y"] + i["h"] - 0.22 * i["size"]
+    outside = [i for i in items if not i["bleed"] and (i["x"] < m or top(i) < m or i["x"] + i["w"] > W - m or foot(i) > H - m)]
+    off = [i for i in items if not i["bleed"] and (i["x"] < -1 or top(i) < -1 or i["x"] + i["w"] > W + 1 or foot(i) > H + 1)]
     if off:
         add("FAIL", "layout", f"text runs off the sheet: {', '.join(repr(i['text'][:24]) for i in off[:4])}")
     if [i for i in outside if i not in off]:

@@ -1,6 +1,6 @@
 # The prompt, for any Copilot or chat assistant
 
-The easy way is to open [`studio.html`](../studio.html): it fills this prompt in from a form, then previews, checks and exports what Copilot writes.
+The easy way is to open [`studio.html`](../studio.html): type the words and it draws, checks and exports the poster itself. This page is the older route, for an assistant that writes the poster's HTML by hand.
 
 To use the prompt by hand, copy everything in the block below into Copilot, and edit the lines under **THE BRIEF** first:
 

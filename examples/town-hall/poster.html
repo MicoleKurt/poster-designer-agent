@@ -9,21 +9,24 @@
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{width:100vw;height:100vh;overflow:hidden;background:var(--paper)}
 .poster{position:relative;width:100vw;height:100vh;overflow:hidden;background:var(--paper);color:var(--ink);font-family:'Figtree','Segoe UI',Arial,sans-serif;-webkit-font-smoothing:antialiased}
-.poster>*{position:absolute}
+.stage{position:absolute;left:0;top:calc(0*var(--u));width:100vw;height:calc(125*var(--u))}
+.stage>*{position:absolute}
 .l{display:block;white-space:nowrap}
-.head{font-weight:900;letter-spacing:-.035em;white-space:nowrap}
+.head{white-space:nowrap}
 .fact{font-weight:800;line-height:1.2;letter-spacing:-.012em}
 .say{font-family:'Newsreader',Georgia,serif;font-style:italic;font-weight:400;line-height:1.18}
 .pt{font-weight:600;line-height:1.26}
 .kick{font-weight:700;line-height:1.2;letter-spacing:.14em;text-transform:uppercase;white-space:nowrap}
-.art{left:0;top:0;width:100vw;height:100vh;display:block}
+.art{left:0;top:0;width:100%;height:100%;display:block;overflow:visible}
 .art *{fill:none;stroke:var(--orange);stroke-linecap:butt}
 .stop{display:inline-block;vertical-align:baseline;width:.3em;height:.3em;margin-left:.06em;border-radius:50%;background:var(--orange)}
 </style>
 </head>
 <body>
 <main class="poster L-arcs">
-<svg class="art" data-decor aria-hidden="true" viewBox="0 0 100 125" preserveAspectRatio="none"><path d="M63.152 58.53A6.885 6.885 0 1 1 57.098 70.807" stroke-width="2.754"/><path d="M66.508 52.47A13.77 13.77 0 0 1 56.428 78.058" stroke-width="5.508"/><path d="M56.489 37.799A27.54 27.54 0 1 1 44.416 87.138" stroke-width="11.016"/><path d="M16.521 32.237A55.08 55.08 0 1 1 22.883 104.954" stroke-width="22.032"/><circle cx="60.797" cy="65" r="110.16" stroke-width="44.064"/></svg><h1 class="head" style="left:calc(6.46*var(--u));top:calc(44.075*var(--u));font-weight:800;font-size:calc(13.5*var(--u));line-height:0.9"><span class="l">Bring one</span><span class="l">question<i class="stop" data-decor></i></span></h1><div class="info" style="left:calc(7*var(--u));top:calc(71.175*var(--u))"><p class="say" style="font-size:calc(3*var(--u))"><span class="l">Ask anything. We answer in the room.</span></p><p class="fact" style="font-size:calc(3.4*var(--u));margin-top:calc(2.2*var(--u))"><span class="l">Thursday 4 December</span><span class="l">3 pm</span><span class="l">Training Room B</span></p><p class="kick" style="font-size:calc(1.55*var(--u));margin-top:calc(2.4*var(--u))"><span class="l">Town hall</span></p></div>
+<div class="stage">
+<svg class="art" data-decor aria-hidden="true" viewBox="0 0 100 125" preserveAspectRatio="none"><path d="M63.096 58.51A6.885 6.885 0 0 1 60.317 71.868" stroke-width="2.754"/><path d="M66.617 52.52A13.77 13.77 0 0 1 57.7 78.417" stroke-width="5.508"/><path d="M67.693 38.337A27.54 27.54 0 1 1 45.597 87.965" stroke-width="11.016"/><path d="M17.992 30.337A55.08 55.08 0 1 1 21.176 103.262" stroke-width="22.032"/></svg><h1 class="head" style="left:calc(6.46*var(--u));top:calc(41.139*var(--u));font-size:calc(13.5*var(--u));line-height:1.045;font-weight:800;letter-spacing:-0.035em"><span class="l">Bring one</span><span class="l">question<i class="stop" data-decor></i></span></h1><div class="info" style="left:calc(7*var(--u));top:calc(72.725*var(--u))"><p class="say" style="font-size:calc(3*var(--u))"><span class="l">Ask anything. We answer in the room.</span></p><p class="fact" style="font-size:calc(3.4*var(--u));margin-top:calc(2.2*var(--u))"><span class="l">Thursday 4 December</span><span class="l">3 pm</span><span class="l">Training Room B</span></p></div>
+</div>
 </main>
 </body>
 </html>

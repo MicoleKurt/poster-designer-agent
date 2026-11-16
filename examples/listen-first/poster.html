@@ -9,21 +9,24 @@
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{width:100vw;height:100vh;overflow:hidden;background:var(--paper)}
 .poster{position:relative;width:100vw;height:100vh;overflow:hidden;background:var(--paper);color:var(--ink);font-family:'Figtree','Segoe UI',Arial,sans-serif;-webkit-font-smoothing:antialiased}
-.poster>*{position:absolute}
+.stage{position:absolute;left:0;top:calc(0*var(--u));width:100vw;height:calc(100*var(--u))}
+.stage>*{position:absolute}
 .l{display:block;white-space:nowrap}
-.head{font-weight:900;letter-spacing:-.035em;white-space:nowrap}
+.head{white-space:nowrap}
 .fact{font-weight:800;line-height:1.2;letter-spacing:-.012em}
 .say{font-family:'Newsreader',Georgia,serif;font-style:italic;font-weight:400;line-height:1.18}
 .pt{font-weight:600;line-height:1.26}
 .kick{font-weight:700;line-height:1.2;letter-spacing:.14em;text-transform:uppercase;white-space:nowrap}
-.art{left:0;top:0;width:100vw;height:100vh;display:block}
+.art{left:0;top:0;width:100%;height:100%;display:block;overflow:visible}
 .ring{border-radius:50%;border-style:solid;border-color:var(--orange)}
-.step{font-weight:800;line-height:1.08;letter-spacing:-.02em}
+.step{font-weight:800;line-height:1.1;letter-spacing:-.02em}
 </style>
 </head>
 <body>
 <main class="poster L-steps">
-<p class="kick" style="left:calc(7*var(--u));top:calc(7*var(--u));font-size:calc(1.55*var(--u))">Every call</p><h1 class="head" style="left:calc(6.373*var(--u));top:calc(11.8*var(--u));font-size:calc(13.925*var(--u));line-height:0.86"><span class="l">Listen first.</span><span class="l">Then solve.</span></h1><div class="ring" data-decor style="left:calc(83.556*var(--u));top:calc(7*var(--u));width:calc(40*var(--u));height:calc(40*var(--u));border-width:calc(9.6*var(--u))"></div><p class="step" style="left:calc(128.056*var(--u));top:calc(19.656*var(--u));font-size:calc(6.8*var(--u))"><span class="l">Let the</span><span class="l">caller finish.</span></p><div class="ring" data-decor style="left:calc(98.756*var(--u));top:calc(50*var(--u));width:calc(24.8*var(--u));height:calc(24.8*var(--u));border-width:calc(5.952*var(--u))"></div><p class="step" style="left:calc(128.056*var(--u));top:calc(57.847*var(--u));font-size:calc(4.216*var(--u))"><span class="l">Say back what</span><span class="l">you heard.</span></p><div class="ring" data-decor style="left:calc(108.356*var(--u));top:calc(77.8*var(--u));width:calc(15.2*var(--u));height:calc(15.2*var(--u));border-width:calc(3.648*var(--u))"></div><p class="step" style="left:calc(128.056*var(--u));top:calc(80.847*var(--u));font-size:calc(4.216*var(--u))"><span class="l">Confirm the fix</span><span class="l">before you close.</span></p>
+<div class="stage">
+<h1 class="head" style="left:calc(6.373*var(--u));top:calc(6.582*var(--u));font-size:calc(13.925*var(--u));line-height:0.86;font-weight:900;letter-spacing:-0.035em"><span class="l">Listen first.</span><span class="l">Then solve.</span></h1><div class="ring" data-decor style="left:calc(83.556*var(--u));top:calc(7*var(--u));width:calc(40*var(--u));height:calc(40*var(--u));border-width:calc(9.6*var(--u))"></div><p class="step" style="left:calc(128.056*var(--u));top:calc(20.107*var(--u));font-size:calc(6.266*var(--u))"><span class="l">Let the</span><span class="l">caller finish.</span></p><div class="ring" data-decor style="left:calc(98.756*var(--u));top:calc(50*var(--u));width:calc(24.8*var(--u));height:calc(24.8*var(--u));border-width:calc(5.952*var(--u))"></div><p class="step" style="left:calc(128.056*var(--u));top:calc(57.762*var(--u));font-size:calc(4.216*var(--u))"><span class="l">Say back what</span><span class="l">you heard.</span></p><div class="ring" data-decor style="left:calc(108.356*var(--u));top:calc(77.8*var(--u));width:calc(15.2*var(--u));height:calc(15.2*var(--u));border-width:calc(3.648*var(--u))"></div><p class="step" style="left:calc(128.056*var(--u));top:calc(80.762*var(--u));font-size:calc(4.216*var(--u))"><span class="l">Confirm the fix</span><span class="l">before you close.</span></p>
+</div>
 </main>
 </body>
 </html>

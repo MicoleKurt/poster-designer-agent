@@ -5,7 +5,7 @@
 | File | What it is |
 |---|---|
 | `src.html` | The Studio itself. Edit this, never `studio.html`. |
-| `engine.js` | The design engine: ten layouts, three colour styles and ten pictures. `makePoster(data)` returns one finished HTML poster. |
+| `engine.js` | The design engine: eight Big O layouts and two colour styles, no pictures. It measures the type and fits it to the sheet. `makePoster(data)` returns one finished HTML poster, and never leaves a given word off. |
 | `../copilot/start.txt` | The block for Copilot. The Studio's copy button carries it. |
 | `fonts/figtree-latin.woff2` | Figtree, variable weight, Latin. SIL Open Font License 1.1. |
 | `fonts/newsreader-italic-latin.woff2` | Newsreader Italic, Latin. SIL Open Font License 1.1. |
